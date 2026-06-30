@@ -509,3 +509,66 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
   .admin-layout { grid-template-columns: 1fr; }
   .form-row { grid-template-columns: 1fr; }
 }
+/* ===== YouTube Fallback ===== */
+
+.fallback-box{
+
+    max-width:700px;
+
+    margin:40px auto;
+
+    padding:40px;
+
+    background:#181818;
+
+    border:1px solid #333;
+
+    border-radius:16px;
+
+    text-align:center;
+
+}
+
+.fallback-box h3{
+
+    color:white;
+
+    margin-bottom:15px;
+
+}
+
+.fallback-box p{
+
+    color:#bbbbbb;
+
+    margin-bottom:25px;
+
+}
+
+.btn-youtube{
+
+    display:inline-block;
+
+    padding:14px 28px;
+
+    background:#ff0000;
+
+    color:white;
+
+    text-decoration:none;
+
+    border-radius:8px;
+
+    font-size:18px;
+
+    font-weight:bold;
+
+    transition:.25s;
+
+}
+
+.btn-youtube:hover{
+
+    background:#d40000;
+
+}

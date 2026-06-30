@@ -69,13 +69,40 @@
 
     <!-- Video Embed Section -->
     <div class="video-wrap">
-      <iframe id="yt-player"
-        src=""
-        title="Reproductor de video"
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+     <div class="video-container">
+
+    <iframe
+        id="yt-player"
         allowfullscreen
-        loading="lazy">
-      </iframe>
+        loading="lazy"
+        allow="autoplay; encrypted-media"
+        frameborder="0">
+    </iframe>
+
+</div>
+
+<div id="youtube-fallback" style="display:none">
+
+    <div class="fallback-box">
+
+        <h3>⚠️ Este video no está disponible aquí.</h3>
+
+        <p>
+            YouTube restringe la reproducción en sitios externos.
+        </p>
+
+        <a
+            id="watchYoutube"
+            class="btn-youtube"
+            target="_blank">
+
+            ▶️ Ver en YouTube
+
+        </a>
+
+    </div>
+
+</div>
     </div>
 
     <!-- Adsterra Smartlink - Below Player -->
