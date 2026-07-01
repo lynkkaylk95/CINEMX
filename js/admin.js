@@ -3,8 +3,31 @@
    Logic for admin.html (Offline Admin Panel)
 ============================================================ */
 
-let currentMovies = typeof MOVIES !== 'undefined' ? [...MOVIES] : [];
+const MOVIES_STORAGE_KEY = 'cinemax_movies';
+let currentMovies = loadSavedMovies();
 let activeEpisodeTags = [];
+function loadSavedMovies() {
+  try {
+    const saved = localStorage.getItem(MOVIES_STORAGE_KEY);
+    const parsed = saved ? JSON.parse(saved) : null;
+    if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+  } catch (err) {
+    console.warn('Không đọc được danh sách phim đã lưu.', err);
+  }
+  return typeof MOVIES !== 'undefined' ? [...MOVIES] : [];
+}
+
+function persistMovies() {
+  localStorage.setItem(MOVIES_STORAGE_KEY, JSON.stringify(currentMovies));
+}
+
+function extractYouTubeId(value) {
+  const raw = String(value || '').trim();
+  const shortMatch = raw.match(/youtu\.be\/([A-Za-z0-9_-]{6,})/);
+  const watchMatch = raw.match(/[?&]v=([A-Za-z0-9_-]{6,})/);
+  const embedMatch = raw.match(/youtube\.com\/embed\/([A-Za-z0-9_-]{6,})/);
+  return (shortMatch && shortMatch[1]) || (watchMatch && watchMatch[1]) || (embedMatch && embedMatch[1]) || raw;
+}
 
 document.addEventListener('DOMContentLoaded', () => {
   renderAdminList();
@@ -34,7 +57,7 @@ function renderAdminList(searchQuery = '') {
   countBadge.textContent = filtered.length;
 
   if (filtered.length === 0) {
-    container.innerHTML = `<div style="padding: 24px; text-align: center; color: var(--text3); font-size: 13px;">No se encontraron películas.</div>`;
+    container.innerHTML = `<div style="padding: 24px; text-align: center; color: var(--text3); font-size: 13px;">Không tìm thấy phim nào.</div>`;
     return;
   }
 
@@ -48,8 +71,8 @@ function renderAdminList(searchQuery = '') {
         </div>
       </div>
       <div class="admin-movie-actions">
-        <button class="btn-edit" onclick="editMovie(${m.id})">Editar</button>
-        <button class="btn-delete" onclick="deleteMovie(${m.id})">Eliminar</button>
+        <button class="btn-edit" onclick="editMovie(${m.id})">Sửa</button>
+        <button class="btn-delete" onclick="deleteMovie(${m.id})">Xóa</button>
       </div>
     </div>
   `).join('');
@@ -79,6 +102,7 @@ function addEpisodeTag() {
   }
 }
 
+// Remove episode tag
 function removeEpisodeTag(idx) {
   activeEpisodeTags.splice(idx, 1);
   renderEpisodeTags();
@@ -99,7 +123,7 @@ function editMovie(id) {
   const movie = currentMovies.find(m => Number(m.id) === Number(id));
   if (!movie) return;
 
-  document.getElementById('form-title').textContent = "Editar Película / Serie";
+  document.getElementById('form-title').textContent = "Chỉnh sửa Phim / Series";
   document.getElementById('movie-id').value = movie.id;
   document.getElementById('title').value = movie.title || '';
   document.getElementById('genre').value = movie.genre || 'Acción';
@@ -130,12 +154,12 @@ function saveMovie() {
   const rating = parseFloat(document.getElementById('rating').value);
   const duration = document.getElementById('duration').value.trim();
   const emoji = document.getElementById('emoji').value.trim();
-  const yt = document.getElementById('yt').value.trim();
+  const yt = extractYouTubeId(document.getElementById('yt').value);
   const thumb = document.getElementById('thumb').value.trim();
   const desc = document.getElementById('desc').value.trim();
 
   if (!title || !duration || !yt || !desc) {
-    showToast("Por favor, llena todos los campos obligatorios.");
+    showToast("Vui lòng điền đầy đủ các trường bắt buộc.");
     return;
   }
 
@@ -148,7 +172,7 @@ function saveMovie() {
     duration,
     emoji: emoji || "🎬",
     yt,
-    thumb,
+    thumb: thumb || (yt ? `https://i3.ytimg.com/vi/${yt}/maxresdefault.jpg` : ''),
     desc,
     badge: type === 'Serie' ? 'SERIE' : 'NUEVO',
     episodes: type === 'Serie' ? [...activeEpisodeTags] : []
@@ -161,32 +185,34 @@ function saveMovie() {
     if (idx !== -1) {
       currentMovies[idx] = { ...currentMovies[idx], ...movieData, id };
     }
-    showToast("Película actualizada con éxito.");
+    showToast("Cập nhật phim thành công.");
   } else {
     // Creating new movie
     const newId = getNextId();
     currentMovies.push({ ...movieData, id: newId });
-    showToast("¡Nueva película añadida!");
+    showToast("Đã thêm phim mới thành công!");
   }
 
   resetMovieForm();
+  persistMovies();
   renderAdminList();
   showAlert();
 }
 
 // Delete movie
 function deleteMovie(id) {
-  if (confirm(`¿Estás seguro de eliminar el título con ID: ${id}?`)) {
+  if (confirm(`Bạn có chắc chắn muốn xóa phim có ID: ${id}?`)) {
     currentMovies = currentMovies.filter(m => Number(m.id) !== Number(id));
+    persistMovies();
     renderAdminList();
-    showToast("Título eliminado.");
+    showToast("Đã xóa phim.");
     showAlert();
   }
 }
 
 // Reset Form state
 function resetMovieForm() {
-  document.getElementById('form-title').textContent = "Nueva Película / Serie";
+  document.getElementById('form-title').textContent = "Thêm Phim / Series Mới";
   document.getElementById('movie-id').value = '';
   document.getElementById('movie-form').reset();
   activeEpisodeTags = [];
@@ -228,6 +254,7 @@ const MOVIES = ${JSON.stringify(currentMovies, null, 2)};
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);
+  URL.revokeObjectURL(url);
   
-  showToast("¡Archivo movies.js exportado con éxito!");
+  showToast("Xuất file movies.js thành công!");
 }

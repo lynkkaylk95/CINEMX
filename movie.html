@@ -94,7 +94,9 @@
         <a
             id="watchYoutube"
             class="btn-youtube"
-            target="_blank">
+            target="_blank"
+            rel="noopener noreferrer"
+            href="#">
 
             ▶️ Ver en YouTube
 
@@ -166,7 +168,6 @@
         <h4>Plataforma</h4>
         <ul>
           <li><a href="index.html">Inicio</a></li>
-          <li><a href="admin.html">Administración</a></li>
           <li><a href="#">Privacidad</a></li>
           <li><a href="#">Términos</a></li>
         </ul>
@@ -191,71 +192,121 @@
   <!-- Scripts -->
   <script src="js/movies.js"></script>
   <script>
-    // Logic to render movie.html details
-    document.addEventListener('DOMContentLoaded', () => {
-      const urlParams = new URLSearchParams(window.location.search);
-      const movieId = parseInt(urlParams.get('id'));
-      
-      const moviesList = typeof MOVIES !== 'undefined' ? MOVIES : [];
-      const movie = moviesList.find(m => m.id === movieId);
+    const MOVIES_STORAGE_KEY = 'cinemax_movies';
 
-      if (!movie) {
-        // Show error message
-        document.getElementById('movie-title').textContent = "Película no encontrada";
-        document.getElementById('movie-desc').textContent = "Lo sentimos, el título que buscas no está disponible en este momento.";
+    function getMoviesList() {
+      try {
+        const saved = localStorage.getItem(MOVIES_STORAGE_KEY);
+        const parsed = saved ? JSON.parse(saved) : null;
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      } catch (err) {
+        console.warn('No se pudo leer la lista local de peliculas.', err);
+      }
+      return typeof MOVIES !== 'undefined' ? [...MOVIES] : [];
+    }
+
+    function getYouTubeId(value) {
+      const raw = String(value || '').trim();
+      if (!raw) return '';
+      const shortMatch = raw.match(/youtu\.be\/([A-Za-z0-9_-]{6,})/);
+      const watchMatch = raw.match(/[?&]v=([A-Za-z0-9_-]{6,})/);
+      const embedMatch = raw.match(/youtube\.com\/embed\/([A-Za-z0-9_-]{6,})/);
+      return (shortMatch && shortMatch[1]) || (watchMatch && watchMatch[1]) || (embedMatch && embedMatch[1]) || raw;
+    }
+
+    function escapeHTML(value) {
+      return String(value ?? '').replace(/[&<>"']/g, char => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+      }[char]));
+    }
+
+    function escapeAttr(value) {
+      return escapeHTML(value).replace(/`/g, '&#96;');
+    }
+
+    function setPlayer(ytId) {
+      const iframe = document.getElementById('yt-player');
+      const fallback = document.getElementById('youtube-fallback');
+      const watchYoutube = document.getElementById('watchYoutube');
+
+      if (!ytId) {
+        if (iframe) iframe.style.display = 'none';
+        if (fallback) fallback.style.display = 'block';
+        if (watchYoutube) watchYoutube.removeAttribute('href');
         return;
       }
 
-      // Populate basic texts
+      if (iframe) {
+        iframe.style.display = 'block';
+        iframe.src = `https://www.youtube.com/embed/${encodeURIComponent(ytId)}?autoplay=1&rel=0&modestbranding=1&color=red`;
+      }
+      if (fallback) fallback.style.display = 'none';
+      if (watchYoutube) {
+        watchYoutube.href = `https://www.youtube.com/watch?v=${encodeURIComponent(ytId)}`;
+        watchYoutube.target = '_blank';
+        watchYoutube.rel = 'noopener noreferrer';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const movieId = Number(urlParams.get('id'));
+      const moviesList = getMoviesList();
+      const movie = moviesList.find(m => Number(m.id) === movieId);
+
+      if (!movie) {
+        document.getElementById('movie-title').textContent = 'Película no encontrada';
+        document.getElementById('movie-desc').textContent = 'Lo sentimos, el título que buscas no está disponible en este momento.';
+        setPlayer('');
+        return;
+      }
+
+      const movieYtId = getYouTubeId(movie.yt);
       document.getElementById('page-title').textContent = `${movie.title} — CineMax MX`;
-      document.getElementById('meta-desc').content = movie.desc;
-      document.getElementById('movie-title').textContent = movie.title;
-      document.getElementById('movie-desc').textContent = movie.desc;
-      document.getElementById('movie-badge').textContent = movie.type;
-      document.getElementById('movie-year').textContent = movie.year;
-      document.getElementById('movie-duration').textContent = movie.duration;
-      document.getElementById('movie-genre').textContent = movie.genre;
-      document.getElementById('movie-rating').textContent = `⭐ ${movie.rating}`;
+      document.getElementById('meta-desc').content = movie.desc || '';
+      document.getElementById('movie-title').textContent = movie.title || '';
+      document.getElementById('movie-desc').textContent = movie.desc || '';
+      document.getElementById('movie-badge').textContent = movie.type || 'Película';
+      document.getElementById('movie-year').textContent = movie.year || '-';
+      document.getElementById('movie-duration').textContent = movie.duration || '-';
+      document.getElementById('movie-genre').textContent = movie.genre || '-';
+      document.getElementById('movie-rating').textContent = `⭐ ${movie.rating || '0.0'}`;
+      setPlayer(movieYtId);
 
-      // Embed Video Player
-      const iframe = document.getElementById('yt-player');
-      iframe.src = `https://www.youtube.com/embed/${movie.yt}?autoplay=1&rel=0&modestbranding=1&color=red`;
-
-      // Episode Grid
       const epSection = document.getElementById('ep-section');
       const epGrid = document.getElementById('ep-grid-container');
-      
       if (movie.episodes && movie.episodes.length > 0) {
         epSection.style.display = 'block';
         epGrid.innerHTML = movie.episodes.map((ep, idx) => `
-          <button class="ep-btn ${idx === 0 ? 'active' : ''}" onclick="loadEpisode('${movie.yt}', ${idx})">
-            ${ep}
+          <button class="ep-btn ${idx === 0 ? 'active' : ''}" onclick="loadEpisode('${escapeAttr(movieYtId)}', ${idx})">
+            ${escapeHTML(ep)}
           </button>
         `).join('');
       } else {
         epSection.style.display = 'none';
       }
 
-      // Recommended list (same genre)
-      const recommended = moviesList.filter(m => m.id !== movie.id && m.genre === movie.genre).slice(0, 6);
+      const recommended = moviesList.filter(m => Number(m.id) !== Number(movie.id) && m.genre === movie.genre).slice(0, 6);
       const recGrid = document.getElementById('rec-grid-container');
-      
       if (recommended.length > 0) {
         recGrid.innerHTML = recommended.map(m => {
-          const hasThumb = m.thumb && m.thumb.trim() !== "";
-          const bgStyle = hasThumb ? "" : `background: linear-gradient(135deg, ${hashColor(m.id)})`;
-          
+          const hasThumb = m.thumb && String(m.thumb).trim() !== '';
+          const bgStyle = hasThumb ? '' : `background: linear-gradient(135deg, ${hashColor(m.id)})`;
           return `
-            <div class="card" onclick="window.location.href='movie.html?id=${m.id}'">
+            <div class="card" onclick="window.location.href='movie.html?id=${encodeURIComponent(m.id)}'">
               <div class="card-thumb" style="${bgStyle}">
-                ${hasThumb 
-                  ? `<img class="card-thumb-img" src="${m.thumb}" alt="${m.title}">` 
-                  : `<div class="card-thumb-emoji" style="font-size:38px;">${m.emoji || "🎬"}</div>`
+                ${hasThumb
+                  ? `<img class="card-thumb-img" src="${escapeAttr(m.thumb)}" alt="${escapeAttr(m.title)}">`
+                  : `<div class="card-thumb-emoji" style="font-size:38px;">${escapeHTML(m.emoji || '🎬')}</div>`
                 }
-                <div class="card-rating">⭐ ${m.rating}</div>
+                <div class="card-rating">⭐ ${escapeHTML(m.rating)}</div>
               </div>
               <div class="card-info" style="padding: 8px;">
-                <div class="card-title" style="font-size: 11px;">${m.title}</div>
+                <div class="card-title" style="font-size: 11px;">${escapeHTML(m.title)}</div>
               </div>
             </div>`;
         }).join('');
@@ -263,21 +314,16 @@
         recGrid.innerHTML = '<p style="font-size: 13px; color: var(--text3)">No hay recomendaciones de este género todavía.</p>';
       }
 
-      // Send Google Analytics Event
       if (typeof gtag !== 'undefined') {
         gtag('event', 'watch_movie', { event_category: 'engagement', event_label: movie.title });
       }
     });
 
     function loadEpisode(ytId, index) {
-      // Toggle active class
       document.querySelectorAll('.ep-btn').forEach((btn, idx) => {
         btn.classList.toggle('active', idx === index);
       });
-      // In a real series layout, you could map multiple YouTube IDs per episode in the database.
-      // Here, as a safe fallback, we use the same video but reset/autoplay.
-      const iframe = document.getElementById('yt-player');
-      iframe.src = `https://www.youtube.com/embed/${ytId}?autoplay=1&rel=0&modestbranding=1&color=red`;
+      setPlayer(ytId);
     }
 
     function hashColor(id) {
@@ -286,7 +332,7 @@
         '#0a0a1a, #1a0a3a', '#1a1a0a, #3a2a0a', '#0a1a1a, #0a2a2a',
         '#1a0a1a, #2a0a2a', '#0d0d0d, #2a1a0a', '#0a1a0a, #1a3a2a'
       ];
-      return colors[id % colors.length];
+      return colors[Math.abs(Number(id) || 0) % colors.length];
     }
 
     function showToast(msg) {
