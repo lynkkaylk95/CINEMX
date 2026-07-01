@@ -64,6 +64,9 @@
     <a href="#" onclick="filterByGenre('Drama'); closeMenu(); return false;">🎭 Drama</a>
     <a href="#" onclick="filterByGenre('Terror'); closeMenu(); return false;">👻 Terror</a>
     <a href="#" onclick="filterByGenre('Animación'); closeMenu(); return false;">🎨 Animación</a>
+    <a href="#" onclick="filterByGenre('Ciencia Ficción'); closeMenu(); return false;">🚀 Ciencia Ficción</a>
+    <a href="#" onclick="filterByGenre('Romance'); closeMenu(); return false;">💖 Romance</a>
+    <a href="#" onclick="filterByGenre('Thriller'); closeMenu(); return false;">🕵️ Thriller</a>
     <a href="#" onclick="filterByGenre('Series'); closeMenu(); return false;">📺 Series</a>
     <div id="mob-search">
       <input type="search" id="mob-search-input" placeholder="🔍 Buscar película o serie..." oninput="handleSearch(this.value)" autocomplete="off">
@@ -210,6 +213,60 @@
         <a href="#" class="view-all" onclick="filterByGenre('Comedia'); return false;">Ver todo →</a>
       </div>
       <div class="movies-grid" id="grid-comedy"></div>
+    </section>
+
+    <!-- Section: Drama -->
+    <section id="sect-drama" class="content-section">
+      <div class="section-header">
+        <h2 class="section-title"><span class="icon">🎭</span> Drama y Emoción <span class="section-line"></span></h2>
+        <a href="#" class="view-all" onclick="filterByGenre('Drama'); return false;">Ver todo →</a>
+      </div>
+      <div class="movies-grid" id="grid-drama"></div>
+    </section>
+
+    <!-- Section: Terror -->
+    <section id="sect-terror" class="content-section">
+      <div class="section-header">
+        <h2 class="section-title"><span class="icon">👻</span> Terror y Suspenso <span class="section-line"></span></h2>
+        <a href="#" class="view-all" onclick="filterByGenre('Terror'); return false;">Ver todo →</a>
+      </div>
+      <div class="movies-grid" id="grid-terror"></div>
+    </section>
+
+    <!-- Section: Animación -->
+    <section id="sect-animation" class="content-section">
+      <div class="section-header">
+        <h2 class="section-title"><span class="icon">🎨</span> Animación y Familia <span class="section-line"></span></h2>
+        <a href="#" class="view-all" onclick="filterByGenre('Animación'); return false;">Ver todo →</a>
+      </div>
+      <div class="movies-grid" id="grid-animation"></div>
+    </section>
+
+    <!-- Section: Ciencia Ficción -->
+    <section id="sect-sci-fi" class="content-section">
+      <div class="section-header">
+        <h2 class="section-title"><span class="icon">🚀</span> Ciencia Ficción <span class="section-line"></span></h2>
+        <a href="#" class="view-all" onclick="filterByGenre('Ciencia Ficción'); return false;">Ver todo →</a>
+      </div>
+      <div class="movies-grid" id="grid-sci-fi"></div>
+    </section>
+
+    <!-- Section: Romance -->
+    <section id="sect-romance" class="content-section">
+      <div class="section-header">
+        <h2 class="section-title"><span class="icon">💖</span> Romance Destacado <span class="section-line"></span></h2>
+        <a href="#" class="view-all" onclick="filterByGenre('Romance'); return false;">Ver todo →</a>
+      </div>
+      <div class="movies-grid" id="grid-romance"></div>
+    </section>
+
+    <!-- Section: Thriller -->
+    <section id="sect-thriller" class="content-section">
+      <div class="section-header">
+        <h2 class="section-title"><span class="icon">🕵️</span> Thriller y Misterio <span class="section-line"></span></h2>
+        <a href="#" class="view-all" onclick="filterByGenre('Thriller'); return false;">Ver todo →</a>
+      </div>
+      <div class="movies-grid" id="grid-thriller"></div>
     </section>
 
     <!-- Adsterra Smartlink - Home Bottom -->
