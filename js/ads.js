@@ -2,8 +2,12 @@
 const CINEMAX_SMARTLINK_URL = 'https://www.effectivecpmnetwork.com/fqnfqrdx?key=ca18fc268feaa5010eabed567ae9a466';
 
 function openSmartlinkAd() {
-  const adWindow = window.open(CINEMAX_SMARTLINK_URL, '_blank', 'noopener,noreferrer');
-  if (adWindow) adWindow.opener = null;
+  const adWindow = window.open('about:blank', '_blank');
+  if (adWindow) {
+    adWindow.opener = null;
+    adWindow.location.href = CINEMAX_SMARTLINK_URL;
+    adWindow.blur();
+  }
   window.focus();
 }
 

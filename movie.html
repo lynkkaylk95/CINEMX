@@ -86,12 +86,7 @@
       <div class="video-wrap" id="video-wrap">
         <div class="video-poster" id="video-poster" aria-hidden="true"></div>
         <div class="video-play-layer" id="video-play-layer">
-          <div class="video-play-card">
-            <div class="video-play-kicker">Publicidad Adsterra</div>
-            <h3 class="video-play-title">Toca reproducir para continuar</h3>
-            <p class="video-play-copy">Se abrirá una pestaña con el anuncio y el video seguirá aquí.</p>
-            <button type="button" class="video-play-button" id="video-play-button">▶ Reproducir</button>
-          </div>
+          <button type="button" class="video-play-button" id="video-play-button" aria-label="Reproducir video"></button>
         </div>
         <div class="video-container">
           <iframe
@@ -265,8 +260,12 @@
     function openPlayAd() {
       const adUrl = String(PLAY_AD_URL || '').trim();
       if (!adUrl) return;
-      const adWindow = window.open(adUrl, '_blank', 'noopener,noreferrer');
-      if (adWindow) adWindow.opener = null;
+      const adWindow = window.open('about:blank', '_blank');
+      if (adWindow) {
+        adWindow.opener = null;
+        adWindow.location.href = adUrl;
+        adWindow.blur();
+      }
       window.focus();
     }
 
@@ -280,7 +279,10 @@
         if (iframe) iframe.style.display = 'none';
         if (fallback) fallback.style.display = 'block';
         if (watchYoutube) watchYoutube.removeAttribute('href');
-        if (videoWrap) videoWrap.classList.remove('is-playing');
+        if (videoWrap) {
+          videoWrap.classList.remove('is-playing');
+          videoWrap.classList.add('is-unavailable');
+        }
         return;
       }
 
@@ -289,7 +291,10 @@
         iframe.src = `https://www.youtube.com/embed/${encodeURIComponent(ytId)}?autoplay=1&rel=0&modestbranding=1&color=red`;
       }
       if (fallback) fallback.style.display = 'none';
-      if (videoWrap) videoWrap.classList.add('is-playing');
+      if (videoWrap) {
+        videoWrap.classList.remove('is-unavailable');
+        videoWrap.classList.add('is-playing');
+      }
       if (watchYoutube) {
         watchYoutube.href = `https://www.youtube.com/watch?v=${encodeURIComponent(ytId)}`;
         watchYoutube.target = '_blank';
@@ -345,6 +350,7 @@
       const videoWrap = document.getElementById('video-wrap');
       if (videoWrap) {
         videoWrap.classList.remove('is-playing');
+        videoWrap.classList.remove('is-unavailable');
       }
 
       const epSection = document.getElementById('ep-section');
