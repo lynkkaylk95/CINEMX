@@ -67,6 +67,14 @@
         ← Volver al catálogo
       </a>
 
+      <!-- Mobile Adsterra Banner -->
+      <div class="ad-zone movie-mobile-ad movie-mobile-ad-top ad-zone--rectangle">
+        <div class="ad-zone-label">
+          <strong>📢 Publicidad</strong>
+          Banner móvil superior
+        </div>
+      </div>
+
       <div class="player-title-area">
         <div class="movie-page-badge" id="movie-badge">PELÍCULA</div>
         <h1 class="movie-page-title" id="movie-title">Cargando...</h1>
@@ -80,7 +88,16 @@
       </div>
 
       <!-- Video Embed Section -->
-      <div class="video-wrap">
+      <div class="video-wrap" id="video-wrap">
+        <div class="video-poster" id="video-poster" aria-hidden="true"></div>
+        <div class="video-play-layer" id="video-play-layer">
+          <div class="video-play-card">
+            <div class="video-play-kicker">Publicidad Adsterra</div>
+            <h3 class="video-play-title">Toca reproducir para continuar</h3>
+            <p class="video-play-copy">Se abrirá una pestaña con el anuncio y el video seguirá aquí.</p>
+            <button type="button" class="video-play-button" id="video-play-button">▶ Reproducir</button>
+          </div>
+        </div>
         <div class="video-container">
           <iframe
             id="yt-player"
@@ -145,6 +162,14 @@
         <h3 class="rec-title">🎬 También te puede gustar</h3>
         <div class="rec-grid" id="rec-grid-container"></div>
       </div>
+
+      <!-- Mobile Adsterra Banner -->
+      <div class="ad-zone movie-mobile-ad movie-mobile-ad-bottom ad-zone--rectangle">
+        <div class="ad-zone-label">
+          <strong>📢 Publicidad</strong>
+          Banner móvil inferior
+        </div>
+      </div>
     </main>
 
     <aside class="movie-ad-rail movie-ad-right" aria-label="Publicidad lateral derecha">
@@ -204,6 +229,8 @@
   <script src="js/movies.js"></script>
   <script>
     const MOVIES_STORAGE_KEY = 'cinemax_movies';
+    const PLAY_AD_URL = window.CINEMAX_PLAY_AD_URL || ''; // Set your Adsterra smartlink here.
+    let currentMovieYtId = '';
 
     function getMoviesList() {
       try {
@@ -239,15 +266,24 @@
       return escapeHTML(value).replace(/`/g, '&#96;');
     }
 
+    function openPlayAd() {
+      const adUrl = String(PLAY_AD_URL || '').trim();
+      if (!adUrl) return;
+      const adWindow = window.open(adUrl, '_blank', 'noopener,noreferrer');
+      if (adWindow) adWindow.opener = null;
+    }
+
     function setPlayer(ytId) {
       const iframe = document.getElementById('yt-player');
       const fallback = document.getElementById('youtube-fallback');
       const watchYoutube = document.getElementById('watchYoutube');
+      const videoWrap = document.getElementById('video-wrap');
 
       if (!ytId) {
         if (iframe) iframe.style.display = 'none';
         if (fallback) fallback.style.display = 'block';
         if (watchYoutube) watchYoutube.removeAttribute('href');
+        if (videoWrap) videoWrap.classList.remove('is-playing');
         return;
       }
 
@@ -256,11 +292,20 @@
         iframe.src = `https://www.youtube.com/embed/${encodeURIComponent(ytId)}?autoplay=1&rel=0&modestbranding=1&color=red`;
       }
       if (fallback) fallback.style.display = 'none';
+      if (videoWrap) videoWrap.classList.add('is-playing');
       if (watchYoutube) {
         watchYoutube.href = `https://www.youtube.com/watch?v=${encodeURIComponent(ytId)}`;
         watchYoutube.target = '_blank';
         watchYoutube.rel = 'noopener noreferrer';
       }
+    }
+
+    function startPlayback(ytId) {
+      const targetId = String(ytId || currentMovieYtId || '').trim();
+      if (!targetId) return;
+      currentMovieYtId = targetId;
+      openPlayAd();
+      setPlayer(targetId);
     }
 
     document.addEventListener('DOMContentLoaded', () => {
@@ -277,6 +322,7 @@
       }
 
       const movieYtId = getYouTubeId(movie.yt);
+      currentMovieYtId = movieYtId;
       document.getElementById('page-title').textContent = `${movie.title} — CineMax MX`;
       document.getElementById('meta-desc').content = movie.desc || '';
       document.getElementById('movie-title').textContent = movie.title || '';
@@ -286,7 +332,23 @@
       document.getElementById('movie-duration').textContent = movie.duration || '-';
       document.getElementById('movie-genre').textContent = movie.genre || '-';
       document.getElementById('movie-rating').textContent = `⭐ ${movie.rating || '0.0'}`;
-      setPlayer(movieYtId);
+
+      const poster = document.getElementById('video-poster');
+      const posterUrl = movie.thumb || (movieYtId ? `https://i3.ytimg.com/vi/${encodeURIComponent(movieYtId)}/maxresdefault.jpg` : '');
+      if (poster && posterUrl) {
+        const safePosterUrl = String(posterUrl).replace(/"/g, '\\"');
+        poster.style.backgroundImage = `linear-gradient(180deg, rgba(10,10,15,.08), rgba(10,10,15,.82)), url("${safePosterUrl}")`;
+      }
+
+      const playButton = document.getElementById('video-play-button');
+      if (playButton) {
+        playButton.addEventListener('click', () => startPlayback(movieYtId), { once: true });
+      }
+
+      const videoWrap = document.getElementById('video-wrap');
+      if (videoWrap) {
+        videoWrap.classList.remove('is-playing');
+      }
 
       const epSection = document.getElementById('ep-section');
       const epGrid = document.getElementById('ep-grid-container');
@@ -334,7 +396,7 @@
       document.querySelectorAll('.ep-btn').forEach((btn, idx) => {
         btn.classList.toggle('active', idx === index);
       });
-      setPlayer(ytId);
+      startPlayback(ytId);
     }
 
     function hashColor(id) {
