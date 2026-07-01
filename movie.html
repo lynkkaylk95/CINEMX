@@ -8,13 +8,8 @@
   <title id="page-title">Detalles de Película — CineMax MX</title>
 
   <!-- Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-XXXXXXXXXX');
-  </script>
+  <script src="js/analytics.js"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-55GL8N8TFV"></script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -227,9 +222,10 @@
 
   <!-- Scripts -->
   <script src="js/movies.js"></script>
+  <script src="js/ads.js" defer></script>
   <script>
     const MOVIES_STORAGE_KEY = 'cinemax_movies';
-    const PLAY_AD_URL = window.CINEMAX_PLAY_AD_URL || ''; // Set your Adsterra smartlink here.
+    const PLAY_AD_URL = window.CINEMAX_PLAY_AD_URL || 'https://www.effectivecpmnetwork.com/fqnfqrdx?key=ca18fc268feaa5010eabed567ae9a466';
     let currentMovieYtId = '';
 
     function getMoviesList() {
@@ -271,6 +267,7 @@
       if (!adUrl) return;
       const adWindow = window.open(adUrl, '_blank', 'noopener,noreferrer');
       if (adWindow) adWindow.opener = null;
+      window.focus();
     }
 
     function setPlayer(ytId) {

@@ -297,6 +297,18 @@ ul { list-style: none; }
 }
 .ad-zone-label { pointer-events: none; }
 .ad-zone-label strong { display: block; color: var(--text2); font-size: 13px; margin-bottom: 3px; }
+.ad-clickable {
+  cursor: pointer;
+  transition: border-color var(--tr), background var(--tr), color var(--tr);
+}
+.ad-clickable:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+.ad-clickable:hover {
+  border-color: rgba(245,197,24,.45);
+  color: var(--text2);
+}
 
 /* ---- AFFILIATE SECTION ---- */
 #affiliate-section {
