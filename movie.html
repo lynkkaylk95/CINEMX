@@ -49,105 +49,116 @@
   </nav>
 
   <!-- Movie Details Container -->
-  <div class="movie-page">
-    
-    <a href="index.html" class="movie-back-btn">
-      ← Volver al catálogo
-    </a>
-
-    <div class="player-title-area">
-      <div class="movie-page-badge" id="movie-badge">PELÍCULA</div>
-      <h1 class="movie-page-title" id="movie-title">Cargando...</h1>
-      
-      <div class="movie-meta-row" id="movie-meta-row">
-        <span class="movie-meta-tag" id="movie-year">-</span>
-        <span class="movie-meta-tag" id="movie-duration">-</span>
-        <span class="movie-meta-tag" id="movie-genre">-</span>
-        <span class="movie-page-rating" id="movie-rating">⭐ 0.0</span>
+  <div class="movie-shell">
+    <aside class="movie-ad-rail movie-ad-left" aria-label="Publicidad lateral izquierda">
+      <div class="movie-ad-slot movie-ad-slot-lg">
+        <div class="movie-ad-label">
+          <strong>Publicidad</strong>
+          Banner lateral izquierdo
+        </div>
+        <div class="movie-ad-code">
+          Pega aquí tu banner o script
+        </div>
       </div>
-    </div>
+    </aside>
 
-    <!-- Video Embed Section -->
-    <div class="video-wrap">
-     <div class="video-container">
+    <main class="movie-page">
+      <a href="index.html" class="movie-back-btn">
+        ← Volver al catálogo
+      </a>
 
-    <iframe
-        id="yt-player"
-        allowfullscreen
-        loading="lazy"
-        allow="autoplay; encrypted-media"
-        frameborder="0">
-    </iframe>
-
-</div>
-
-<div id="youtube-fallback" style="display:none">
-
-    <div class="fallback-box">
-
-        <h3>⚠️ Este video no está disponible aquí.</h3>
-
-        <p>
-            YouTube restringe la reproducción en sitios externos.
-        </p>
-
-        <a
-            id="watchYoutube"
-            class="btn-youtube"
-            target="_blank"
-            rel="noopener noreferrer"
-            href="#">
-
-            ▶️ Ver en YouTube
-
-        </a>
-
-    </div>
-
-</div>
-    </div>
-
-    <!-- Adsterra Smartlink - Below Player -->
-    <div class="ad-below-player">
-      <div class="ad-zone-label">
-        <strong>📢 Publicidad</strong>
-        Zona Adsterra Smartlink — Pega aquí tu script Adsterra (bajo el player)
+      <div class="player-title-area">
+        <div class="movie-page-badge" id="movie-badge">PELÍCULA</div>
+        <h1 class="movie-page-title" id="movie-title">Cargando...</h1>
+        
+        <div class="movie-meta-row" id="movie-meta-row">
+          <span class="movie-meta-tag" id="movie-year">-</span>
+          <span class="movie-meta-tag" id="movie-duration">-</span>
+          <span class="movie-meta-tag" id="movie-genre">-</span>
+          <span class="movie-page-rating" id="movie-rating">⭐ 0.0</span>
+        </div>
       </div>
-    </div>
 
-    <!-- Episode list (Visible only for Series) -->
-    <div id="ep-section" style="display: none;">
-      <h3 class="ep-section-title">📋 Temporada 1 — Episodios</h3>
-      <div class="ep-grid" id="ep-grid-container"></div>
-    </div>
+      <!-- Video Embed Section -->
+      <div class="video-wrap">
+        <div class="video-container">
+          <iframe
+            id="yt-player"
+            allowfullscreen
+            loading="lazy"
+            allow="autoplay; encrypted-media"
+            frameborder="0">
+          </iframe>
+        </div>
 
-    <!-- Description -->
-    <p class="movie-desc" id="movie-desc">Cargando descripción...</p>
-
-    <!-- Movie Page Affiliate Section -->
-    <div class="movie-affiliate">
-      <h3>🛒 Recomendaciones de compra</h3>
-      <div class="movie-aff-links">
-        <a href="#" class="aff-btn aff-btn-1" onclick="showToast('Redirigiendo a Amazon México...'); return true;">
-          📺 Smart TV 4K — Ver oferta
-        </a>
-        <a href="#" class="aff-btn aff-btn-2" onclick="showToast('Redirigiendo a Mercado Libre...'); return true;">
-          🎧 Audífonos Bluetooth — Ver oferta
-        </a>
-        <a href="#" class="aff-btn aff-btn-3" onclick="showToast('Redirigiendo a NordVPN...'); return true;">
-          🚀 VPN Premium — Descuento
-        </a>
+        <div id="youtube-fallback" style="display:none">
+          <div class="fallback-box">
+            <h3>⚠️ Este video no está disponible aquí.</h3>
+            <p>YouTube restringe la reproducción en sitios externos.</p>
+            <a
+              id="watchYoutube"
+              class="btn-youtube"
+              target="_blank"
+              rel="noopener noreferrer"
+              href="#">
+              ▶️ Ver en YouTube
+            </a>
+          </div>
+        </div>
       </div>
-    </div>
 
-    <!-- Recommended Section -->
-    <div class="rec-section">
-      <h3 class="rec-title">🎬 También te puede gustar</h3>
-      <div class="rec-grid" id="rec-grid-container"></div>
-    </div>
+      <!-- Adsterra Smartlink - Below Player -->
+      <div class="ad-below-player">
+        <div class="ad-zone-label">
+          <strong>📢 Publicidad</strong>
+          Zona Adsterra Smartlink — Pega aquí tu script Adsterra (bajo el player)
+        </div>
+      </div>
 
+      <!-- Episode list (Visible only for Series) -->
+      <div id="ep-section" style="display: none;">
+        <h3 class="ep-section-title">📋 Temporada 1 — Episodios</h3>
+        <div class="ep-grid" id="ep-grid-container"></div>
+      </div>
+
+      <!-- Description -->
+      <p class="movie-desc" id="movie-desc">Cargando descripción...</p>
+
+      <!-- Movie Page Affiliate Section -->
+      <div class="movie-affiliate">
+        <h3>🛒 Recomendaciones de compra</h3>
+        <div class="movie-aff-links">
+          <a href="#" class="aff-btn aff-btn-1" onclick="showToast('Redirigiendo a Amazon México...'); return true;">
+            📺 Smart TV 4K — Ver oferta
+          </a>
+          <a href="#" class="aff-btn aff-btn-2" onclick="showToast('Redirigiendo a Mercado Libre...'); return true;">
+            🎧 Audífonos Bluetooth — Ver oferta
+          </a>
+          <a href="#" class="aff-btn aff-btn-3" onclick="showToast('Redirigiendo a NordVPN...'); return true;">
+            🚀 VPN Premium — Descuento
+          </a>
+        </div>
+      </div>
+
+      <!-- Recommended Section -->
+      <div class="rec-section">
+        <h3 class="rec-title">🎬 También te puede gustar</h3>
+        <div class="rec-grid" id="rec-grid-container"></div>
+      </div>
+    </main>
+
+    <aside class="movie-ad-rail movie-ad-right" aria-label="Publicidad lateral derecha">
+      <div class="movie-ad-slot movie-ad-slot-lg">
+        <div class="movie-ad-label">
+          <strong>Publicidad</strong>
+          Banner lateral derecho
+        </div>
+        <div class="movie-ad-code">
+          Pega aquí tu banner o script
+        </div>
+      </div>
+    </aside>
   </div>
-
   <!-- Footer -->
   <footer>
     <div class="footer-grid">
