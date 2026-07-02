@@ -4,6 +4,20 @@
 ============================================================ */
 
 const MOVIES_STORAGE_KEY = 'cinemax_movies';
+const STATIC_GENRES = [
+  'Acción',
+  'Comedia',
+  'Drama',
+  'Terror',
+  'Ciencia Ficción',
+  'Romance',
+  'Thriller',
+  'Series',
+  'Học đường',
+  'Xuyên không',
+  'Cổ trang',
+  'Cung đấu'
+];
 let currentGenre = 'Todos';
 let currentSearch = '';
 let moviesList = loadMoviesList();
@@ -221,10 +235,13 @@ function renderAll() {
     const comedy = moviesList.filter(m => hasGenre(m, 'Comedia')).slice(0, 8);
     const drama = moviesList.filter(m => hasGenre(m, 'Drama')).slice(0, 8);
     const terror = moviesList.filter(m => hasGenre(m, 'Terror')).slice(0, 8);
-    const animation = moviesList.filter(m => hasGenre(m, 'Animación')).slice(0, 8);
     const sciFi = moviesList.filter(m => hasGenre(m, 'Ciencia Ficción')).slice(0, 8);
     const romance = moviesList.filter(m => hasGenre(m, 'Romance')).slice(0, 8);
     const thriller = moviesList.filter(m => hasGenre(m, 'Thriller')).slice(0, 8);
+    const school = moviesList.filter(m => hasGenre(m, 'Học đường')).slice(0, 8);
+    const timeTravel = moviesList.filter(m => hasGenre(m, 'Xuyên không')).slice(0, 8);
+    const costume = moviesList.filter(m => hasGenre(m, 'Cổ trang')).slice(0, 8);
+    const palace = moviesList.filter(m => hasGenre(m, 'Cung đấu')).slice(0, 8);
     renderGrid('grid-trending', trending.length ? trending : moviesList.slice(0, 8));
     renderGrid('grid-new', newMovies.length ? newMovies : moviesList.slice(0, 8));
     renderGrid('grid-series', series, 'feat');
@@ -232,18 +249,24 @@ function renderAll() {
     renderGrid('grid-comedy', comedy);
     renderGrid('grid-drama', drama);
     renderGrid('grid-terror', terror);
-    renderGrid('grid-animation', animation);
     renderGrid('grid-sci-fi', sciFi);
     renderGrid('grid-romance', romance);
     renderGrid('grid-thriller', thriller);
+    renderGrid('grid-school', school);
+    renderGrid('grid-time-travel', timeTravel);
+    renderGrid('grid-costume', costume);
+    renderGrid('grid-palace', palace);
     showSection('sect-series', 'block');
     showSection('sect-comedy', 'block');
     showSection('sect-drama', 'block');
     showSection('sect-terror', 'block');
-    showSection('sect-animation', 'block');
     showSection('sect-sci-fi', 'block');
     showSection('sect-romance', 'block');
     showSection('sect-thriller', 'block');
+    showSection('sect-school', school.length ? 'block' : 'none');
+    showSection('sect-time-travel', timeTravel.length ? 'block' : 'none');
+    showSection('sect-costume', costume.length ? 'block' : 'none');
+    showSection('sect-palace', palace.length ? 'block' : 'none');
     showSection('sect-new', 'block');
     showSection('sect-action', 'block');
     const titleEl = document.querySelector('#sect-trending .section-title');
@@ -256,18 +279,24 @@ function renderAll() {
     renderGrid('grid-comedy', []);
     renderGrid('grid-drama', []);
     renderGrid('grid-terror', []);
-    renderGrid('grid-animation', []);
     renderGrid('grid-sci-fi', []);
     renderGrid('grid-romance', []);
     renderGrid('grid-thriller', []);
+    renderGrid('grid-school', []);
+    renderGrid('grid-time-travel', []);
+    renderGrid('grid-costume', []);
+    renderGrid('grid-palace', []);
     showSection('sect-series', 'none');
     showSection('sect-comedy', 'none');
     showSection('sect-drama', 'none');
     showSection('sect-terror', 'none');
-    showSection('sect-animation', 'none');
     showSection('sect-sci-fi', 'none');
     showSection('sect-romance', 'none');
     showSection('sect-thriller', 'none');
+    showSection('sect-school', 'none');
+    showSection('sect-time-travel', 'none');
+    showSection('sect-costume', 'none');
+    showSection('sect-palace', 'none');
     showSection('sect-new', 'none');
     showSection('sect-action', 'none');
     const titleEl = document.querySelector('#sect-trending .section-title');
@@ -348,7 +377,7 @@ function applyInitialQueryParams() {
   const params = new URLSearchParams(window.location.search);
   const genre = params.get('genre');
   const search = params.get('q');
-  const validGenres = new Set(['Todos', ...moviesList.flatMap(m => getMovieGenres(m))]);
+  const validGenres = new Set(['Todos', ...STATIC_GENRES, ...moviesList.flatMap(m => getMovieGenres(m))]);
   if (genre && validGenres.has(genre)) currentGenre = genre;
   if (search) {
     currentSearch = search.trim();

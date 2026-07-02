@@ -34,8 +34,11 @@
       <a href="#" onclick="filterByGenre('Comedia'); return false;">Comedia</a>
       <a href="#" onclick="filterByGenre('Drama'); return false;">Drama</a>
       <a href="#" onclick="filterByGenre('Terror'); return false;">Terror</a>
-      <a href="#" onclick="filterByGenre('Animación'); return false;">Animación</a>
       <a href="#" onclick="filterByGenre('Series'); return false;">Series</a>
+      <a href="#" onclick="filterByGenre('Học đường'); return false;">Học đường</a>
+      <a href="#" onclick="filterByGenre('Xuyên không'); return false;">Xuyên không</a>
+      <a href="#" onclick="filterByGenre('Cổ trang'); return false;">Cổ trang</a>
+      <a href="#" onclick="filterByGenre('Cung đấu'); return false;">Cung đấu</a>
     </div>
 
     <div class="nav-right">
@@ -58,11 +61,14 @@
     <a href="#" onclick="filterByGenre('Comedia'); closeMenu(); return false;">😂 Comedia</a>
     <a href="#" onclick="filterByGenre('Drama'); closeMenu(); return false;">🎭 Drama</a>
     <a href="#" onclick="filterByGenre('Terror'); closeMenu(); return false;">👻 Terror</a>
-    <a href="#" onclick="filterByGenre('Animación'); closeMenu(); return false;">🎨 Animación</a>
     <a href="#" onclick="filterByGenre('Ciencia Ficción'); closeMenu(); return false;">🚀 Ciencia Ficción</a>
     <a href="#" onclick="filterByGenre('Romance'); closeMenu(); return false;">💖 Romance</a>
     <a href="#" onclick="filterByGenre('Thriller'); closeMenu(); return false;">🕵️ Thriller</a>
     <a href="#" onclick="filterByGenre('Series'); closeMenu(); return false;">📺 Series</a>
+    <a href="#" onclick="filterByGenre('Học đường'); closeMenu(); return false;">🏫 Học đường</a>
+    <a href="#" onclick="filterByGenre('Xuyên không'); closeMenu(); return false;">⏳ Xuyên không</a>
+    <a href="#" onclick="filterByGenre('Cổ trang'); closeMenu(); return false;">👘 Cổ trang</a>
+    <a href="#" onclick="filterByGenre('Cung đấu'); closeMenu(); return false;">⚔️ Cung đấu</a>
     <div id="mob-search">
       <input type="search" id="mob-search-input" placeholder="🔍 Buscar película o serie..." oninput="handleSearch(this.value)" autocomplete="off">
     </div>
@@ -114,11 +120,14 @@
         <button class="genre-tab" onclick="filterByGenre('Comedia')">😂 Comedia</button>
         <button class="genre-tab" onclick="filterByGenre('Drama')">🎭 Drama</button>
         <button class="genre-tab" onclick="filterByGenre('Terror')">👻 Terror</button>
-        <button class="genre-tab" onclick="filterByGenre('Animación')">🎨 Animación</button>
         <button class="genre-tab" onclick="filterByGenre('Ciencia Ficción')">🚀 Ciencia Ficción</button>
         <button class="genre-tab" onclick="filterByGenre('Romance')">💖 Romance</button>
         <button class="genre-tab" onclick="filterByGenre('Thriller')">🕵️ Thriller</button>
         <button class="genre-tab" onclick="filterByGenre('Series')">📺 Series</button>
+        <button class="genre-tab" onclick="filterByGenre('Học đường')">🏫 Học đường</button>
+        <button class="genre-tab" onclick="filterByGenre('Xuyên không')">⏳ Xuyên không</button>
+        <button class="genre-tab" onclick="filterByGenre('Cổ trang')">👘 Cổ trang</button>
+        <button class="genre-tab" onclick="filterByGenre('Cung đấu')">⚔️ Cung đấu</button>
       </div>
     </div>
 
@@ -228,15 +237,6 @@
       <div class="movies-grid" id="grid-terror"></div>
     </section>
 
-    <!-- Section: Animación -->
-    <section id="sect-animation" class="content-section">
-      <div class="section-header">
-        <h2 class="section-title"><span class="icon">🎨</span> Animación y Familia <span class="section-line"></span></h2>
-        <a href="#" class="view-all" onclick="filterByGenre('Animación'); return false;">Ver todo →</a>
-      </div>
-      <div class="movies-grid" id="grid-animation"></div>
-    </section>
-
     <!-- Section: Ciencia Ficción -->
     <section id="sect-sci-fi" class="content-section">
       <div class="section-header">
@@ -262,6 +262,42 @@
         <a href="#" class="view-all" onclick="filterByGenre('Thriller'); return false;">Ver todo →</a>
       </div>
       <div class="movies-grid" id="grid-thriller"></div>
+    </section>
+
+    <!-- Section: Học đường -->
+    <section id="sect-school" class="content-section">
+      <div class="section-header">
+        <h2 class="section-title"><span class="icon">🏫</span> Học đường <span class="section-line"></span></h2>
+        <a href="#" class="view-all" onclick="filterByGenre('Học đường'); return false;">Ver todo →</a>
+      </div>
+      <div class="movies-grid" id="grid-school"></div>
+    </section>
+
+    <!-- Section: Xuyên không -->
+    <section id="sect-time-travel" class="content-section">
+      <div class="section-header">
+        <h2 class="section-title"><span class="icon">⏳</span> Xuyên không <span class="section-line"></span></h2>
+        <a href="#" class="view-all" onclick="filterByGenre('Xuyên không'); return false;">Ver todo →</a>
+      </div>
+      <div class="movies-grid" id="grid-time-travel"></div>
+    </section>
+
+    <!-- Section: Cổ trang -->
+    <section id="sect-costume" class="content-section">
+      <div class="section-header">
+        <h2 class="section-title"><span class="icon">👘</span> Cổ trang <span class="section-line"></span></h2>
+        <a href="#" class="view-all" onclick="filterByGenre('Cổ trang'); return false;">Ver todo →</a>
+      </div>
+      <div class="movies-grid" id="grid-costume"></div>
+    </section>
+
+    <!-- Section: Cung đấu -->
+    <section id="sect-palace" class="content-section">
+      <div class="section-header">
+        <h2 class="section-title"><span class="icon">⚔️</span> Cung đấu <span class="section-line"></span></h2>
+        <a href="#" class="view-all" onclick="filterByGenre('Cung đấu'); return false;">Ver todo →</a>
+      </div>
+      <div class="movies-grid" id="grid-palace"></div>
     </section>
 
     <!-- Adsterra Smartlink - Home Bottom -->
