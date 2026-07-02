@@ -26,6 +26,7 @@ const GENRE_ALIASES = {
 };
 let currentGenre = 'Todos';
 let currentSearch = '';
+let currentYear = '';
 let moviesList = loadMoviesList();
 
 function loadMoviesList() {
@@ -68,6 +69,25 @@ function getMovieGenres(movie) {
 
 function getGenreLabel(movie) {
   return getMovieGenres(movie).join(' • ') || '-';
+}
+
+function slugify(value) {
+  return String(value || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/ñ/g, 'n')
+    .replace(/Ñ/g, 'n')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+function getMovieSlug(movie) {
+  return movie?.slug || slugify(movie?.title) || `pelicula-${movie?.id || ''}`;
+}
+
+function getMovieUrl(movie) {
+  return `/pelicula/${encodeURIComponent(getMovieSlug(movie))}`;
 }
 
 function hasGenre(movie, genre) {
@@ -163,9 +183,9 @@ function createCard(m) {
   const hasThumb = thumbUrl !== '';
   const bgStyle = hasThumb ? '' : `background: linear-gradient(135deg, ${hashColor(m.id)})`;
   return `
-    <div class="card" onclick="navigateToMovie(${Number(m.id)})">
+    <a class="card" href="${escapeAttr(getMovieUrl(m))}">
       <div class="card-thumb" style="${bgStyle}">
-        ${hasThumb ? `<img class="card-thumb-img" src="${escapeAttr(thumbUrl)}" alt="${escapeAttr(m.title)}" loading="lazy" onerror="this.onerror=null; this.src='https://i3.ytimg.com/vi/${escapeAttr(getYouTubeId(m.yt))}/hqdefault.jpg';">` : `<div class="card-thumb-emoji">${escapeHTML(m.emoji || '🎬')}</div>`}
+        ${hasThumb ? `<img class="card-thumb-img" src="${escapeAttr(thumbUrl)}" alt="Poster de ${escapeAttr(m.title)}" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='https://i3.ytimg.com/vi/${escapeAttr(getYouTubeId(m.yt))}/hqdefault.jpg';">` : `<div class="card-thumb-emoji">${escapeHTML(m.emoji || '🎬')}</div>`}
         ${m.badge ? `<div class="card-badge">${escapeHTML(m.badge)}</div>` : ''}
         <div class="card-rating">⭐ ${escapeHTML(m.rating)}</div>
         <div class="card-overlay"><div class="card-play">▶</div></div>
@@ -174,7 +194,7 @@ function createCard(m) {
         <div class="card-title">${escapeHTML(m.title)}</div>
         <div class="card-meta"><span>${escapeHTML(m.year)}</span><span class="card-genre-tag">${escapeHTML(getGenreLabel(m))}</span></div>
       </div>
-    </div>`;
+    </a>`;
 }
 
 function createFeatCard(m) {
@@ -182,9 +202,9 @@ function createFeatCard(m) {
   const hasThumb = thumbUrl !== '';
   const bgStyle = hasThumb ? '' : `background: linear-gradient(135deg, ${hashColor(m.id)})`;
   return `
-    <div class="feat-card" onclick="navigateToMovie(${Number(m.id)})">
+    <a class="feat-card" href="${escapeAttr(getMovieUrl(m))}">
       <div class="feat-thumb" style="${bgStyle}">
-        ${hasThumb ? `<img class="card-thumb-img" src="${escapeAttr(thumbUrl)}" alt="${escapeAttr(m.title)}" loading="lazy" onerror="this.onerror=null; this.src='https://i3.ytimg.com/vi/${escapeAttr(getYouTubeId(m.yt))}/hqdefault.jpg';">` : `<div class="feat-thumb-emoji">${escapeHTML(m.emoji || '🎬')}</div>`}
+        ${hasThumb ? `<img class="card-thumb-img" src="${escapeAttr(thumbUrl)}" alt="Poster de ${escapeAttr(m.title)}" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='https://i3.ytimg.com/vi/${escapeAttr(getYouTubeId(m.yt))}/hqdefault.jpg';">` : `<div class="feat-thumb-emoji">${escapeHTML(m.emoji || '🎬')}</div>`}
         <div class="feat-play-wrap"><div class="feat-play-btn">▶</div></div>
         ${m.badge ? `<div class="card-badge">${escapeHTML(m.badge)}</div>` : ''}
         <div class="card-rating">⭐ ${escapeHTML(m.rating)}</div>
@@ -197,7 +217,7 @@ function createFeatCard(m) {
           <div class="feat-rating">⭐ ${escapeHTML(m.rating)}</div>
         </div>
       </div>
-    </div>`;
+    </a>`;
 }
 
 function hashColor(id) {
@@ -215,8 +235,9 @@ function filterMovies(genre, search) {
   const query = normalizeText(search);
   return moviesList.filter(m => {
     const matchG = hasGenre(m, genre);
+    const matchYear = !currentYear || Number(m.year) === Number(currentYear);
     const haystack = normalizeText([m.title, getGenreLabel(m), m.type, m.desc, m.year].join(' '));
-    return matchG && (!query || haystack.includes(query));
+    return matchG && matchYear && (!query || haystack.includes(query));
   });
 }
 
@@ -244,7 +265,7 @@ function renderAll() {
   if (noRes) noRes.style.display = 'none';
   document.querySelectorAll('.content-section').forEach(s => s.style.display = 'block');
 
-  if (currentGenre === 'Todos' && !currentSearch) {
+  if (currentGenre === 'Todos' && !currentSearch && !currentYear) {
     const trending = moviesList.filter(m => m.badge && m.type === 'Película').slice(0, 8);
     const newMovies = moviesList.filter(m => Number(m.year) === 2026 && m.type === 'Película').slice(0, 8);
     const series = moviesList.filter(m => m.type === 'Serie').slice(0, 4);
@@ -317,16 +338,32 @@ function renderAll() {
     showSection('sect-new', 'none');
     showSection('sect-action', 'none');
     const titleEl = document.querySelector('#sect-trending .section-title');
-    if (titleEl) titleEl.innerHTML = currentSearch ? `<span class="icon">🔍</span> Resultados para "${escapeHTML(currentSearch)}" <span class="section-line"></span>` : `<span class="icon">🎬</span> ${escapeHTML(currentGenre)} <span class="section-line"></span>`;
+    if (titleEl) {
+      titleEl.innerHTML = currentSearch
+        ? `<span class="icon">🔍</span> Resultados para "${escapeHTML(currentSearch)}" <span class="section-line"></span>`
+        : currentYear
+          ? `<span class="icon">📅</span> Películas de ${escapeHTML(currentYear)} <span class="section-line"></span>`
+          : `<span class="icon">🎬</span> ${escapeHTML(currentGenre)} <span class="section-line"></span>`;
+    }
   }
 }
 
 function navigateToMovie(id) {
-  window.location.href = `movie.html?id=${encodeURIComponent(id)}`;
+  const movie = moviesList.find(m => Number(m.id) === Number(id));
+  window.location.href = movie ? getMovieUrl(movie) : `movie.html?id=${encodeURIComponent(id)}`;
 }
 
 function syncUrl() {
   const url = new URL(window.location.href);
+  if (currentYear) {
+    url.pathname = `/ano/${encodeURIComponent(currentYear)}`;
+    url.search = '';
+    window.history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`);
+    return;
+  }
+  if (/\/ano\/\d{4}\/?$/.test(url.pathname)) {
+    url.pathname = '/';
+  }
   currentGenre === 'Todos' ? url.searchParams.delete('genre') : url.searchParams.set('genre', currentGenre);
   currentSearch ? url.searchParams.set('q', currentSearch) : url.searchParams.delete('q');
   window.history.replaceState({}, '', `${url.pathname}${url.search}${url.hash}`);
@@ -337,14 +374,19 @@ function updateGenreTabs() {
     const text = t.textContent.trim();
     t.classList.toggle('active', text.includes(currentGenre) || (currentGenre === 'Todos' && text.includes('Todos')));
   });
+  document.querySelectorAll('.year-tab').forEach(t => {
+    t.classList.toggle('active', Boolean(currentYear) && t.textContent.trim() === String(currentYear));
+  });
 }
 
 function handleSearch(val) {
   currentSearch = val.trim();
   currentGenre = 'Todos';
+  currentYear = '';
   updateGenreTabs();
   syncUrl();
   renderAll();
+  updatePageSeo();
 }
 
 function toggleSearch() {
@@ -357,6 +399,7 @@ function toggleSearch() {
 function filterByGenre(genre) {
   currentGenre = genre;
   currentSearch = '';
+  currentYear = '';
   const searchInp = document.getElementById('search-input');
   const mobSearchInp = document.getElementById('mob-search-input');
   if (searchInp) searchInp.value = '';
@@ -364,6 +407,22 @@ function filterByGenre(genre) {
   updateGenreTabs();
   syncUrl();
   renderAll();
+  updatePageSeo();
+  scrollToMovieResults();
+}
+
+function filterByYear(year) {
+  currentYear = Number(year);
+  currentGenre = 'Todos';
+  currentSearch = '';
+  const searchInp = document.getElementById('search-input');
+  const mobSearchInp = document.getElementById('mob-search-input');
+  if (searchInp) searchInp.value = '';
+  if (mobSearchInp) mobSearchInp.value = '';
+  updateGenreTabs();
+  syncUrl();
+  renderAll();
+  updatePageSeo();
   scrollToMovieResults();
 }
 
@@ -394,17 +453,48 @@ function applyInitialQueryParams() {
   const params = new URLSearchParams(window.location.search);
   const genre = params.get('genre');
   const search = params.get('q');
+  const yearMatch = window.location.pathname.match(/\/ano\/(\d{4})\/?$/);
   const validGenres = new Set(['Todos', ...STATIC_GENRES, ...moviesList.flatMap(m => getMovieGenres(m))]);
   if (genre && validGenres.has(genre)) currentGenre = genre;
+  if (yearMatch) {
+    currentYear = Number(yearMatch[1]);
+    currentGenre = 'Todos';
+  }
   if (search) {
     currentSearch = search.trim();
     currentGenre = 'Todos';
+    currentYear = '';
   }
   const searchInp = document.getElementById('search-input');
   const mobSearchInp = document.getElementById('mob-search-input');
   if (searchInp) searchInp.value = currentSearch;
   if (mobSearchInp) mobSearchInp.value = currentSearch;
   updateGenreTabs();
+}
+
+function updatePageSeo() {
+  const origin = window.location.origin && window.location.origin !== 'null' ? window.location.origin : '';
+  const canonical = document.getElementById('canonical-link');
+  const desc = document.getElementById('meta-desc');
+  const ogTitle = document.getElementById('og-title');
+  const ogDesc = document.getElementById('og-desc');
+  const ogUrl = document.getElementById('og-url');
+  const twitterTitle = document.getElementById('twitter-title');
+  const twitterDesc = document.getElementById('twitter-desc');
+  const title = currentYear
+    ? `Películas ${currentYear} en español latino — CineMax MX`
+    : 'CineMax MX — Películas y Series en Línea';
+  const description = currentYear
+    ? `Mira películas y series de ${currentYear} en español latino en CineMax MX. Estrenos, dramas, romance, acción y títulos populares.`
+    : 'Películas completas y series en español latino, con estrenos, romance, acción, drama y títulos populares para ver en línea.';
+  document.title = title;
+  if (desc) desc.content = description;
+  if (canonical) canonical.href = origin ? `${origin}${currentYear ? `/ano/${currentYear}` : '/'}` : (currentYear ? `/ano/${currentYear}` : '/');
+  if (ogTitle) ogTitle.content = title;
+  if (ogDesc) ogDesc.content = description;
+  if (ogUrl) ogUrl.content = canonical?.href || window.location.href;
+  if (twitterTitle) twitterTitle.content = title;
+  if (twitterDesc) twitterDesc.content = description;
 }
 
 window.addEventListener('scroll', () => {
@@ -420,7 +510,8 @@ document.addEventListener('DOMContentLoaded', () => {
   applyInitialQueryParams();
   initDailyHero();
   renderAll();
-  if (currentGenre !== 'Todos' || currentSearch) {
+  updatePageSeo();
+  if (currentGenre !== 'Todos' || currentSearch || currentYear) {
     requestAnimationFrame(() => scrollToMovieResults('auto'));
   }
 });

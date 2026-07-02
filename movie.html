@@ -2,10 +2,26 @@
 <html lang="es-MX">
 <head>
   <meta charset="UTF-8">
+  <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
   <meta name="description" id="meta-desc" content="Mira los detalles de tu película o serie favorita en CineMax MX.">
+  <meta name="robots" content="index, follow">
   <meta name="theme-color" content="#0a0a0f">
+  <link rel="canonical" id="canonical-link" href="/movie.html">
+  <meta property="og:type" content="video.movie">
+  <meta property="og:site_name" content="CineMax MX">
+  <meta property="og:title" id="og-title" content="CineMax MX — Película en línea">
+  <meta property="og:description" id="og-desc" content="Mira películas completas y series en español latino en CineMax MX.">
+  <meta property="og:url" id="og-url" content="/movie.html">
+  <meta property="og:image" id="og-image" content="https://i3.ytimg.com/vi/Qb-2xKrPsP0/maxresdefault.jpg">
+  <meta property="og:image:width" content="1280">
+  <meta property="og:image:height" content="720">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" id="twitter-title" content="CineMax MX — Película en línea">
+  <meta name="twitter:description" id="twitter-desc" content="Mira películas completas y series en español latino en CineMax MX.">
+  <meta name="twitter:image" id="twitter-image" content="https://i3.ytimg.com/vi/Qb-2xKrPsP0/maxresdefault.jpg">
   <title id="page-title">Detalles de Película — CineMax MX</title>
+  <script type="application/ld+json" id="structured-data"></script>
 
   <!-- Google Analytics -->
   <script src="js/analytics.js"></script>
@@ -61,6 +77,14 @@
     </aside>
 
     <main class="movie-page">
+      <nav class="breadcrumb" aria-label="Breadcrumb">
+        <a href="index.html">Inicio</a>
+        <span>/</span>
+        <a href="index.html" id="breadcrumb-year">Películas</a>
+        <span>/</span>
+        <span id="breadcrumb-title">Cargando...</span>
+      </nav>
+
       <a href="index.html" class="movie-back-btn">
         ← Volver al catálogo
       </a>
@@ -96,6 +120,7 @@
             id="yt-player"
             allowfullscreen
             loading="lazy"
+            title="Reproductor de video"
             allow="autoplay; encrypted-media"
             referrerpolicy="strict-origin-when-cross-origin"
             frameborder="0">
@@ -134,6 +159,19 @@
 
       <!-- Description -->
       <p class="movie-desc" id="movie-desc">Cargando descripción...</p>
+
+      <section class="comments-section" id="comments-section">
+        <div class="comments-head">
+          <h3>Comentarios</h3>
+          <span id="comments-count">0</span>
+        </div>
+        <form class="comment-form" id="comment-form">
+          <input type="text" id="comment-name" maxlength="40" placeholder="Tu nombre (opcional)" autocomplete="name">
+          <textarea id="comment-text" maxlength="500" placeholder="Escribe tu comentario..." required></textarea>
+          <button type="submit" class="btn-save">Publicar comentario</button>
+        </form>
+        <div class="comments-list" id="comments-list"></div>
+      </section>
 
       <!-- Movie Page Affiliate Section -->
       <div class="movie-affiliate">
@@ -296,6 +334,157 @@
       return getMovieGenres(movie).join(' • ') || '-';
     }
 
+    function slugify(value) {
+      return String(value || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/ñ/g, 'n')
+        .replace(/Ñ/g, 'n')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+    }
+
+    function getMovieSlug(movie) {
+      return movie?.slug || slugify(movie?.title) || `pelicula-${movie?.id || ''}`;
+    }
+
+    function getMovieUrl(movie) {
+      return `/pelicula/${encodeURIComponent(getMovieSlug(movie))}`;
+    }
+
+    function getCurrentMovieSlug() {
+      const parts = window.location.pathname.split('/').filter(Boolean);
+      const movieIndex = parts.indexOf('pelicula');
+      return movieIndex >= 0 ? decodeURIComponent(parts[movieIndex + 1] || '') : '';
+    }
+
+    function cleanDescription(value, maxLength = 155) {
+      const compact = String(value || '').replace(/\s+/g, ' ').trim();
+      if (compact.length <= maxLength) return compact;
+      return `${compact.slice(0, maxLength - 1).trim()}…`;
+    }
+
+    function setMetaContent(selector, value) {
+      const el = document.querySelector(selector);
+      if (el) el.setAttribute('content', value);
+    }
+
+    function updateMovieSeo(movie, posterUrl) {
+      const origin = window.location.origin && window.location.origin !== 'null' ? window.location.origin : '';
+      const canonicalPath = getMovieUrl(movie);
+      const canonicalUrl = origin ? `${origin}${canonicalPath}` : canonicalPath;
+      const description = cleanDescription(movie.desc || `Mira ${movie.title} en español latino en CineMax MX.`);
+      const title = `${movie.title} — CineMax MX`;
+      document.getElementById('page-title').textContent = title;
+      document.getElementById('meta-desc').content = description;
+      document.getElementById('canonical-link').href = canonicalUrl;
+      setMetaContent('#og-title', title);
+      setMetaContent('#og-desc', description);
+      setMetaContent('#og-url', canonicalUrl);
+      setMetaContent('#og-image', posterUrl || 'https://i3.ytimg.com/vi/Qb-2xKrPsP0/maxresdefault.jpg');
+      setMetaContent('#twitter-title', title);
+      setMetaContent('#twitter-desc', description);
+      setMetaContent('#twitter-image', posterUrl || 'https://i3.ytimg.com/vi/Qb-2xKrPsP0/maxresdefault.jpg');
+
+      const breadcrumbYear = document.getElementById('breadcrumb-year');
+      const breadcrumbTitle = document.getElementById('breadcrumb-title');
+      if (breadcrumbYear) {
+        breadcrumbYear.textContent = movie.year || 'Películas';
+        breadcrumbYear.href = movie.year ? `/ano/${encodeURIComponent(movie.year)}` : 'index.html';
+      }
+      if (breadcrumbTitle) breadcrumbTitle.textContent = movie.title || '';
+
+      const structured = document.getElementById('structured-data');
+      if (structured) {
+        structured.textContent = JSON.stringify({
+          '@context': 'https://schema.org',
+          '@graph': [
+            {
+              '@type': movie.type === 'Serie' ? 'TVSeries' : 'Movie',
+              name: movie.title,
+              description,
+              image: posterUrl || undefined,
+              datePublished: movie.year ? String(movie.year) : undefined,
+              duration: movie.duration || undefined,
+              genre: getMovieGenres(movie),
+              aggregateRating: movie.rating ? {
+                '@type': 'AggregateRating',
+                ratingValue: String(movie.rating),
+                bestRating: '10',
+                ratingCount: '1'
+              } : undefined,
+              url: canonicalUrl
+            },
+            {
+              '@type': 'BreadcrumbList',
+              itemListElement: [
+                { '@type': 'ListItem', position: 1, name: 'Inicio', item: origin ? `${origin}/` : '/' },
+                { '@type': 'ListItem', position: 2, name: movie.year ? String(movie.year) : 'Películas', item: origin && movie.year ? `${origin}/ano/${movie.year}` : `/ano/${movie.year || ''}` },
+                { '@type': 'ListItem', position: 3, name: movie.title, item: canonicalUrl }
+              ]
+            }
+          ]
+        });
+      }
+    }
+
+    function getCommentsKey(movieId) {
+      return `cinemax_comments_${movieId}`;
+    }
+
+    function loadComments(movieId) {
+      try {
+        const parsed = JSON.parse(localStorage.getItem(getCommentsKey(movieId)) || '[]');
+        return Array.isArray(parsed) ? parsed : [];
+      } catch (err) {
+        return [];
+      }
+    }
+
+    function saveComments(movieId, comments) {
+      localStorage.setItem(getCommentsKey(movieId), JSON.stringify(comments.slice(0, 80)));
+    }
+
+    function renderComments(movieId) {
+      const list = document.getElementById('comments-list');
+      const count = document.getElementById('comments-count');
+      if (!list) return;
+      const comments = loadComments(movieId);
+      if (count) count.textContent = comments.length;
+      list.innerHTML = comments.length ? comments.map(comment => `
+        <article class="comment-item">
+          <div class="comment-meta">
+            <strong>${escapeHTML(comment.name || 'Visitante')}</strong>
+            <span>${escapeHTML(comment.date || '')}</span>
+          </div>
+          <p>${escapeHTML(comment.text || '')}</p>
+        </article>
+      `).join('') : '<p class="comment-empty">Sé el primero en comentar esta película.</p>';
+    }
+
+    function initComments(movieId) {
+      const form = document.getElementById('comment-form');
+      if (!form) return;
+      renderComments(movieId);
+      form.addEventListener('submit', event => {
+        event.preventDefault();
+        const nameInput = document.getElementById('comment-name');
+        const textInput = document.getElementById('comment-text');
+        const text = textInput.value.trim();
+        if (!text) return;
+        const comments = loadComments(movieId);
+        comments.unshift({
+          name: nameInput.value.trim() || 'Visitante',
+          text,
+          date: new Date().toLocaleDateString('es-MX', { year: 'numeric', month: 'short', day: 'numeric' })
+        });
+        saveComments(movieId, comments);
+        form.reset();
+        renderComments(movieId);
+      });
+    }
+
     function sharesGenre(movieA, movieB) {
       const base = new Set(getMovieGenres(movieA));
       return getMovieGenres(movieB).some(genre => base.has(genre));
@@ -347,8 +536,11 @@
     document.addEventListener('DOMContentLoaded', () => {
       const urlParams = new URLSearchParams(window.location.search);
       const movieId = Number(urlParams.get('id'));
+      const movieSlug = getCurrentMovieSlug() || urlParams.get('slug') || '';
       const moviesList = getMoviesList();
-      const movie = moviesList.find(m => Number(m.id) === movieId);
+      const movie = movieId
+        ? moviesList.find(m => Number(m.id) === movieId)
+        : moviesList.find(m => getMovieSlug(m) === movieSlug);
 
       if (!movie) {
         document.getElementById('movie-title').textContent = 'Película no encontrada';
@@ -359,8 +551,6 @@
 
       const movieYtId = getYouTubeId(movie.yt);
       currentMovieYtId = movieYtId;
-      document.getElementById('page-title').textContent = `${movie.title} — CineMax MX`;
-      document.getElementById('meta-desc').content = movie.desc || '';
       document.getElementById('movie-title').textContent = movie.title || '';
       document.getElementById('movie-desc').textContent = movie.desc || '';
       document.getElementById('movie-badge').textContent = movie.type || 'Película';
@@ -371,6 +561,10 @@
 
       const poster = document.getElementById('video-poster');
       const posterUrl = getThumbnailUrl(movie.thumb, movieYtId);
+      updateMovieSeo(movie, posterUrl);
+      if (window.location.protocol.startsWith('http') && window.location.pathname !== getMovieUrl(movie)) {
+        window.history.replaceState({}, '', getMovieUrl(movie));
+      }
       if (poster && posterUrl) {
         const safePosterUrl = String(posterUrl).replace(/"/g, '\\"');
         poster.style.backgroundImage = `linear-gradient(180deg, rgba(10,10,15,.08), rgba(10,10,15,.82)), url("${safePosterUrl}")`;
@@ -408,10 +602,10 @@
           const hasThumb = recThumb !== '';
           const bgStyle = hasThumb ? '' : `background: linear-gradient(135deg, ${hashColor(m.id)})`;
           return `
-            <div class="card" onclick="window.location.href='movie.html?id=${encodeURIComponent(m.id)}'">
+            <a class="card" href="${escapeAttr(getMovieUrl(m))}">
               <div class="card-thumb" style="${bgStyle}">
                 ${hasThumb
-                  ? `<img class="card-thumb-img" src="${escapeAttr(recThumb)}" alt="${escapeAttr(m.title)}">`
+                  ? `<img class="card-thumb-img" src="${escapeAttr(recThumb)}" alt="Poster de ${escapeAttr(m.title)}" loading="lazy" decoding="async">`
                   : `<div class="card-thumb-emoji" style="font-size:38px;">${escapeHTML(m.emoji || '🎬')}</div>`
                 }
                 <div class="card-rating">⭐ ${escapeHTML(m.rating)}</div>
@@ -419,11 +613,13 @@
               <div class="card-info" style="padding: 8px;">
                 <div class="card-title" style="font-size: 11px;">${escapeHTML(m.title)}</div>
               </div>
-            </div>`;
+            </a>`;
         }).join('');
       } else {
         recGrid.innerHTML = '<p style="font-size: 13px; color: var(--text3)">No hay recomendaciones de este género todavía.</p>';
       }
+
+      initComments(movie.id);
 
       if (typeof gtag !== 'undefined') {
         gtag('event', 'watch_movie', { event_category: 'engagement', event_label: movie.title });

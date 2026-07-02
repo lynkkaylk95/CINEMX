@@ -2,9 +2,22 @@
 <html lang="es-MX">
 <head>
   <meta charset="UTF-8">
+  <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-  <meta name="description" content="CineMax MX — Mira las mejores películas y series en línea gratis en español de México.">
+  <meta name="description" id="meta-desc" content="CineMax MX reúne películas completas y series en español latino, con estrenos, dramas, romance, acción y títulos populares para ver en línea.">
+  <meta name="robots" content="index, follow">
   <meta name="theme-color" content="#0a0a0f">
+  <link rel="canonical" id="canonical-link" href="/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="CineMax MX">
+  <meta property="og:title" id="og-title" content="CineMax MX — Películas y Series en Línea">
+  <meta property="og:description" id="og-desc" content="Películas completas y series en español latino, con estrenos, romance, acción, drama y títulos populares para ver en línea.">
+  <meta property="og:url" id="og-url" content="/">
+  <meta property="og:image" id="og-image" content="https://i3.ytimg.com/vi/Qb-2xKrPsP0/maxresdefault.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" id="twitter-title" content="CineMax MX — Películas y Series en Línea">
+  <meta name="twitter:description" id="twitter-desc" content="Películas completas y series en español latino, con estrenos, romance, acción, drama y títulos populares para ver en línea.">
+  <meta name="twitter:image" id="twitter-image" content="https://i3.ytimg.com/vi/Qb-2xKrPsP0/maxresdefault.jpg">
   <title>CineMax MX — Películas y Series en Línea</title>
 
   <!-- Google Analytics -->
@@ -128,6 +141,15 @@
         <button class="genre-tab" onclick="filterByGenre('Viajes en el tiempo')">⏳ Viajes en el tiempo</button>
         <button class="genre-tab" onclick="filterByGenre('De época')">👘 De época</button>
         <button class="genre-tab" onclick="filterByGenre('Intrigas palaciegas')">⚔️ Intrigas palaciegas</button>
+      </div>
+    </div>
+
+    <div class="genre-bar year-bar">
+      <div class="genre-tabs" id="year-tabs-container">
+        <button class="genre-tab year-tab" onclick="filterByYear(2023)">2023</button>
+        <button class="genre-tab year-tab" onclick="filterByYear(2024)">2024</button>
+        <button class="genre-tab year-tab" onclick="filterByYear(2025)">2025</button>
+        <button class="genre-tab year-tab" onclick="filterByYear(2026)">2026</button>
       </div>
     </div>
 
