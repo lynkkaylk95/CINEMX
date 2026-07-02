@@ -3,4 +3,4 @@ Allow: /
 Disallow: /admin.html
 Disallow: /admin
 
-Sitemap: https://cinemaxmx.pages.dev/sitemap.xml
+Sitemap: https://cinemx.moviemx.workers.dev/sitemap.xml
