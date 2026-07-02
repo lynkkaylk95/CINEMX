@@ -23,10 +23,28 @@ function persistMovies() {
 
 function extractYouTubeId(value) {
   const raw = String(value || '').trim();
-  const shortMatch = raw.match(/youtu\.be\/([A-Za-z0-9_-]{6,})/);
-  const watchMatch = raw.match(/[?&]v=([A-Za-z0-9_-]{6,})/);
-  const embedMatch = raw.match(/youtube\.com\/embed\/([A-Za-z0-9_-]{6,})/);
-  return (shortMatch && shortMatch[1]) || (watchMatch && watchMatch[1]) || (embedMatch && embedMatch[1]) || raw;
+  if (!raw) return '';
+  const patterns = [
+    /ytimg\.com\/vi\/([A-Za-z0-9_-]{6,})\//,
+    /youtu\.be\/([A-Za-z0-9_-]{6,})/,
+    /youtube\.com\/(?:watch\?.*?v=|embed\/|shorts\/|live\/|v\/)([A-Za-z0-9_-]{6,})/,
+    /[?&]v=([A-Za-z0-9_-]{6,})/
+  ];
+  for (const pattern of patterns) {
+    const match = raw.match(pattern);
+    if (match) return match[1];
+  }
+  const directId = raw.split(/[?&#]/)[0].split('&')[0].trim().match(/^([A-Za-z0-9_-]{6,})$/);
+  return directId ? directId[1] : '';
+}
+
+function getThumbnailUrl(value, fallbackYtId = '') {
+  const raw = String(value || '').trim();
+  const ytId = extractYouTubeId(raw) || fallbackYtId;
+  if (ytId && /(?:youtube\.com|youtu\.be|ytimg\.com|^[A-Za-z0-9_-]{6,})/.test(raw)) {
+    return `https://i3.ytimg.com/vi/${ytId}/hqdefault.jpg`;
+  }
+  return raw || (ytId ? `https://i3.ytimg.com/vi/${ytId}/hqdefault.jpg` : '');
 }
 
 function getMovieGenres(movie) {
@@ -187,7 +205,7 @@ function saveMovie() {
   const duration = document.getElementById('duration').value.trim();
   const emoji = document.getElementById('emoji').value.trim();
   const yt = extractYouTubeId(document.getElementById('yt').value);
-  const thumb = document.getElementById('thumb').value.trim();
+  const thumb = getThumbnailUrl(document.getElementById('thumb').value, yt);
   const desc = document.getElementById('desc').value.trim();
 
   if (!title || !duration || !yt || !desc || genres.length === 0) {
@@ -205,7 +223,7 @@ function saveMovie() {
     duration,
     emoji: emoji || "🎬",
     yt,
-    thumb: thumb || (yt ? `https://i3.ytimg.com/vi/${yt}/maxresdefault.jpg` : ''),
+    thumb,
     desc,
     badge: type === 'Serie' ? 'SERIE' : 'NUEVO',
     episodes: type === 'Serie' ? [...activeEpisodeTags] : []

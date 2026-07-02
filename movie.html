@@ -94,6 +94,7 @@
             allowfullscreen
             loading="lazy"
             allow="autoplay; encrypted-media"
+            referrerpolicy="strict-origin-when-cross-origin"
             frameborder="0">
           </iframe>
         </div>
@@ -236,10 +237,27 @@
     function getYouTubeId(value) {
       const raw = String(value || '').trim();
       if (!raw) return '';
-      const shortMatch = raw.match(/youtu\.be\/([A-Za-z0-9_-]{6,})/);
-      const watchMatch = raw.match(/[?&]v=([A-Za-z0-9_-]{6,})/);
-      const embedMatch = raw.match(/youtube\.com\/embed\/([A-Za-z0-9_-]{6,})/);
-      return (shortMatch && shortMatch[1]) || (watchMatch && watchMatch[1]) || (embedMatch && embedMatch[1]) || raw;
+      const patterns = [
+        /ytimg\.com\/vi\/([A-Za-z0-9_-]{6,})\//,
+        /youtu\.be\/([A-Za-z0-9_-]{6,})/,
+        /youtube\.com\/(?:watch\?.*?v=|embed\/|shorts\/|live\/|v\/)([A-Za-z0-9_-]{6,})/,
+        /[?&]v=([A-Za-z0-9_-]{6,})/
+      ];
+      for (const pattern of patterns) {
+        const match = raw.match(pattern);
+        if (match) return match[1];
+      }
+      const directId = raw.split(/[?&#]/)[0].split('&')[0].trim().match(/^([A-Za-z0-9_-]{6,})$/);
+      return directId ? directId[1] : '';
+    }
+
+    function getThumbnailUrl(value, fallbackYtId = '') {
+      const raw = String(value || '').trim();
+      const ytId = getYouTubeId(raw) || fallbackYtId;
+      if (ytId && /(?:youtube\.com|youtu\.be|ytimg\.com|^[A-Za-z0-9_-]{6,})/.test(raw)) {
+        return `https://i3.ytimg.com/vi/${encodeURIComponent(ytId)}/hqdefault.jpg`;
+      }
+      return raw || (ytId ? `https://i3.ytimg.com/vi/${encodeURIComponent(ytId)}/hqdefault.jpg` : '');
     }
 
     function escapeHTML(value) {
@@ -290,7 +308,10 @@
 
       if (iframe) {
         iframe.style.display = 'block';
-        iframe.src = `https://www.youtube.com/embed/${encodeURIComponent(ytId)}?autoplay=1&rel=0&modestbranding=1&color=red`;
+        const origin = window.location.origin && window.location.origin !== 'null'
+          ? `&origin=${encodeURIComponent(window.location.origin)}`
+          : '';
+        iframe.src = `https://www.youtube.com/embed/${encodeURIComponent(ytId)}?autoplay=1&playsinline=1&rel=0&modestbranding=1&color=red${origin}`;
       }
       if (fallback) fallback.style.display = 'none';
       if (videoWrap) {
@@ -337,7 +358,7 @@
       document.getElementById('movie-rating').textContent = `⭐ ${movie.rating || '0.0'}`;
 
       const poster = document.getElementById('video-poster');
-      const posterUrl = movie.thumb || (movieYtId ? `https://i3.ytimg.com/vi/${encodeURIComponent(movieYtId)}/maxresdefault.jpg` : '');
+      const posterUrl = getThumbnailUrl(movie.thumb, movieYtId);
       if (poster && posterUrl) {
         const safePosterUrl = String(posterUrl).replace(/"/g, '\\"');
         poster.style.backgroundImage = `linear-gradient(180deg, rgba(10,10,15,.08), rgba(10,10,15,.82)), url("${safePosterUrl}")`;
@@ -371,13 +392,14 @@
       const recGrid = document.getElementById('rec-grid-container');
       if (recommended.length > 0) {
         recGrid.innerHTML = recommended.map(m => {
-          const hasThumb = m.thumb && String(m.thumb).trim() !== '';
+          const recThumb = getThumbnailUrl(m.thumb, getYouTubeId(m.yt));
+          const hasThumb = recThumb !== '';
           const bgStyle = hasThumb ? '' : `background: linear-gradient(135deg, ${hashColor(m.id)})`;
           return `
             <div class="card" onclick="window.location.href='movie.html?id=${encodeURIComponent(m.id)}'">
               <div class="card-thumb" style="${bgStyle}">
                 ${hasThumb
-                  ? `<img class="card-thumb-img" src="${escapeAttr(m.thumb)}" alt="${escapeAttr(m.title)}">`
+                  ? `<img class="card-thumb-img" src="${escapeAttr(recThumb)}" alt="${escapeAttr(m.title)}">`
                   : `<div class="card-thumb-emoji" style="font-size:38px;">${escapeHTML(m.emoji || '🎬')}</div>`
                 }
                 <div class="card-rating">⭐ ${escapeHTML(m.rating)}</div>

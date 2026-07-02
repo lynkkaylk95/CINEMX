@@ -54,17 +54,31 @@ function hasGenre(movie, genre) {
 function getYouTubeId(value) {
   const raw = String(value || '').trim();
   if (!raw) return '';
-  const shortMatch = raw.match(/youtu\.be\/([A-Za-z0-9_-]{6,})/);
-  const watchMatch = raw.match(/[?&]v=([A-Za-z0-9_-]{6,})/);
-  const embedMatch = raw.match(/youtube\.com\/embed\/([A-Za-z0-9_-]{6,})/);
-  return (shortMatch && shortMatch[1]) || (watchMatch && watchMatch[1]) || (embedMatch && embedMatch[1]) || raw;
+  const patterns = [
+    /ytimg\.com\/vi\/([A-Za-z0-9_-]{6,})\//,
+    /youtu\.be\/([A-Za-z0-9_-]{6,})/,
+    /youtube\.com\/(?:watch\?.*?v=|embed\/|shorts\/|live\/|v\/)([A-Za-z0-9_-]{6,})/,
+    /[?&]v=([A-Za-z0-9_-]{6,})/
+  ];
+  for (const pattern of patterns) {
+    const match = raw.match(pattern);
+    if (match) return match[1];
+  }
+  const directId = raw.split(/[?&#]/)[0].split('&')[0].trim().match(/^([A-Za-z0-9_-]{6,})$/);
+  return directId ? directId[1] : '';
+}
+
+function getThumbnailUrl(value, fallbackYtId = '') {
+  const raw = String(value || '').trim();
+  const ytId = getYouTubeId(raw) || fallbackYtId;
+  if (ytId && /(?:youtube\.com|youtu\.be|ytimg\.com|^[A-Za-z0-9_-]{6,})/.test(raw)) {
+    return `https://i3.ytimg.com/vi/${encodeURIComponent(ytId)}/hqdefault.jpg`;
+  }
+  return raw || (ytId ? `https://i3.ytimg.com/vi/${encodeURIComponent(ytId)}/hqdefault.jpg` : '');
 }
 
 function getMovieImage(movie) {
-  const thumb = String(movie?.thumb || '').trim();
-  if (thumb) return thumb;
-  const ytId = getYouTubeId(movie?.yt);
-  return ytId ? `https://i3.ytimg.com/vi/${encodeURIComponent(ytId)}/maxresdefault.jpg` : '';
+  return getThumbnailUrl(movie?.thumb, getYouTubeId(movie?.yt));
 }
 
 function dailyHeroIndex(total) {
@@ -122,12 +136,13 @@ function initDailyHero() {
 }
 
 function createCard(m) {
-  const hasThumb = m.thumb && String(m.thumb).trim() !== '';
+  const thumbUrl = getMovieImage(m);
+  const hasThumb = thumbUrl !== '';
   const bgStyle = hasThumb ? '' : `background: linear-gradient(135deg, ${hashColor(m.id)})`;
   return `
     <div class="card" onclick="navigateToMovie(${Number(m.id)})">
       <div class="card-thumb" style="${bgStyle}">
-        ${hasThumb ? `<img class="card-thumb-img" src="${escapeAttr(m.thumb)}" alt="${escapeAttr(m.title)}" loading="lazy">` : `<div class="card-thumb-emoji">${escapeHTML(m.emoji || '🎬')}</div>`}
+        ${hasThumb ? `<img class="card-thumb-img" src="${escapeAttr(thumbUrl)}" alt="${escapeAttr(m.title)}" loading="lazy" onerror="this.onerror=null; this.src='https://i3.ytimg.com/vi/${escapeAttr(getYouTubeId(m.yt))}/hqdefault.jpg';">` : `<div class="card-thumb-emoji">${escapeHTML(m.emoji || '🎬')}</div>`}
         ${m.badge ? `<div class="card-badge">${escapeHTML(m.badge)}</div>` : ''}
         <div class="card-rating">⭐ ${escapeHTML(m.rating)}</div>
         <div class="card-overlay"><div class="card-play">▶</div></div>
@@ -140,12 +155,13 @@ function createCard(m) {
 }
 
 function createFeatCard(m) {
-  const hasThumb = m.thumb && String(m.thumb).trim() !== '';
+  const thumbUrl = getMovieImage(m);
+  const hasThumb = thumbUrl !== '';
   const bgStyle = hasThumb ? '' : `background: linear-gradient(135deg, ${hashColor(m.id)})`;
   return `
     <div class="feat-card" onclick="navigateToMovie(${Number(m.id)})">
       <div class="feat-thumb" style="${bgStyle}">
-        ${hasThumb ? `<img class="card-thumb-img" src="${escapeAttr(m.thumb)}" alt="${escapeAttr(m.title)}" loading="lazy">` : `<div class="feat-thumb-emoji">${escapeHTML(m.emoji || '🎬')}</div>`}
+        ${hasThumb ? `<img class="card-thumb-img" src="${escapeAttr(thumbUrl)}" alt="${escapeAttr(m.title)}" loading="lazy" onerror="this.onerror=null; this.src='https://i3.ytimg.com/vi/${escapeAttr(getYouTubeId(m.yt))}/hqdefault.jpg';">` : `<div class="feat-thumb-emoji">${escapeHTML(m.emoji || '🎬')}</div>`}
         <div class="feat-play-wrap"><div class="feat-play-btn">▶</div></div>
         ${m.badge ? `<div class="card-badge">${escapeHTML(m.badge)}</div>` : ''}
         <div class="card-rating">⭐ ${escapeHTML(m.rating)}</div>

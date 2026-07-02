@@ -517,6 +517,9 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
   margin: 0 0 28px;
   min-height: 250px;
 }
+.movie-mobile-ad-top {
+  display: none !important;
+}
 .movie-back-btn {
   display: inline-flex; align-items: center; gap: 6px;
   font-size: 13px; font-weight: 600; color: var(--text2);
