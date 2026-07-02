@@ -220,7 +220,6 @@
   <script src="js/ads.js" defer></script>
   <script>
     const MOVIES_STORAGE_KEY = 'cinemax_movies';
-    const PLAY_AD_URL = window.CINEMAX_PLAY_AD_URL || 'https://www.effectivecpmnetwork.com/fqnfqrdx?key=ca18fc268feaa5010eabed567ae9a466';
     let currentMovieYtId = '';
 
     function getMoviesList() {
@@ -255,18 +254,6 @@
 
     function escapeAttr(value) {
       return escapeHTML(value).replace(/`/g, '&#96;');
-    }
-
-    function openPlayAd() {
-      const adUrl = String(PLAY_AD_URL || '').trim();
-      if (!adUrl) return;
-      const adWindow = window.open('about:blank', '_blank');
-      if (adWindow) {
-        adWindow.opener = null;
-        adWindow.location.href = adUrl;
-        adWindow.blur();
-      }
-      window.focus();
     }
 
     function setPlayer(ytId) {
@@ -306,7 +293,6 @@
       const targetId = String(ytId || currentMovieYtId || '').trim();
       if (!targetId) return;
       currentMovieYtId = targetId;
-      openPlayAd();
       setPlayer(targetId);
     }
 

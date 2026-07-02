@@ -222,8 +222,13 @@ function filterByGenre(genre) {
 }
 
 function toggleMenu() {
-  document.getElementById('mobile-menu')?.classList.toggle('open');
-  document.getElementById('hamburger')?.classList.toggle('open');
+  const menu = document.getElementById('mobile-menu');
+  const hamburger = document.getElementById('hamburger');
+  menu?.classList.toggle('open');
+  hamburger?.classList.toggle('open');
+  if (menu?.classList.contains('open')) {
+    setTimeout(() => document.getElementById('mob-search-input')?.focus(), 120);
+  }
 }
 
 function closeMenu() {
@@ -263,6 +268,9 @@ window.addEventListener('scroll', () => {
 
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('search-input')?.addEventListener('input', e => handleSearch(e.target.value));
+  document.getElementById('mob-search-input')?.addEventListener('keydown', e => {
+    if (e.key === 'Enter') closeMenu();
+  });
   applyInitialQueryParams();
   renderAll();
 });
