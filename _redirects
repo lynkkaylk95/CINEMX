@@ -1,5 +1,2 @@
 /admin.html / 302
 /admin / 302
-/movie /movie.html 200
-/pelicula/* /movie.html 200
-/ano/* /index.html 200
