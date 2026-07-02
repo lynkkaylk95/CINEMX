@@ -51,6 +51,76 @@ function hasGenre(movie, genre) {
   return genre === 'Todos' || getMovieGenres(movie).includes(genre);
 }
 
+function getYouTubeId(value) {
+  const raw = String(value || '').trim();
+  if (!raw) return '';
+  const shortMatch = raw.match(/youtu\.be\/([A-Za-z0-9_-]{6,})/);
+  const watchMatch = raw.match(/[?&]v=([A-Za-z0-9_-]{6,})/);
+  const embedMatch = raw.match(/youtube\.com\/embed\/([A-Za-z0-9_-]{6,})/);
+  return (shortMatch && shortMatch[1]) || (watchMatch && watchMatch[1]) || (embedMatch && embedMatch[1]) || raw;
+}
+
+function getMovieImage(movie) {
+  const thumb = String(movie?.thumb || '').trim();
+  if (thumb) return thumb;
+  const ytId = getYouTubeId(movie?.yt);
+  return ytId ? `https://i3.ytimg.com/vi/${encodeURIComponent(ytId)}/maxresdefault.jpg` : '';
+}
+
+function dailyHeroIndex(total) {
+  const today = new Date();
+  const key = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
+  let hash = 0;
+  for (let i = 0; i < key.length; i += 1) {
+    hash = ((hash << 5) - hash) + key.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash) % total;
+}
+
+function initDailyHero() {
+  const hero = document.getElementById('hero');
+  const titleEl = document.getElementById('hero-title');
+  const descEl = document.getElementById('hero-desc');
+  const bgEl = document.querySelector('.hero-bg');
+  const badgeEl = document.querySelector('.hero-badge');
+  const metaEl = document.querySelector('.hero-meta');
+  const playBtn = document.querySelector('.hero-btns .btn-play');
+  const infoBtn = document.querySelector('.hero-btns .btn-info');
+  const candidates = moviesList.filter(m => m && m.id && m.title);
+  if (!hero || !titleEl || !descEl || !candidates.length) return;
+
+  const movie = candidates[dailyHeroIndex(candidates.length)];
+  const imageUrl = getMovieImage(movie);
+  const movieId = Number(movie.id);
+
+  titleEl.textContent = movie.title || 'CineMax MX';
+  descEl.textContent = movie.desc || 'Disfruta una selección destacada de películas y series en español de México.';
+
+  if (badgeEl) {
+    badgeEl.textContent = movie.type === 'Serie' ? 'Serie destacada del día' : 'Película destacada del día';
+  }
+
+  if (metaEl) {
+    metaEl.innerHTML = `
+      <span class="hero-meta-item">
+        <span class="rating-pill">★ ${escapeHTML(movie.rating || '0.0')}</span>
+      </span>
+      <span class="hero-meta-item"><span class="dot"></span> ${escapeHTML(movie.year || '-')}</span>
+      <span class="hero-meta-item"><span class="dot"></span> ${escapeHTML(movie.duration || '-')}</span>
+      <span class="hero-meta-item"><span class="dot"></span> ${escapeHTML(getGenreLabel(movie))}</span>
+    `;
+  }
+
+  if (imageUrl && bgEl) {
+    bgEl.style.backgroundImage = `linear-gradient(90deg, rgba(10,10,15,.9) 0%, rgba(10,10,15,.62) 34%, rgba(10,10,15,.2) 68%, rgba(10,10,15,.72) 100%), url("${imageUrl.replace(/"/g, '\\"')}")`;
+    hero.classList.add('has-featured-image');
+  }
+
+  if (playBtn) playBtn.onclick = () => navigateToMovie(movieId);
+  if (infoBtn) infoBtn.onclick = () => navigateToMovie(movieId);
+}
+
 function createCard(m) {
   const hasThumb = m.thumb && String(m.thumb).trim() !== '';
   const bgStyle = hasThumb ? '' : `background: linear-gradient(135deg, ${hashColor(m.id)})`;
@@ -286,5 +356,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (e.key === 'Enter') closeMenu();
   });
   applyInitialQueryParams();
+  initDailyHero();
   renderAll();
 });

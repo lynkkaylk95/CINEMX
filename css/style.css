@@ -144,16 +144,26 @@ ul { list-style: none; }
 .hero-bg {
   position: absolute; inset: 0;
   background: linear-gradient(135deg,#0d0d1a,#1a0a1a,#0d1a0d,#1a1a0d);
+  background-position: center right;
+  background-size: cover;
+  background-repeat: no-repeat;
+  transform: scale(1.01);
+  transition: opacity .35s ease, transform 6s ease;
+}
+#hero.has-featured-image .hero-bg {
+  transform: scale(1.04);
 }
 .hero-glow {
   position: absolute; inset: 0;
   background:
-    radial-gradient(ellipse at 68% 38%, rgba(229,9,20,.11) 0%, transparent 55%),
-    radial-gradient(ellipse at 18% 78%, rgba(80,10,180,.07) 0%, transparent 50%);
+    radial-gradient(ellipse at 76% 42%, rgba(229,9,20,.08) 0%, transparent 56%),
+    radial-gradient(ellipse at 18% 78%, rgba(80,10,180,.06) 0%, transparent 50%);
 }
 .hero-fade {
   position: absolute; inset: 0;
-  background: linear-gradient(180deg,transparent 0%,transparent 28%,rgba(10,10,15,.62) 60%,rgba(10,10,15,.96) 84%,var(--bg) 100%);
+  background:
+    linear-gradient(180deg,transparent 0%,transparent 26%,rgba(10,10,15,.58) 62%,rgba(10,10,15,.96) 86%,var(--bg) 100%),
+    linear-gradient(90deg,rgba(10,10,15,.94) 0%,rgba(10,10,15,.7) 34%,rgba(10,10,15,.22) 68%,rgba(10,10,15,.82) 100%);
 }
 .hero-deco {
   position: absolute; top: 0; right: 0; width: 52%; height: 100%;
