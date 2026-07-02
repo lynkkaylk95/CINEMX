@@ -256,6 +256,21 @@
       return escapeHTML(value).replace(/`/g, '&#96;');
     }
 
+    function getMovieGenres(movie) {
+      const values = Array.isArray(movie?.genres) ? movie.genres : [];
+      const legacy = movie?.genre ? [movie.genre] : [];
+      return [...new Set([...values, ...legacy].map(g => String(g || '').trim()).filter(Boolean))];
+    }
+
+    function getGenreLabel(movie) {
+      return getMovieGenres(movie).join(' • ') || '-';
+    }
+
+    function sharesGenre(movieA, movieB) {
+      const base = new Set(getMovieGenres(movieA));
+      return getMovieGenres(movieB).some(genre => base.has(genre));
+    }
+
     function setPlayer(ytId) {
       const iframe = document.getElementById('yt-player');
       const fallback = document.getElementById('youtube-fallback');
@@ -318,7 +333,7 @@
       document.getElementById('movie-badge').textContent = movie.type || 'Película';
       document.getElementById('movie-year').textContent = movie.year || '-';
       document.getElementById('movie-duration').textContent = movie.duration || '-';
-      document.getElementById('movie-genre').textContent = movie.genre || '-';
+      document.getElementById('movie-genre').textContent = getGenreLabel(movie);
       document.getElementById('movie-rating').textContent = `⭐ ${movie.rating || '0.0'}`;
 
       const poster = document.getElementById('video-poster');
@@ -352,7 +367,7 @@
         epSection.style.display = 'none';
       }
 
-      const recommended = moviesList.filter(m => Number(m.id) !== Number(movie.id) && m.genre === movie.genre).slice(0, 6);
+      const recommended = moviesList.filter(m => Number(m.id) !== Number(movie.id) && sharesGenre(movie, m)).slice(0, 6);
       const recGrid = document.getElementById('rec-grid-container');
       if (recommended.length > 0) {
         recGrid.innerHTML = recommended.map(m => {

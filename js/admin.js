@@ -4,7 +4,7 @@
 ============================================================ */
 
 const MOVIES_STORAGE_KEY = 'cinemax_movies';
-let currentMovies = loadSavedMovies();
+let currentMovies = loadSavedMovies().map(normalizeMovieGenres);
 let activeEpisodeTags = [];
 function loadSavedMovies() {
   try {
@@ -29,7 +29,39 @@ function extractYouTubeId(value) {
   return (shortMatch && shortMatch[1]) || (watchMatch && watchMatch[1]) || (embedMatch && embedMatch[1]) || raw;
 }
 
+function getMovieGenres(movie) {
+  const values = Array.isArray(movie?.genres) ? movie.genres : [];
+  const legacy = movie?.genre ? [movie.genre] : [];
+  return [...new Set([...values, ...legacy].map(g => String(g || '').trim()).filter(Boolean))];
+}
+
+function getGenreLabel(movie) {
+  return getMovieGenres(movie).join(' • ') || '-';
+}
+
+function normalizeMovieGenres(movie) {
+  const genres = getMovieGenres(movie);
+  const normalizedGenres = genres.length ? genres : ['Acción'];
+  return {
+    ...movie,
+    genre: movie?.genre || normalizedGenres[0],
+    genres: normalizedGenres
+  };
+}
+
+function getSelectedGenres() {
+  return [...document.querySelectorAll('input[name="genres"]:checked')].map(input => input.value);
+}
+
+function setSelectedGenres(genres) {
+  const selected = new Set(genres && genres.length ? genres : ['Acción']);
+  document.querySelectorAll('input[name="genres"]').forEach(input => {
+    input.checked = selected.has(input.value);
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+  setSelectedGenres(['Acción']);
   renderAdminList();
 });
 
@@ -50,7 +82,7 @@ function renderAdminList(searchQuery = '') {
   const filtered = currentMovies.filter(m => {
     return !query || 
            m.title.toLowerCase().includes(query) || 
-           m.genre.toLowerCase().includes(query) ||
+           getGenreLabel(m).toLowerCase().includes(query) ||
            m.type.toLowerCase().includes(query);
   });
 
@@ -67,7 +99,7 @@ function renderAdminList(searchQuery = '') {
       <div class="admin-movie-info">
         <div class="admin-movie-title">${m.title}</div>
         <div class="admin-movie-meta">
-          ID: ${m.id} | ${m.genre} | ${m.year} | ⭐ ${m.rating} | ${m.type}
+          ID: ${m.id} | ${getGenreLabel(m)} | ${m.year} | ⭐ ${m.rating} | ${m.type}
         </div>
       </div>
       <div class="admin-movie-actions">
@@ -126,7 +158,7 @@ function editMovie(id) {
   document.getElementById('form-title').textContent = "Chỉnh sửa Phim / Series";
   document.getElementById('movie-id').value = movie.id;
   document.getElementById('title').value = movie.title || '';
-  document.getElementById('genre').value = movie.genre || 'Acción';
+  setSelectedGenres(getMovieGenres(movie));
   document.getElementById('type').value = movie.type || 'Película';
   document.getElementById('year').value = movie.year || 2026;
   document.getElementById('rating').value = movie.rating || 8.5;
@@ -148,7 +180,7 @@ function editMovie(id) {
 function saveMovie() {
   const idVal = document.getElementById('movie-id').value;
   const title = document.getElementById('title').value.trim();
-  const genre = document.getElementById('genre').value;
+  const genres = getSelectedGenres();
   const type = document.getElementById('type').value;
   const year = parseInt(document.getElementById('year').value);
   const rating = parseFloat(document.getElementById('rating').value);
@@ -158,14 +190,15 @@ function saveMovie() {
   const thumb = document.getElementById('thumb').value.trim();
   const desc = document.getElementById('desc').value.trim();
 
-  if (!title || !duration || !yt || !desc) {
+  if (!title || !duration || !yt || !desc || genres.length === 0) {
     showToast("Vui lòng điền đầy đủ các trường bắt buộc.");
     return;
   }
 
   const movieData = {
     title,
-    genre,
+    genre: genres[0],
+    genres,
     type,
     year: isNaN(year) ? 2026 : year,
     rating: isNaN(rating) ? 8.5 : rating,
@@ -215,6 +248,7 @@ function resetMovieForm() {
   document.getElementById('form-title').textContent = "Thêm Phim / Series Mới";
   document.getElementById('movie-id').value = '';
   document.getElementById('movie-form').reset();
+  setSelectedGenres(['Acción']);
   activeEpisodeTags = [];
   toggleEpisodesField();
   renderEpisodeTags();

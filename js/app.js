@@ -37,6 +37,20 @@ function escapeAttr(value) {
   return escapeHTML(value).replace(/`/g, '&#96;');
 }
 
+function getMovieGenres(movie) {
+  const values = Array.isArray(movie?.genres) ? movie.genres : [];
+  const legacy = movie?.genre ? [movie.genre] : [];
+  return [...new Set([...values, ...legacy].map(g => String(g || '').trim()).filter(Boolean))];
+}
+
+function getGenreLabel(movie) {
+  return getMovieGenres(movie).join(' • ') || '-';
+}
+
+function hasGenre(movie, genre) {
+  return genre === 'Todos' || getMovieGenres(movie).includes(genre);
+}
+
 function createCard(m) {
   const hasThumb = m.thumb && String(m.thumb).trim() !== '';
   const bgStyle = hasThumb ? '' : `background: linear-gradient(135deg, ${hashColor(m.id)})`;
@@ -50,7 +64,7 @@ function createCard(m) {
       </div>
       <div class="card-info">
         <div class="card-title">${escapeHTML(m.title)}</div>
-        <div class="card-meta"><span>${escapeHTML(m.year)}</span><span class="card-genre-tag">${escapeHTML(m.genre)}</span></div>
+        <div class="card-meta"><span>${escapeHTML(m.year)}</span><span class="card-genre-tag">${escapeHTML(getGenreLabel(m))}</span></div>
       </div>
     </div>`;
 }
@@ -91,8 +105,8 @@ function renderGrid(gridId, movies, cardType = 'card') {
 function filterMovies(genre, search) {
   const query = normalizeText(search);
   return moviesList.filter(m => {
-    const matchG = genre === 'Todos' || m.genre === genre;
-    const haystack = normalizeText([m.title, m.genre, m.type, m.desc, m.year].join(' '));
+    const matchG = hasGenre(m, genre);
+    const haystack = normalizeText([m.title, getGenreLabel(m), m.type, m.desc, m.year].join(' '));
     return matchG && (!query || haystack.includes(query));
   });
 }
@@ -117,14 +131,14 @@ function renderAll() {
     const trending = moviesList.filter(m => m.badge && m.type === 'Película').slice(0, 8);
     const newMovies = moviesList.filter(m => Number(m.year) === 2026 && m.type === 'Película').slice(0, 8);
     const series = moviesList.filter(m => m.type === 'Serie').slice(0, 4);
-    const action = moviesList.filter(m => m.genre === 'Acción').slice(0, 8);
-    const comedy = moviesList.filter(m => m.genre === 'Comedia').slice(0, 8);
-    const drama = moviesList.filter(m => m.genre === 'Drama').slice(0, 8);
-    const terror = moviesList.filter(m => m.genre === 'Terror').slice(0, 8);
-    const animation = moviesList.filter(m => m.genre === 'Animación').slice(0, 8);
-    const sciFi = moviesList.filter(m => m.genre === 'Ciencia Ficción').slice(0, 8);
-    const romance = moviesList.filter(m => m.genre === 'Romance').slice(0, 8);
-    const thriller = moviesList.filter(m => m.genre === 'Thriller').slice(0, 8);
+    const action = moviesList.filter(m => hasGenre(m, 'Acción')).slice(0, 8);
+    const comedy = moviesList.filter(m => hasGenre(m, 'Comedia')).slice(0, 8);
+    const drama = moviesList.filter(m => hasGenre(m, 'Drama')).slice(0, 8);
+    const terror = moviesList.filter(m => hasGenre(m, 'Terror')).slice(0, 8);
+    const animation = moviesList.filter(m => hasGenre(m, 'Animación')).slice(0, 8);
+    const sciFi = moviesList.filter(m => hasGenre(m, 'Ciencia Ficción')).slice(0, 8);
+    const romance = moviesList.filter(m => hasGenre(m, 'Romance')).slice(0, 8);
+    const thriller = moviesList.filter(m => hasGenre(m, 'Thriller')).slice(0, 8);
     renderGrid('grid-trending', trending.length ? trending : moviesList.slice(0, 8));
     renderGrid('grid-new', newMovies.length ? newMovies : moviesList.slice(0, 8));
     renderGrid('grid-series', series, 'feat');
@@ -248,7 +262,7 @@ function applyInitialQueryParams() {
   const params = new URLSearchParams(window.location.search);
   const genre = params.get('genre');
   const search = params.get('q');
-  const validGenres = new Set(['Todos', ...moviesList.map(m => m.genre)]);
+  const validGenres = new Set(['Todos', ...moviesList.flatMap(m => getMovieGenres(m))]);
   if (genre && validGenres.has(genre)) currentGenre = genre;
   if (search) {
     currentSearch = search.trim();

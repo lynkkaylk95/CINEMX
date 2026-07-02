@@ -311,6 +311,16 @@ ul { list-style: none; }
 .ad-zone--rectangle {
   min-height: 250px;
 }
+.ad-zone-home-top {
+  margin: 20px 4vw 0;
+}
+.ad-zone-home-mid,
+.ad-zone-home-feed {
+  min-height: 92px;
+}
+.ad-zone-home-bottom {
+  margin-top: 36px;
+}
 .ad-zone-label { pointer-events: none; }
 .ad-zone-label strong { display: block; color: var(--text2); font-size: 13px; margin-bottom: 3px; }
 .ad-clickable {
@@ -395,6 +405,18 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
   #hamburger { display: flex; }
   .movies-grid { grid-template-columns: repeat(auto-fill,minmax(130px,1fr)); gap: 9px; }
   .featured-row { grid-template-columns: 1fr; }
+  .ad-zone {
+    margin: 22px 0;
+    min-height: 76px;
+    padding: 10px;
+  }
+  .ad-zone-home-top {
+    margin: 14px 4vw 0;
+    min-height: 72px;
+  }
+  .ad-zone--rectangle {
+    min-height: 220px;
+  }
 }
 @media (max-width: 480px) {
   .footer-grid { grid-template-columns: 1fr; }
@@ -659,6 +681,34 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
 .form-group input::placeholder, .form-group textarea::placeholder { color: var(--text3); }
 .form-hint { font-size: 10px; color: var(--text3); margin-top: 4px; }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.genre-check-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.genre-check {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 36px;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--bg3);
+  color: var(--text2);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.25;
+}
+.genre-check input {
+  width: auto;
+  accent-color: var(--red);
+}
+.genre-check:has(input:checked) {
+  color: var(--white);
+  border-color: rgba(229,9,20,.5);
+  background: rgba(229,9,20,.12);
+}
 .admin-btns { display: flex; gap: 9px; flex-wrap: wrap; margin-top: 4px; }
 .btn-save { background: var(--red); color: #fff; padding: 10px 22px; border-radius: 8px; font-size: 13px; font-weight: 700; transition: var(--tr); }
 .btn-save:hover { background: var(--red2); transform: translateY(-1px); box-shadow: var(--glow-red); }
@@ -707,6 +757,7 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
 @media (max-width: 768px) {
   .admin-layout { grid-template-columns: 1fr; }
   .form-row { grid-template-columns: 1fr; }
+  .genre-check-list { grid-template-columns: 1fr; }
 }
 /* ===== YouTube Fallback ===== */
 

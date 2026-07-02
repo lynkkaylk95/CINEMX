@@ -45,18 +45,19 @@
 
           <div class="form-row">
             <div class="form-group">
-              <label for="genre">Thể loại:</label>
-              <select id="genre">
-                <option value="Acción">💥 Hành động (Acción)</option>
-                <option value="Comedia">😂 Hài hước (Comedia)</option>
-                <option value="Drama">🎭 Chính kịch (Drama)</option>
-                <option value="Terror">👻 Kinh dị (Terror)</option>
-                <option value="Animación">🎨 Hoạt hình (Animación)</option>
-                <option value="Ciencia Ficción">🚀 Viễn tưởng (Ciencia Ficción)</option>
-                <option value="Romance">💖 Lãng mạn (Romance)</option>
-                <option value="Thriller">🕵️ Gây cấn (Thriller)</option>
-                <option value="Series">📺 Phim bộ (Series)</option>
-              </select>
+              <label>Thể loại:</label>
+              <div class="genre-check-list" id="genre-options">
+                <label class="genre-check"><input type="checkbox" name="genres" value="Acción"> <span>💥 Hành động</span></label>
+                <label class="genre-check"><input type="checkbox" name="genres" value="Comedia"> <span>😂 Hài hước</span></label>
+                <label class="genre-check"><input type="checkbox" name="genres" value="Drama"> <span>🎭 Chính kịch</span></label>
+                <label class="genre-check"><input type="checkbox" name="genres" value="Terror"> <span>👻 Kinh dị</span></label>
+                <label class="genre-check"><input type="checkbox" name="genres" value="Animación"> <span>🎨 Hoạt hình</span></label>
+                <label class="genre-check"><input type="checkbox" name="genres" value="Ciencia Ficción"> <span>🚀 Viễn tưởng</span></label>
+                <label class="genre-check"><input type="checkbox" name="genres" value="Romance"> <span>💖 Lãng mạn</span></label>
+                <label class="genre-check"><input type="checkbox" name="genres" value="Thriller"> <span>🕵️ Gây cấn</span></label>
+                <label class="genre-check"><input type="checkbox" name="genres" value="Series"> <span>📺 Phim bộ</span></label>
+              </div>
+              <div class="form-hint">Có thể chọn nhiều thể loại cho cùng một phim.</div>
             </div>
             <div class="form-group">
               <label for="type">Loại:</label>
