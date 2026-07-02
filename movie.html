@@ -34,10 +34,10 @@
       <a href="index.html?genre=Drama">Drama</a>
       <a href="index.html?genre=Terror">Terror</a>
       <a href="index.html?genre=Series">Series</a>
-      <a href="index.html?genre=Học đường">Học đường</a>
-      <a href="index.html?genre=Xuyên không">Xuyên không</a>
-      <a href="index.html?genre=Cổ trang">Cổ trang</a>
-      <a href="index.html?genre=Cung đấu">Cung đấu</a>
+      <a href="index.html?genre=Escolar">Escolar</a>
+      <a href="index.html?genre=Viajes en el tiempo">Viajes en el tiempo</a>
+      <a href="index.html?genre=De época">De época</a>
+      <a href="index.html?genre=Intrigas palaciegas">Intrigas palaciegas</a>
     </div>
     <div class="nav-right">
       <a href="index.html" style="font-size: 14px; font-weight: 600; color: var(--text2); display: flex; align-items: center; gap: 4px;">
@@ -280,7 +280,16 @@
     function getMovieGenres(movie) {
       const values = Array.isArray(movie?.genres) ? movie.genres : [];
       const legacy = movie?.genre ? [movie.genre] : [];
-      return [...new Set([...values, ...legacy].map(g => String(g || '').trim()).filter(Boolean))];
+      const aliases = {
+        'Học đường': 'Escolar',
+        'Xuyên không': 'Viajes en el tiempo',
+        'Cổ trang': 'De época',
+        'Cung đấu': 'Intrigas palaciegas'
+      };
+      return [...new Set([...values, ...legacy].map(g => {
+        const genre = String(g || '').trim();
+        return aliases[genre] || genre;
+      }).filter(Boolean))];
     }
 
     function getGenreLabel(movie) {

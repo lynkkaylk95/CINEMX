@@ -4,6 +4,26 @@
 ============================================================ */
 
 const MOVIES_STORAGE_KEY = 'cinemax_movies';
+const GENRE_ALIASES = {
+  'Học đường': 'Escolar',
+  'Xuyên không': 'Viajes en el tiempo',
+  'Cổ trang': 'De época',
+  'Cung đấu': 'Intrigas palaciegas'
+};
+const ADMIN_GENRE_LABELS = {
+  'Acción': 'Hành động',
+  'Comedia': 'Hài hước',
+  'Drama': 'Chính kịch',
+  'Terror': 'Kinh dị',
+  'Ciencia Ficción': 'Viễn tưởng',
+  'Romance': 'Lãng mạn',
+  'Thriller': 'Gây cấn',
+  'Series': 'Phim bộ',
+  'Escolar': 'Học đường',
+  'Viajes en el tiempo': 'Xuyên không',
+  'De época': 'Cổ trang',
+  'Intrigas palaciegas': 'Cung đấu'
+};
 let currentMovies = loadSavedMovies().map(normalizeMovieGenres);
 let activeEpisodeTags = [];
 function loadSavedMovies() {
@@ -50,11 +70,14 @@ function getThumbnailUrl(value, fallbackYtId = '') {
 function getMovieGenres(movie) {
   const values = Array.isArray(movie?.genres) ? movie.genres : [];
   const legacy = movie?.genre ? [movie.genre] : [];
-  return [...new Set([...values, ...legacy].map(g => String(g || '').trim()).filter(Boolean))];
+  return [...new Set([...values, ...legacy].map(g => {
+    const genre = String(g || '').trim();
+    return GENRE_ALIASES[genre] || genre;
+  }).filter(Boolean))];
 }
 
 function getGenreLabel(movie) {
-  return getMovieGenres(movie).join(' • ') || '-';
+  return getMovieGenres(movie).map(genre => ADMIN_GENRE_LABELS[genre] || genre).join(' • ') || '-';
 }
 
 function normalizeMovieGenres(movie) {

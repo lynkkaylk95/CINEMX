@@ -13,11 +13,17 @@ const STATIC_GENRES = [
   'Romance',
   'Thriller',
   'Series',
-  'Học đường',
-  'Xuyên không',
-  'Cổ trang',
-  'Cung đấu'
+  'Escolar',
+  'Viajes en el tiempo',
+  'De época',
+  'Intrigas palaciegas'
 ];
+const GENRE_ALIASES = {
+  'Học đường': 'Escolar',
+  'Xuyên không': 'Viajes en el tiempo',
+  'Cổ trang': 'De época',
+  'Cung đấu': 'Intrigas palaciegas'
+};
 let currentGenre = 'Todos';
 let currentSearch = '';
 let moviesList = loadMoviesList();
@@ -54,7 +60,10 @@ function escapeAttr(value) {
 function getMovieGenres(movie) {
   const values = Array.isArray(movie?.genres) ? movie.genres : [];
   const legacy = movie?.genre ? [movie.genre] : [];
-  return [...new Set([...values, ...legacy].map(g => String(g || '').trim()).filter(Boolean))];
+  return [...new Set([...values, ...legacy].map(g => {
+    const genre = String(g || '').trim();
+    return GENRE_ALIASES[genre] || genre;
+  }).filter(Boolean))];
 }
 
 function getGenreLabel(movie) {
@@ -216,6 +225,14 @@ function showSection(id, display) {
   if (el) el.style.display = display;
 }
 
+function scrollToMovieResults(behavior = 'smooth') {
+  const target = document.getElementById('sect-trending') || document.getElementById('main');
+  if (!target) return;
+  const navHeight = document.getElementById('navbar')?.offsetHeight || 0;
+  const targetTop = target.getBoundingClientRect().top + window.scrollY - navHeight - 18;
+  window.scrollTo({ top: Math.max(0, targetTop), behavior });
+}
+
 function renderAll() {
   const filtered = filterMovies(currentGenre, currentSearch);
   const noRes = document.getElementById('no-results');
@@ -238,10 +255,10 @@ function renderAll() {
     const sciFi = moviesList.filter(m => hasGenre(m, 'Ciencia Ficción')).slice(0, 8);
     const romance = moviesList.filter(m => hasGenre(m, 'Romance')).slice(0, 8);
     const thriller = moviesList.filter(m => hasGenre(m, 'Thriller')).slice(0, 8);
-    const school = moviesList.filter(m => hasGenre(m, 'Học đường')).slice(0, 8);
-    const timeTravel = moviesList.filter(m => hasGenre(m, 'Xuyên không')).slice(0, 8);
-    const costume = moviesList.filter(m => hasGenre(m, 'Cổ trang')).slice(0, 8);
-    const palace = moviesList.filter(m => hasGenre(m, 'Cung đấu')).slice(0, 8);
+    const school = moviesList.filter(m => hasGenre(m, 'Escolar')).slice(0, 8);
+    const timeTravel = moviesList.filter(m => hasGenre(m, 'Viajes en el tiempo')).slice(0, 8);
+    const costume = moviesList.filter(m => hasGenre(m, 'De época')).slice(0, 8);
+    const palace = moviesList.filter(m => hasGenre(m, 'Intrigas palaciegas')).slice(0, 8);
     renderGrid('grid-trending', trending.length ? trending : moviesList.slice(0, 8));
     renderGrid('grid-new', newMovies.length ? newMovies : moviesList.slice(0, 8));
     renderGrid('grid-series', series, 'feat');
@@ -347,7 +364,7 @@ function filterByGenre(genre) {
   updateGenreTabs();
   syncUrl();
   renderAll();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+  scrollToMovieResults();
 }
 
 function toggleMenu() {
@@ -403,4 +420,7 @@ document.addEventListener('DOMContentLoaded', () => {
   applyInitialQueryParams();
   initDailyHero();
   renderAll();
+  if (currentGenre !== 'Todos' || currentSearch) {
+    requestAnimationFrame(() => scrollToMovieResults('auto'));
+  }
 });
