@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+  <meta charset="UTF-8">
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="description" id="meta-desc" content="Mira pel?culas y series de 2023 en espa?ol latino en CineMax MX. Estrenos, dramas, romance, acci?n y t?tulos populares.">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#0a0a0f">
+  <link rel="canonical" id="canonical-link" href="https://cinemx.moviemx.workers.dev/ano/2023">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="CineMax MX">
+  <meta property="og:title" id="og-title" content="Pel?culas 2023 en espa?ol latino - CineMax MX">
+  <meta property="og:description" id="og-desc" content="Mira pel?culas y series de 2023 en espa?ol latino en CineMax MX. Estrenos, dramas, romance, acci?n y t?tulos populares.">
+  <meta property="og:url" id="og-url" content="https://cinemx.moviemx.workers.dev/ano/2023">
+  <meta property="og:image" id="og-image" content="https://i3.ytimg.com/vi/Qb-2xKrPsP0/maxresdefault.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" id="twitter-title" content="Pel?culas 2023 en espa?ol latino - CineMax MX">
+  <meta name="twitter:description" id="twitter-desc" content="Mira pel?culas y series de 2023 en espa?ol latino en CineMax MX. Estrenos, dramas, romance, acci?n y t?tulos populares.">
+  <meta name="twitter:image" id="twitter-image" content="https://i3.ytimg.com/vi/Qb-2xKrPsP0/maxresdefault.jpg">
+  <title>Pel?culas 2023 en espa?ol latino - CineMax MX</title>
+
+  <!-- Google Analytics -->
+  <script src="js/analytics.js"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-55GL8N8TFV"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Adsterra Smartlink - Top Bar -->
+  <div id="ad-top-bar">
+    🎬 <strong>CineMax MX</strong> &nbsp;|&nbsp; Mira miles de títulos gratis &nbsp;|&nbsp;
+    <a href="#" onclick="showToast('¡Oferta Adsterra Smartlink!'); return false;">Ver oferta exclusiva →</a>
+  </div>
+
+  <!-- Navbar -->
+  <nav id="navbar">
+    <div class="nav-logo" onclick="window.location.href='index.html'">CINE<span>MAX</span></div>
+    
+    <div class="nav-links">
+      <a href="#" class="active" onclick="filterByGenre('Todos'); return false;">Inicio</a>
+      <a href="#" onclick="filterByGenre('Acción'); return false;">Acción</a>
+      <a href="#" onclick="filterByGenre('Comedia'); return false;">Comedia</a>
+      <a href="#" onclick="filterByGenre('Drama'); return false;">Drama</a>
+      <a href="#" onclick="filterByGenre('Terror'); return false;">Terror</a>
+      <a href="#" onclick="filterByGenre('Series'); return false;">Series</a>
+      <a href="#" onclick="filterByGenre('Escolar'); return false;">Escolar</a>
+      <a href="#" onclick="filterByGenre('Viajes en el tiempo'); return false;">Viajes en el tiempo</a>
+      <a href="#" onclick="filterByGenre('De época'); return false;">De época</a>
+      <a href="#" onclick="filterByGenre('Intrigas palaciegas'); return false;">Intrigas palaciegas</a>
+    </div>
+
+    <div class="nav-right">
+      <div class="nav-search-wrap">
+        <div id="search-box">
+          <input type="search" id="search-input" placeholder="Buscar película..." autocomplete="off">
+        </div>
+        <button id="search-toggle" onclick="toggleSearch()" aria-label="Buscar">🔍</button>
+      </div>
+      <button id="hamburger" onclick="toggleMenu()" aria-label="Menú">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div id="mobile-menu">
+    <a href="#" onclick="filterByGenre('Todos'); closeMenu(); return false;">🏠 Inicio</a>
+    <a href="#" onclick="filterByGenre('Acción'); closeMenu(); return false;">💥 Acción</a>
+    <a href="#" onclick="filterByGenre('Comedia'); closeMenu(); return false;">😂 Comedia</a>
+    <a href="#" onclick="filterByGenre('Drama'); closeMenu(); return false;">🎭 Drama</a>
+    <a href="#" onclick="filterByGenre('Terror'); closeMenu(); return false;">👻 Terror</a>
+    <a href="#" onclick="filterByGenre('Ciencia Ficción'); closeMenu(); return false;">🚀 Ciencia Ficción</a>
+    <a href="#" onclick="filterByGenre('Romance'); closeMenu(); return false;">💖 Romance</a>
+    <a href="#" onclick="filterByGenre('Thriller'); closeMenu(); return false;">🕵️ Thriller</a>
+    <a href="#" onclick="filterByGenre('Series'); closeMenu(); return false;">📺 Series</a>
+    <a href="#" onclick="filterByGenre('Escolar'); closeMenu(); return false;">🏫 Escolar</a>
+    <a href="#" onclick="filterByGenre('Viajes en el tiempo'); closeMenu(); return false;">⏳ Viajes en el tiempo</a>
+    <a href="#" onclick="filterByGenre('De época'); closeMenu(); return false;">👘 De época</a>
+    <a href="#" onclick="filterByGenre('Intrigas palaciegas'); closeMenu(); return false;">⚔️ Intrigas palaciegas</a>
+    <div id="mob-search">
+      <input type="search" id="mob-search-input" placeholder="🔍 Buscar película o serie..." oninput="handleSearch(this.value)" autocomplete="off">
+    </div>
+  </div>
+
+  <!-- Hero Section -->
+  <section id="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-glow"></div>
+    <div class="hero-fade"></div>
+    <div class="hero-deco"></div>
+    <div id="hero-content">
+      <div class="hero-badge">🔥 Tendencia #1 en México</div>
+      <h1 id="hero-title">El Último Imperio</h1>
+      <p id="hero-desc">
+        En un México del futuro cercano, un joven hacker descubre que los cimientos del poder ocultan un secreto que podría cambiarlo todo. Una historia de traición, redención y revolución.
+      </p>
+      <div class="hero-meta">
+        <span class="hero-meta-item">
+          <span class="rating-pill">⭐ 8.7</span>
+        </span>
+        <span class="hero-meta-item"><span class="dot"></span> 2026</span>
+        <span class="hero-meta-item"><span class="dot"></span> 2h 18min</span>
+        <span class="hero-meta-item"><span class="dot"></span> Acción • Ciencia Ficción</span>
+      </div>
+      <div class="hero-btns">
+        <button class="btn-play" onclick="navigateToMovie(1)">▶ Ver Ahora</button>
+        <button class="btn-info" onclick="navigateToMovie(1)">ℹ Más info</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Adsterra Smartlink - Home Top -->
+  <div class="ad-zone ad-zone--leaderboard ad-zone-home-top">
+    <div class="ad-zone-label">
+      <strong>📢 Publicidad</strong>
+      Banner principal para Adsterra
+    </div>
+  </div>
+
+  <!-- Main Content -->
+  <main id="main">
+
+    <!-- Genre Filter Tabs -->
+    <div class="genre-bar">
+      <div class="genre-tabs" id="genre-tabs-container">
+        <button class="genre-tab active" onclick="filterByGenre('Todos')">🎬 Todos</button>
+        <button class="genre-tab" onclick="filterByGenre('Acción')">💥 Acción</button>
+        <button class="genre-tab" onclick="filterByGenre('Comedia')">😂 Comedia</button>
+        <button class="genre-tab" onclick="filterByGenre('Drama')">🎭 Drama</button>
+        <button class="genre-tab" onclick="filterByGenre('Terror')">👻 Terror</button>
+        <button class="genre-tab" onclick="filterByGenre('Ciencia Ficción')">🚀 Ciencia Ficción</button>
+        <button class="genre-tab" onclick="filterByGenre('Romance')">💖 Romance</button>
+        <button class="genre-tab" onclick="filterByGenre('Thriller')">🕵️ Thriller</button>
+        <button class="genre-tab" onclick="filterByGenre('Series')">📺 Series</button>
+        <button class="genre-tab" onclick="filterByGenre('Escolar')">🏫 Escolar</button>
+        <button class="genre-tab" onclick="filterByGenre('Viajes en el tiempo')">⏳ Viajes en el tiempo</button>
+        <button class="genre-tab" onclick="filterByGenre('De época')">👘 De época</button>
+        <button class="genre-tab" onclick="filterByGenre('Intrigas palaciegas')">⚔️ Intrigas palaciegas</button>
+      </div>
+    </div>
+
+    <div class="genre-bar year-bar">
+      <div class="genre-tabs" id="year-tabs-container">
+        <button class="genre-tab year-tab" onclick="filterByYear(2023)">2023</button>
+        <button class="genre-tab year-tab" onclick="filterByYear(2024)">2024</button>
+        <button class="genre-tab year-tab" onclick="filterByYear(2025)">2025</button>
+        <button class="genre-tab year-tab" onclick="filterByYear(2026)">2026</button>
+      </div>
+    </div>
+
+    <!-- No Results -->
+    <div id="no-results">
+      <div class="nr-icon">🔍</div>
+      <h3>Sin resultados</h3>
+      <p>No encontramos películas con ese criterio. Intenta con otro término.</p>
+    </div>
+
+    <!-- Section: Trending -->
+    <section id="sect-trending" class="content-section">
+      <div class="section-header">
+        <h2 class="section-title"><span class="icon">🔥</span> Más Vistos Esta Semana <span class="section-line"></span></h2>
+        <a href="#" class="view-all" onclick="filterByGenre('Todos'); return false;">Ver todo →</a>
+      </div>
+      <div class="movies-grid" id="grid-trending"></div>
+    </section>
+
+    <!-- Adsterra Smartlink - Mid -->
+    <div class="ad-zone ad-zone-home-mid">
+      <div class="ad-zone-label">
+        <strong>📢 Publicidad</strong>
+        Zona Adsterra Smartlink — Pega aquí tu script
+      </div>
+    </div>
+
+    <!-- Section: Estrenos -->
+    <section id="sect-new" class="content-section">
+      <div class="section-header">
+        <h2 class="section-title"><span class="icon">✨</span> Estrenos 2026 <span class="section-line"></span></h2>
+        <a href="#" class="view-all" onclick="filterByGenre('Todos'); return false;">Ver todo →</a>
+      </div>
+      <div class="movies-row" id="grid-new"></div>
+    </section>
+
+    <!-- Section: Series -->
+    <section id="sect-series" class="content-section">
+      <div class="section-header">
+        <h2 class="section-title"><span class="icon">📺</span> Series Populares <span class="section-line"></span></h2>
+        <a href="#" class="view-all" onclick="filterByGenre('Series'); return false;">Ver todo →</a>
+      </div>
+      <div class="featured-row" id="grid-series"></div>
+    </section>
+
+    <!-- Affiliate Section -->
+    <section id="affiliate-section">
+      <div class="aff-label">🛒 Ofertas para ti</div>
+      <h2 class="aff-title">Mejora tu experiencia de cine</h2>
+      <p class="aff-desc">
+        Disfruta películas con el mejor equipo. Aprovecha estas ofertas exclusivas seleccionadas para ti en México.
+      </p>
+      <div class="aff-links">
+        <a href="#" class="aff-btn aff-btn-1" onclick="showToast('Redirigiendo a Amazon México...'); return true;">
+          📺 Smart TV 4K — Ver oferta
+        </a>
+        <a href="#" class="aff-btn aff-btn-2" onclick="showToast('Redirigiendo a Mercado Libre...'); return true;">
+          🎧 Audífonos Bluetooth — Ver oferta
+        </a>
+        <a href="#" class="aff-btn aff-btn-3" onclick="showToast('Redirigiendo a NordVPN...'); return true;">
+          🚀 VPN Premium — Descuento
+        </a>
+      </div>
+    </section>
+
+    <!-- Section: Acción -->
+    <section id="sect-action" class="content-section">
+      <div class="section-header">
+        <h2 class="section-title"><span class="icon">💥</span> Acción y Aventura <span class="section-line"></span></h2>
+        <a href="#" class="view-all" onclick="filterByGenre('Acción'); return false;">Ver todo →</a>
+      </div>
+      <div class="movies-grid" id="grid-action"></div>
+    </section>
+
+    <!-- Adsterra Smartlink - Bottom -->
+    <div class="ad-zone ad-zone-home-feed">
+      <div class="ad-zone-label">
+        <strong>📢 Publicidad</strong>
+        Zona Adsterra Smartlink — Pega aquí tu script
+      </div>
+    </div>
+
+    <!-- Section: Comedia -->
+    <section id="sect-comedy" class="content-section">
+      <div class="section-header">
+        <h2 class="section-title"><span class="icon">😂</span> Comedia y Familia <span class="section-line"></span></h2>
+        <a href="#" class="view-all" onclick="filterByGenre('Comedia'); return false;">Ver todo →</a>
+      </div>
+      <div class="movies-grid" id="grid-comedy"></div>
+    </section>
+
+    <!-- Section: Drama -->
+    <section id="sect-drama" class="content-section">
+      <div class="section-header">
+        <h2 class="section-title"><span class="icon">🎭</span> Drama y Emoción <span class="section-line"></span></h2>
+        <a href="#" class="view-all" onclick="filterByGenre('Drama'); return false;">Ver todo →</a>
+      </div>
+      <div class="movies-grid" id="grid-drama"></div>
+    </section>
+
+    <!-- Section: Terror -->
+    <section id="sect-terror" class="content-section">
+      <div class="section-header">
+        <h2 class="section-title"><span class="icon">👻</span> Terror y Suspenso <span class="section-line"></span></h2>
+        <a href="#" class="view-all" onclick="filterByGenre('Terror'); return false;">Ver todo →</a>
+      </div>
+      <div class="movies-grid" id="grid-terror"></div>
+    </section>
+
+    <!-- Section: Ciencia Ficción -->
+    <section id="sect-sci-fi" class="content-section">
+      <div class="section-header">
+        <h2 class="section-title"><span class="icon">🚀</span> Ciencia Ficción <span class="section-line"></span></h2>
+        <a href="#" class="view-all" onclick="filterByGenre('Ciencia Ficción'); return false;">Ver todo →</a>
+      </div>
+      <div class="movies-grid" id="grid-sci-fi"></div>
+    </section>
+
+    <!-- Section: Romance -->
+    <section id="sect-romance" class="content-section">
+      <div class="section-header">
+        <h2 class="section-title"><span class="icon">💖</span> Romance Destacado <span class="section-line"></span></h2>
+        <a href="#" class="view-all" onclick="filterByGenre('Romance'); return false;">Ver todo →</a>
+      </div>
+      <div class="movies-grid" id="grid-romance"></div>
+    </section>
+
+    <!-- Section: Thriller -->
+    <section id="sect-thriller" class="content-section">
+      <div class="section-header">
+        <h2 class="section-title"><span class="icon">🕵️</span> Thriller y Misterio <span class="section-line"></span></h2>
+        <a href="#" class="view-all" onclick="filterByGenre('Thriller'); return false;">Ver todo →</a>
+      </div>
+      <div class="movies-grid" id="grid-thriller"></div>
+    </section>
+
+    <!-- Section: Escolar -->
+    <section id="sect-school" class="content-section">
+      <div class="section-header">
+        <h2 class="section-title"><span class="icon">🏫</span> Escolar <span class="section-line"></span></h2>
+        <a href="#" class="view-all" onclick="filterByGenre('Escolar'); return false;">Ver todo →</a>
+      </div>
+      <div class="movies-grid" id="grid-school"></div>
+    </section>
+
+    <!-- Section: Viajes en el tiempo -->
+    <section id="sect-time-travel" class="content-section">
+      <div class="section-header">
+        <h2 class="section-title"><span class="icon">⏳</span> Viajes en el tiempo <span class="section-line"></span></h2>
+        <a href="#" class="view-all" onclick="filterByGenre('Viajes en el tiempo'); return false;">Ver todo →</a>
+      </div>
+      <div class="movies-grid" id="grid-time-travel"></div>
+    </section>
+
+    <!-- Section: De época -->
+    <section id="sect-costume" class="content-section">
+      <div class="section-header">
+        <h2 class="section-title"><span class="icon">👘</span> De época <span class="section-line"></span></h2>
+        <a href="#" class="view-all" onclick="filterByGenre('De época'); return false;">Ver todo →</a>
+      </div>
+      <div class="movies-grid" id="grid-costume"></div>
+    </section>
+
+    <!-- Section: Intrigas palaciegas -->
+    <section id="sect-palace" class="content-section">
+      <div class="section-header">
+        <h2 class="section-title"><span class="icon">⚔️</span> Intrigas palaciegas <span class="section-line"></span></h2>
+        <a href="#" class="view-all" onclick="filterByGenre('Intrigas palaciegas'); return false;">Ver todo →</a>
+      </div>
+      <div class="movies-grid" id="grid-palace"></div>
+    </section>
+
+    <!-- Adsterra Smartlink - Home Bottom -->
+    <div class="ad-zone ad-zone--leaderboard ad-zone-home-bottom">
+      <div class="ad-zone-label">
+        <strong>📢 Publicidad</strong>
+        Banner inferior para Adsterra
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo">CINE<span>MAX</span></div>
+        <p>La mejor plataforma de streaming gratis en México. Disfruta el mejor cine y series desde tu smartphone.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Géneros</h4>
+        <ul>
+          <li><a href="#" onclick="filterByGenre('Acción'); return false;">Acción</a></li>
+          <li><a href="#" onclick="filterByGenre('Comedia'); return false;">Comedia</a></li>
+          <li><a href="#" onclick="filterByGenre('Drama'); return false;">Drama</a></li>
+          <li><a href="#" onclick="filterByGenre('Terror'); return false;">Terror</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Plataforma</h4>
+        <ul>
+          <li><a href="index.html">Inicio</a></li>
+          <li><a href="#">Privacidad</a></li>
+          <li><a href="#">Términos</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contacto</h4>
+        <ul>
+          <li><a href="#">Soporte</a></li>
+          <li><a href="#">DMCA</a></li>
+          <li><a href="#">Publicidad</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 CineMax MX — Sitio estático optimizado para Cloudflare Pages.</p>
+      <button onclick="showToast('Idioma: Español (México)')">🇲🇽 ES-MX</button>
+    </div>
+  </footer>
+
+  <button id="back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Volver arriba">↑</button>
+  <div id="toast"></div>
+
+  <!-- Scripts -->
+  <script src="js/movies.js?v=seo-20260702"></script>
+  <script src="js/ads.js" defer></script>
+  <script src="js/app.js?v=seo-20260702"></script>
+</body>
+</html>
