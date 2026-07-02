@@ -1,0 +1,11 @@
+_redirects
+**/_redirects
+.git
+.git/**
+.wrangler
+.wrangler/**
+functions
+functions/**
+node_modules
+node_modules/**
+*.log
