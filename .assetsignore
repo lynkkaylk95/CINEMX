@@ -1,5 +1,7 @@
 _redirects
 **/_redirects
+public
+public/**
 .git
 .git/**
 .wrangler
@@ -8,4 +10,6 @@ functions
 functions/**
 node_modules
 node_modules/**
+worker.js
+wrangler.toml
 *.log

@@ -1,4 +1,4 @@
-// Base de datos de pel?culas y series de CineMax MX
+// Base de datos de películas y series de CineMax MX
 const MOVIES = [
   {
     "id": 1,
@@ -162,16 +162,16 @@ const MOVIES = [
   },
   {
     "id": 9,
-    "title": "La Fiscalía",
-    "genre": "Series",
-    "year": 2026,
-    "rating": 8.9,
-    "duration": "52min/ep",
+    "title": "¿¡Mi esposo es el Hombre más Rico!?",
+    "genre": "Romance",
+    "year": 2025,
+    "rating": 8.3,
+    "duration": "2h 39min",
     "type": "Serie",
-    "yt": "dQw4w9WgXcQ",
-    "emoji": "⚖️",
-    "desc": "Una fiscal incorruptible enfrenta a los poderes fácticos de la Ciudad de México en su búsqueda por justicia.",
-    "badge": "NUEVO",
+    "yt": "Sea7albCPWc",
+    "emoji": "🎬",
+    "desc": "La chica, al conocer al trabajador pobre, inmediatamente le pide pasar la noche juntos, sin darse cuenta de que él es en realidad el CEO oculto\n Ahora deben navegar la convivencia y sus verdaderas identidades mientras intentan mantener su unión en secreto ante sus familias.\n\nActrices: Chen Zheng Yang, Lu Lin Feng\nGénero: películas románticas, películas chinas, Multimillonario se hace pasar por pobre, dramas coreanos en español, peliculas completas en español latino, La Amada Esposa del CEO, Matrimonio de Conveniencia, kdrama español completos",
+    "badge": "SERIE",
     "episodes": [
       "Episodio 1",
       "Episodio 2",
@@ -185,22 +185,24 @@ const MOVIES = [
       "Episodio 10"
     ],
     "genres": [
+      "Romance",
       "Series"
     ],
-    "slug": "la-fiscalia"
+    "slug": "mi-esposo-es-el-hombre-mas-rico",
+    "thumb": "https://i3.ytimg.com/vi/Sea7albCPWc/hqdefault.jpg"
   },
   {
     "id": 10,
-    "title": "Neon Barrio",
-    "genre": "Series",
-    "year": 2025,
-    "rating": 8.5,
-    "duration": "38min/ep",
+    "title": "Señoria Estúpida y CEO Ciego",
+    "genre": "Romance",
+    "year": 2024,
+    "rating": 8.3,
+    "duration": "3h 04min",
     "type": "Serie",
-    "yt": "dQw4w9WgXcQ",
-    "emoji": "🌆",
-    "desc": "Jóvenes artistas en el México cyberpunk de 2060 luchan por sobrevivir y tạo ra nghệ thuật trong thế giới doanh nghiệp.",
-    "badge": "",
+    "yt": "CtBBh5xuk6U",
+    "emoji": "🎬",
+    "desc": "Se casó con un CEO ciego en lugar de su hermana, pero él solo fingía estar ciego y la mimaba mucho\n\n\nActrices: Bai Fang Wen (白方文) Jia Yixuan (贾翼瑄)\nGénero: películas románticas, películas chinas, Multimillonario se hace pasar por pobre, dramas coreanos en español, doramas en español latino completas, La Amada Esposa del CEO, Matrimonio de Conveniencia, kdrama español completos",
+    "badge": "SERIE",
     "episodes": [
       "Episodio 1",
       "Episodio 2",
@@ -210,22 +212,24 @@ const MOVIES = [
       "Episodio 6"
     ],
     "genres": [
+      "Romance",
       "Series"
     ],
-    "slug": "neon-barrio"
+    "slug": "senoria-estupida-y-ceo-ciego",
+    "thumb": "https://i3.ytimg.com/vi/CtBBh5xuk6U/hqdefault.jpg"
   },
   {
     "id": 11,
-    "title": "Chefs de Guerra",
-    "genre": "Series",
-    "year": 2026,
-    "rating": 8,
-    "duration": "42min/ep",
+    "title": "Venganza de la Exesposa",
+    "genre": "Thriller",
+    "year": 2024,
+    "rating": 8.1,
+    "duration": "2h 24min",
     "type": "Serie",
-    "yt": "dQw4w9WgXcQ",
-    "emoji": "👨‍🍳",
-    "desc": "Diez chefs mexicanos compiten por el título del mejor restaurante del país. Cada plato cuenta una historia.",
-    "badge": "POPULAR",
+    "yt": "s6JzNvkrQ2o",
+    "emoji": "🎬",
+    "desc": "Ignorada 5 años como ama de casa de CEO, ella se va, cuando él la ve de nuevo, ya es multimillonaria\n\nGénero: películas románticas, películas chinas, Multimillonario se hace pasar por pobre, dramas coreanos en español, doramas en español latino completas, kdrama español completos, Arrepentimiento después del divorcio, presidente disfrazado de pobre, Identidad Misteriosa y Matrimonio Relámpago, venganza al esposo tras renacer, tener hijo con CEO",
+    "badge": "SERIE",
     "episodes": [
       "Episodio 1",
       "Episodio 2",
@@ -237,26 +241,90 @@ const MOVIES = [
       "Episodio 8"
     ],
     "genres": [
+      "Thriller",
       "Series"
     ],
-    "slug": "chefs-de-guerra"
+    "slug": "venganza-de-la-exesposa",
+    "thumb": "https://i3.ytimg.com/vi/s6JzNvkrQ2o/hqdefault.jpg"
   },
   {
     "id": 12,
-    "title": "Creen que es un mendigo común, pero es Dios de la Guerra que vence a mil; bella señorita se enamora",
-    "genre": "Acción",
-    "year": 2026,
-    "rating": 9.2,
-    "duration": "1h 55min",
+    "title": "El CEO y Su Secretaria Heredera",
+    "genre": "Romance",
+    "year": 2025,
+    "rating": 9.5,
+    "duration": "2h 34min",
     "type": "Película",
-    "yt": "TooF1IQyoZQ",
-    "thumb": "https://i3.ytimg.com/vi/TooF1IQyoZQ/maxresdefault.jpg",
-    "desc": "El Maestro Supremo | Peliculas Completas | Estreno 2026 Mejor Películas de Acción en Español",
+    "yt": "O3BWvBpS2g0",
+    "thumb": "https://i3.ytimg.com/vi/O3BWvBpS2g0/hqdefault.jpg",
+    "desc": "¡El CEO la ignoró durante cinco años! Pero cuando la vio con otro hombre… se volvió loco de celos\n\nGénero: películas románticas, películas chinas, Multimillonario se hace pasar por pobre, dramas coreanos en español, doramas en español latino completas, kdrama español completos, Arrepentimiento después del divorcio, presidente disfrazado de pobre, Identidad Misteriosa y Matrimonio Relámpago, Hija de hombre más rico, tener hijo con CEO",
     "badge": "NUEVO",
     "episodes": [],
     "genres": [
-      "Acción"
+      "Romance",
+      "Thriller"
     ],
-    "slug": "creen-que-es-un-mendigo-comun-pero-es-dios-de-la-guerra-que-vence-a-mil-bella-senorita-se-enamora"
+    "slug": "el-ceo-y-su-secretaria-heredera",
+    "emoji": "🎬"
+  },
+  {
+    "title": "El Divorcio del Príncipe y la Concubina",
+    "slug": "el-divorcio-del-principe-y-la-concubina",
+    "genre": "De época",
+    "genres": [
+      "De época",
+      "Intrigas palaciegas"
+    ],
+    "type": "Película",
+    "year": 2023,
+    "rating": 8.6,
+    "duration": "2h 23min",
+    "emoji": "🎬",
+    "yt": "4rM8lYyN75A",
+    "thumb": "https://i3.ytimg.com/vi/4rM8lYyN75A/hqdefault.jpg",
+    "desc": "Hermosa doctora de convierte accidentalmente a una princesa deshonrada. Usando su conocimiento moderno, la chica castiga a sus acosadores y decide divorciarse del príncipe, pero él se enamora profundamente de ella.\n\n\nActrices: Bai Fang Wen, Meng Na\nGénero: películas románticas, películas chinas, Multimillonario se hace pasar por pobre, dramas coreanos en español, peliculas completas en español latino",
+    "badge": "NUEVO",
+    "episodes": [],
+    "id": 13
+  },
+  {
+    "title": "La terca esposa del Sr. Gu",
+    "slug": "la-terca-esposa-del-sr-gu",
+    "genre": "Comedia",
+    "genres": [
+      "Comedia",
+      "Romance"
+    ],
+    "type": "Película",
+    "year": 2024,
+    "rating": 9.2,
+    "duration": "2h 36min",
+    "emoji": "🎬",
+    "yt": "mONA5x8dREM",
+    "thumb": "https://i3.ytimg.com/vi/mONA5x8dREM/hqdefault.jpg",
+    "desc": "El CEO traicionó a Cenicienta para cuidar de su Amante, pero después del divorcio, ¡la persiguió!\n\n\nActrices: Bai Fang Wen, Meng Na\nGénero: películas románticas, películas chinas, Multimillonario se hace pasar por pobre, dramas coreanos en español, doramas en español latino completas, kdrama español completos, Arrepentimiento después del divorcio, presidente disfrazado de pobre, Identidad Misteriosa y Matrimonio Relámpago, Hija de hombre más rico, tener hijo con CEO",
+    "badge": "NUEVO",
+    "episodes": [],
+    "id": 14
+  },
+  {
+    "title": "Matrimonio Relámpago",
+    "slug": "matrimonio-relampago",
+    "genre": "Romance",
+    "genres": [
+      "Romance",
+      "Thriller"
+    ],
+    "type": "Película",
+    "year": 2025,
+    "rating": 8.5,
+    "duration": "2h 45min",
+    "emoji": "🎬",
+    "yt": "AZCSQi2zWyc",
+    "thumb": "https://i3.ytimg.com/vi/AZCSQi2zWyc/hqdefault.jpg",
+    "desc": "Para evitar un matrimonio arreglado con un rico CEO, la chica, que oculta su identidad como multimillonaria, se casa rápidamente con un conductor pobre, sin saber que él es el jefe oculto y también el esposo del que ha huido\n\nActrices:\nGénero: películas románticas, películas chinas, Multimillonario se hace pasar por pobre, dramas coreanos en español, peliculas completas en español latino, La Amada Esposa del CEO, Matrimonio de Conveniencia, kdrama español completos",
+    "badge": "NUEVO",
+    "episodes": [],
+    "id": 15
   }
 ];

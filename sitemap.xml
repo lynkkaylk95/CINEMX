@@ -66,22 +66,37 @@
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://cinemx.moviemx.workers.dev/pelicula/la-fiscalia</loc>
+    <loc>https://cinemx.moviemx.workers.dev/pelicula/mi-esposo-es-el-hombre-mas-rico</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://cinemx.moviemx.workers.dev/pelicula/neon-barrio</loc>
+    <loc>https://cinemx.moviemx.workers.dev/pelicula/senoria-estupida-y-ceo-ciego</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://cinemx.moviemx.workers.dev/pelicula/chefs-de-guerra</loc>
+    <loc>https://cinemx.moviemx.workers.dev/pelicula/venganza-de-la-exesposa</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>
   <url>
-    <loc>https://cinemx.moviemx.workers.dev/pelicula/creen-que-es-un-mendigo-comun-pero-es-dios-de-la-guerra-que-vence-a-mil-bella-senorita-se-enamora</loc>
+    <loc>https://cinemx.moviemx.workers.dev/pelicula/el-ceo-y-su-secretaria-heredera</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://cinemx.moviemx.workers.dev/pelicula/el-divorcio-del-principe-y-la-concubina</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://cinemx.moviemx.workers.dev/pelicula/la-terca-esposa-del-sr-gu</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://cinemx.moviemx.workers.dev/pelicula/matrimonio-relampago</loc>
     <changefreq>weekly</changefreq>
     <priority>0.9</priority>
   </url>

@@ -7,10 +7,13 @@ const MOVIE_SLUGS = {
   "6": "los-trillizos-buscamos-a-papa",
   "7": "tio-ceo-me-ama",
   "8": "princesa-por-obligaciones",
-  "9": "la-fiscalia",
-  "10": "neon-barrio",
-  "11": "chefs-de-guerra",
-  "12": "creen-que-es-un-mendigo-comun-pero-es-dios-de-la-guerra-que-vence-a-mil-bella-senorita-se-enamora"
+  "9": "mi-esposo-es-el-hombre-mas-rico",
+  "10": "senoria-estupida-y-ceo-ciego",
+  "11": "venganza-de-la-exesposa",
+  "12": "el-ceo-y-su-secretaria-heredera",
+  "13": "el-divorcio-del-principe-y-la-concubina",
+  "14": "la-terca-esposa-del-sr-gu",
+  "15": "matrimonio-relampago"
 };
 
 export default {
