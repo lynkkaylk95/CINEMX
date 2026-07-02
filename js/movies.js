@@ -1,4 +1,4 @@
-// Base de datos de películas y series de CineMax MX
+// Base de datos de pel?culas y series de CineMax MX
 const MOVIES = [
   {
     "id": 1,
@@ -18,7 +18,8 @@ const MOVIES = [
       "Comedia",
       "Thriller"
     ],
-    "thumb": "https://i3.ytimg.com/vi/Qb-2xKrPsP0/maxresdefault.jpg"
+    "thumb": "https://i3.ytimg.com/vi/Qb-2xKrPsP0/maxresdefault.jpg",
+    "slug": "el-rey-dragon"
   },
   {
     "id": 2,
@@ -37,7 +38,8 @@ const MOVIES = [
     "genres": [
       "Drama",
       "Romance"
-    ]
+    ],
+    "slug": "oops-me-case-con-un-multimillonario"
   },
   {
     "id": 3,
@@ -56,7 +58,8 @@ const MOVIES = [
       "Romance",
       "Thriller"
     ],
-    "thumb": "https://i3.ytimg.com/vi/ykplaD5YS9c/maxresdefault.jpg"
+    "thumb": "https://i3.ytimg.com/vi/ykplaD5YS9c/maxresdefault.jpg",
+    "slug": "senorita-gu-y-tres-hermanos"
   },
   {
     "id": 4,
@@ -74,7 +77,8 @@ const MOVIES = [
     "genres": [
       "Thriller"
     ],
-    "thumb": "https://i3.ytimg.com/vi/kUazVTr93m8/maxresdefault.jpg"
+    "thumb": "https://i3.ytimg.com/vi/kUazVTr93m8/maxresdefault.jpg",
+    "slug": "levantarse-en-leon"
   },
   {
     "id": 5,
@@ -93,7 +97,8 @@ const MOVIES = [
       "Romance",
       "Thriller"
     ],
-    "thumb": "https://i3.ytimg.com/vi/qEjCvBvyhQQ/maxresdefault.jpg"
+    "thumb": "https://i3.ytimg.com/vi/qEjCvBvyhQQ/maxresdefault.jpg",
+    "slug": "dragon-inigualable"
   },
   {
     "id": 6,
@@ -112,7 +117,8 @@ const MOVIES = [
       "Drama",
       "Thriller"
     ],
-    "thumb": "https://www.youtube.com/watch?v=1VlVTlgwqvI"
+    "thumb": "https://www.youtube.com/watch?v=1VlVTlgwqvI",
+    "slug": "los-trillizos-buscamos-a-papa"
   },
   {
     "id": 7,
@@ -131,7 +137,8 @@ const MOVIES = [
       "Comedia",
       "Romance"
     ],
-    "thumb": "https://i3.ytimg.com/vi/gxGLEWWNYGA/maxresdefault.jpg"
+    "thumb": "https://i3.ytimg.com/vi/gxGLEWWNYGA/maxresdefault.jpg",
+    "slug": "tio-ceo-me-ama"
   },
   {
     "id": 8,
@@ -150,7 +157,8 @@ const MOVIES = [
       "Romance",
       "Series"
     ],
-    "thumb": "https://i3.ytimg.com/vi/gxzrCBXnteM/maxresdefault.jpg"
+    "thumb": "https://i3.ytimg.com/vi/gxzrCBXnteM/maxresdefault.jpg",
+    "slug": "princesa-por-obligaciones"
   },
   {
     "id": 9,
@@ -178,7 +186,8 @@ const MOVIES = [
     ],
     "genres": [
       "Series"
-    ]
+    ],
+    "slug": "la-fiscalia"
   },
   {
     "id": 10,
@@ -202,7 +211,8 @@ const MOVIES = [
     ],
     "genres": [
       "Series"
-    ]
+    ],
+    "slug": "neon-barrio"
   },
   {
     "id": 11,
@@ -228,7 +238,8 @@ const MOVIES = [
     ],
     "genres": [
       "Series"
-    ]
+    ],
+    "slug": "chefs-de-guerra"
   },
   {
     "id": 12,
@@ -245,6 +256,7 @@ const MOVIES = [
     "episodes": [],
     "genres": [
       "Acción"
-    ]
+    ],
+    "slug": "creen-que-es-un-mendigo-comun-pero-es-dios-de-la-guerra-que-vence-a-mil-bella-senorita-se-enamora"
   }
 ];

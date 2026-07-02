@@ -350,7 +350,7 @@ function renderAll() {
 
 function navigateToMovie(id) {
   const movie = moviesList.find(m => Number(m.id) === Number(id));
-  window.location.href = movie ? getMovieUrl(movie) : `movie.html?id=${encodeURIComponent(id)}`;
+  window.location.href = movie ? getMovieUrl(movie) : `/pelicula/pelicula-${encodeURIComponent(id)}`;
 }
 
 function syncUrl() {

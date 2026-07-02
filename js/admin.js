@@ -80,13 +80,25 @@ function getGenreLabel(movie) {
   return getMovieGenres(movie).map(genre => ADMIN_GENRE_LABELS[genre] || genre).join(' • ') || '-';
 }
 
+function slugify(value) {
+  return String(value || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/ñ/g, 'n')
+    .replace(/Ñ/g, 'n')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
 function normalizeMovieGenres(movie) {
   const genres = getMovieGenres(movie);
   const normalizedGenres = genres.length ? genres : ['Acción'];
   return {
     ...movie,
     genre: movie?.genre || normalizedGenres[0],
-    genres: normalizedGenres
+    genres: normalizedGenres,
+    slug: movie?.slug || slugify(movie?.title) || `pelicula-${movie?.id || ''}`
   };
 }
 
@@ -238,6 +250,7 @@ function saveMovie() {
 
   const movieData = {
     title,
+    slug: slugify(title),
     genre: genres[0],
     genres,
     type,
