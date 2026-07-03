@@ -68,6 +68,17 @@ function getThumbnailUrl(value, fallbackYtId = '') {
   return raw || (ytId ? `https://i3.ytimg.com/vi/${ytId}/hqdefault.jpg` : '');
 }
 
+function syncThumbnailFromYouTube() {
+  const ytInput = document.getElementById('yt');
+  const thumbInput = document.getElementById('thumb');
+  if (!ytInput || !thumbInput) return;
+
+  const ytId = extractYouTubeId(ytInput.value);
+  if (!ytId) return;
+
+  thumbInput.value = `https://i3.ytimg.com/vi/${ytId}/hqdefault.jpg`;
+}
+
 function getMovieGenres(movie) {
   const values = Array.isArray(movie?.genres) ? movie.genres : [];
   const legacy = movie?.genre ? [movie.genre] : [];
@@ -116,6 +127,11 @@ function setSelectedGenres(genres) {
 
 document.addEventListener('DOMContentLoaded', () => {
   setSelectedGenres(['Acción']);
+  const ytInput = document.getElementById('yt');
+  if (ytInput) {
+    ytInput.addEventListener('input', syncThumbnailFromYouTube);
+    ytInput.addEventListener('paste', () => setTimeout(syncThumbnailFromYouTube, 0));
+  }
   renderAdminList();
 });
 
