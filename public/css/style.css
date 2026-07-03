@@ -843,49 +843,6 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
 .form-group input::placeholder, .form-group textarea::placeholder { color: var(--text3); }
 .form-hint { font-size: 10px; color: var(--text3); margin-top: 4px; }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.video-check-panel {
-  margin-top: 10px;
-  padding: 10px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: rgba(255,255,255,.03);
-}
-.video-check-btn {
-  width: 100%;
-  min-height: 38px;
-  border-radius: 8px;
-  padding: 9px 12px;
-  color: #fff;
-  font-size: 12px;
-  font-weight: 800;
-  text-align: center;
-}
-.video-check-btn.idle { background: var(--bg4); color: var(--text2); }
-.video-check-btn.checking { background: #f39c12; color: #111; }
-.video-check-btn.ok { background: #27ae60; }
-.video-check-btn.bad { background: #d90429; box-shadow: 0 8px 22px rgba(217,4,41,.28); }
-.video-check-details {
-  margin-top: 7px;
-  color: var(--text3);
-  font-size: 11px;
-  line-height: 1.5;
-}
-.youtube-probe {
-  position: fixed;
-  left: -120vw;
-  top: 0;
-  width: 390px;
-  height: 219px;
-  overflow: hidden;
-  pointer-events: none;
-  opacity: .01;
-  z-index: -1;
-}
-.youtube-probe iframe {
-  width: 100%;
-  height: 100%;
-  border: 0;
-}
 .genre-check-list {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -975,13 +932,6 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
   .admin-layout { grid-template-columns: 1fr; }
   .form-row { grid-template-columns: 1fr; }
   .genre-check-list { grid-template-columns: 1fr; }
-  .video-check-panel {
-    padding: 9px;
-  }
-  .video-check-btn {
-    min-height: 42px;
-    font-size: 12px;
-  }
   .admin-btns {
     display: grid;
     grid-template-columns: 1fr 1fr;

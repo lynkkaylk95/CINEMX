@@ -26,15 +26,6 @@ const ADMIN_GENRE_LABELS = {
 };
 let currentMovies = loadSavedMovies().map(normalizeMovieGenres);
 let activeEpisodeTags = [];
-let videoCheckTimer = null;
-let youtubeApiPromise = null;
-let videoCheckState = {
-  status: 'idle',
-  videoId: '',
-  data: null,
-  requestId: 0
-};
-let youtubeProbePlayer = null;
 
 function loadSavedMovies() {
   try {
@@ -75,308 +66,6 @@ function getThumbnailUrl(value, fallbackYtId = '') {
     return `https://i3.ytimg.com/vi/${ytId}/hqdefault.jpg`;
   }
   return raw || (ytId ? `https://i3.ytimg.com/vi/${ytId}/hqdefault.jpg` : '');
-}
-
-function formatVideoDuration(totalSeconds) {
-  const seconds = Math.max(0, Math.round(Number(totalSeconds) || 0));
-  if (!seconds) return '';
-  const hours = Math.floor(seconds / 3600);
-  const minutes = Math.floor((seconds % 3600) / 60);
-  if (hours > 0) return `${hours}h ${String(minutes).padStart(2, '0')}min`;
-  return `${minutes || 1}min`;
-}
-
-function getYouTubeWatchUrl(videoId) {
-  return `https://www.youtube.com/watch?v=${encodeURIComponent(videoId)}`;
-}
-
-function getYouTubeEmbedUrl(videoId) {
-  const params = new URLSearchParams({
-    enablejsapi: '1',
-    playsinline: '1',
-    rel: '0',
-    modestbranding: '1'
-  });
-  if (window.location.origin && window.location.origin !== 'null') {
-    params.set('origin', window.location.origin);
-  }
-  if (window.location.href && !window.location.href.startsWith('file:')) {
-    params.set('widget_referrer', window.location.href);
-  }
-  return `https://www.youtube.com/embed/${encodeURIComponent(videoId)}?${params.toString()}`;
-}
-
-function setVideoCheckStatus(status, message) {
-  const btn = document.getElementById('video-check-btn');
-  const details = document.getElementById('video-check-details');
-  const submitBtn = document.getElementById('btn-submit');
-  const labels = {
-    idle: 'Chưa kiểm tra video',
-    checking: 'Đang kiểm tra video...',
-    ok: 'Video có thể sử dụng',
-    bad: 'Video không thể sử dụng'
-  };
-
-  if (btn) {
-    btn.textContent = labels[status] || labels.idle;
-    btn.className = `video-check-btn ${status}`;
-  }
-  if (details) details.textContent = message || '';
-  if (submitBtn) submitBtn.disabled = status !== 'ok';
-}
-
-function resetYouTubeProbe() {
-  const probe = document.getElementById('youtube-probe');
-  try {
-    if (youtubeProbePlayer && typeof youtubeProbePlayer.destroy === 'function') {
-      youtubeProbePlayer.destroy();
-    }
-  } catch (err) {
-    console.warn('Không thể dọn trình kiểm tra YouTube.', err);
-  }
-  youtubeProbePlayer = null;
-  if (probe) probe.innerHTML = '';
-}
-
-function markVideoCheckIdle(message = 'Dán link YouTube để kiểm tra khả năng nhúng trên thiết bị di động.') {
-  videoCheckState = {
-    ...videoCheckState,
-    status: 'idle',
-    videoId: '',
-    data: null,
-    requestId: videoCheckState.requestId + 1
-  };
-  resetYouTubeProbe();
-  setVideoCheckStatus('idle', message);
-}
-
-function loadYouTubeIframeAPI() {
-  if (window.YT && window.YT.Player) return Promise.resolve(window.YT);
-  if (youtubeApiPromise) return youtubeApiPromise;
-
-  youtubeApiPromise = new Promise((resolve, reject) => {
-    const previousReady = window.onYouTubeIframeAPIReady;
-    const timeout = window.setTimeout(() => reject(new Error('Không tải được YouTube IFrame API.')), 12000);
-
-    window.onYouTubeIframeAPIReady = () => {
-      window.clearTimeout(timeout);
-      if (typeof previousReady === 'function') previousReady();
-      resolve(window.YT);
-    };
-
-    if (!document.querySelector('script[src="https://www.youtube.com/iframe_api"]')) {
-      const script = document.createElement('script');
-      script.src = 'https://www.youtube.com/iframe_api';
-      script.async = true;
-      script.onerror = () => {
-        window.clearTimeout(timeout);
-        reject(new Error('Không tải được YouTube IFrame API.'));
-      };
-      document.head.appendChild(script);
-    }
-  });
-
-  return youtubeApiPromise;
-}
-
-async function fetchYouTubeOEmbed(videoId) {
-  const url = `https://www.youtube.com/oembed?url=${encodeURIComponent(getYouTubeWatchUrl(videoId))}&format=json`;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error('Không lấy được thông tin video từ YouTube.');
-  return res.json();
-}
-
-async function probeYouTubeEmbed(videoId) {
-  const YTApi = await loadYouTubeIframeAPI();
-  const probe = document.getElementById('youtube-probe');
-  if (!probe) throw new Error('Không tìm thấy vùng kiểm tra video.');
-  resetYouTubeProbe();
-
-  return new Promise((resolve) => {
-    const holderId = `yt-mobile-probe-${Date.now()}-${Math.round(Math.random() * 10000)}`;
-    let player = null;
-    let settled = false;
-    let durationPoll = null;
-    probe.innerHTML = `<div id="${holderId}"></div>`;
-
-    const finish = (result) => {
-      if (settled) return;
-      settled = true;
-      window.clearTimeout(timeout);
-      if (durationPoll) window.clearInterval(durationPoll);
-      try {
-        if (player && typeof player.destroy === 'function') {
-          player.destroy();
-        }
-      } catch (err) {
-        console.warn('Không thể dọn trình kiểm tra YouTube.', err);
-      }
-      youtubeProbePlayer = null;
-      if (probe) probe.innerHTML = '';
-      resolve(result);
-    };
-
-    const timeout = window.setTimeout(() => {
-      finish({
-        ok: false,
-        duration: 0,
-        reason: 'Không kiểm tra được trình phát YouTube. Vui lòng thử lại sau.'
-      });
-    }, 12000);
-
-    probe.innerHTML = `
-      <iframe
-        id="${holderId}"
-        src="${getYouTubeEmbedUrl(videoId)}"
-        title="Kiểm tra nhúng YouTube trên di động"
-        allow="autoplay; encrypted-media; picture-in-picture"
-        allowfullscreen
-        referrerpolicy="origin"
-        frameborder="0"></iframe>
-    `;
-
-    player = new YTApi.Player(holderId, {
-      events: {
-        onReady: (event) => {
-          let attempts = 0;
-          const readDuration = () => event.target && typeof event.target.getDuration === 'function'
-            ? Number(event.target.getDuration()) || 0
-            : 0;
-
-          durationPoll = window.setInterval(() => {
-            const duration = readDuration();
-            attempts += 1;
-            if (duration > 0 || attempts >= 18) {
-              finish({ ok: true, duration });
-            }
-          }, 250);
-        },
-        onError: (event) => {
-          const code = Number(event?.data);
-          if (code === 101 || code === 150) {
-            finish({ ok: false, code, reason: 'Chủ video không cho phép nhúng trên website.' });
-            return;
-          }
-          const reason = code === 153
-            ? 'YouTube từ chối cấu hình nhúng trên thiết bị di động.'
-            : 'Video không tồn tại, bị riêng tư hoặc YouTube từ chối phát.';
-          finish({ ok: false, code, reason });
-        }
-      }
-    });
-  });
-}
-
-function fillVideoMetadata(videoId, metadata, embedResult) {
-  const titleInput = document.getElementById('title');
-  const ytInput = document.getElementById('yt');
-  const thumbInput = document.getElementById('thumb');
-  const durationInput = document.getElementById('duration');
-  const thumbUrl = metadata?.thumbnail_url || `https://i3.ytimg.com/vi/${videoId}/hqdefault.jpg`;
-  const duration = formatVideoDuration(embedResult?.duration);
-
-  if (ytInput) ytInput.value = videoId;
-  if (titleInput && metadata?.title && (!titleInput.value.trim() || titleInput.dataset.autoFilled === '1')) {
-    titleInput.value = metadata.title;
-    titleInput.dataset.autoFilled = '1';
-  }
-  if (thumbInput && (!thumbInput.value.trim() || thumbInput.dataset.autoFilled === '1')) {
-    thumbInput.value = thumbUrl;
-    thumbInput.dataset.autoFilled = '1';
-  }
-  if (durationInput && duration && (!durationInput.value.trim() || durationInput.dataset.autoFilled === '1')) {
-    durationInput.value = duration;
-    durationInput.dataset.autoFilled = '1';
-  }
-}
-
-function clearAutoFilledVideoMetadata() {
-  ['title', 'thumb', 'duration'].forEach(id => {
-    const input = document.getElementById(id);
-    if (input && input.dataset.autoFilled === '1') {
-      input.value = '';
-      input.dataset.autoFilled = '0';
-    }
-  });
-}
-
-async function checkYouTubeVideoNow() {
-  const ytInput = document.getElementById('yt');
-  if (!ytInput) return;
-
-  const videoId = extractYouTubeId(ytInput.value);
-  if (!videoId) {
-    markVideoCheckIdle('Dán link YouTube hợp lệ để hệ thống kiểm tra trước khi lưu.');
-    return;
-  }
-
-  const requestId = videoCheckState.requestId + 1;
-  videoCheckState = { status: 'checking', videoId, data: null, requestId };
-  setVideoCheckStatus('checking', `Đang kiểm tra video ${videoId}...`);
-
-  try {
-    const [metadataResult, embedResult] = await Promise.allSettled([
-      fetchYouTubeOEmbed(videoId),
-      probeYouTubeEmbed(videoId)
-    ]);
-    if (videoCheckState.requestId !== requestId) return;
-
-    const metadata = metadataResult.status === 'fulfilled' ? metadataResult.value : null;
-    if (!metadata) {
-      clearAutoFilledVideoMetadata();
-      videoCheckState = { status: 'bad', videoId, data: null, requestId };
-      setVideoCheckStatus('bad', metadataResult.reason?.message || 'Không lấy được thông tin video từ YouTube.');
-      return;
-    }
-
-    const embedData = embedResult.status === 'fulfilled' ? embedResult.value : {
-      ok: false,
-      duration: 0,
-      reason: embedResult.reason?.message || 'Không kiểm tra được trình phát YouTube.'
-    };
-    if (!embedData.ok) {
-      clearAutoFilledVideoMetadata();
-      videoCheckState = { status: 'bad', videoId, data: null, requestId };
-      setVideoCheckStatus('bad', embedData.reason || 'Video này không thể nhúng trên website.');
-      return;
-    }
-
-    fillVideoMetadata(videoId, metadata, embedData);
-    videoCheckState = {
-      status: 'ok',
-      videoId,
-      data: {
-        title: metadata.title || '',
-        thumb: metadata.thumbnail_url || '',
-        duration: formatVideoDuration(embedData.duration)
-      },
-      requestId
-    };
-    setVideoCheckStatus('ok', 'Video có thể nhúng trên thiết bị di động. Đã cho phép lưu.');
-  } catch (err) {
-    if (videoCheckState.requestId !== requestId) return;
-    videoCheckState = { status: 'bad', videoId, data: null, requestId };
-    setVideoCheckStatus('bad', err?.message || 'Không thể kiểm tra video này.');
-  }
-}
-
-function scheduleYouTubeVideoCheck() {
-  window.clearTimeout(videoCheckTimer);
-  const value = document.getElementById('yt')?.value || '';
-  if (!value.trim()) {
-    markVideoCheckIdle();
-    return;
-  }
-  clearAutoFilledVideoMetadata();
-  videoCheckState = {
-    ...videoCheckState,
-    status: 'checking',
-    videoId: extractYouTubeId(value),
-    data: null,
-    requestId: videoCheckState.requestId + 1
-  };
-  setVideoCheckStatus('checking', 'Đợi một chút, hệ thống sẽ kiểm tra video này.');
-  videoCheckTimer = window.setTimeout(checkYouTubeVideoNow, 550);
 }
 
 function getMovieGenres(movie) {
@@ -427,15 +116,6 @@ function setSelectedGenres(genres) {
 
 document.addEventListener('DOMContentLoaded', () => {
   setSelectedGenres(['Acción']);
-  markVideoCheckIdle();
-  const ytInput = document.getElementById('yt');
-  const autoInputs = ['title', 'thumb', 'duration'].map(id => document.getElementById(id)).filter(Boolean);
-  if (ytInput) ytInput.addEventListener('input', scheduleYouTubeVideoCheck);
-  autoInputs.forEach(input => {
-    input.addEventListener('input', () => {
-      input.dataset.autoFilled = '0';
-    });
-  });
   renderAdminList();
 });
 
@@ -541,12 +221,6 @@ function editMovie(id) {
   document.getElementById('yt').value = movie.yt || '';
   document.getElementById('thumb').value = movie.thumb || '';
   document.getElementById('desc').value = movie.desc || '';
-  ['title', 'thumb', 'duration'].forEach(id => {
-    const input = document.getElementById(id);
-    if (input) input.dataset.autoFilled = '0';
-  });
-  markVideoCheckIdle('Video hiện có sẽ được kiểm tra lại nếu bạn bấm lưu hoặc thay link.');
-  if (movie.yt) scheduleYouTubeVideoCheck();
 
   activeEpisodeTags = movie.episodes ? [...movie.episodes] : [];
   toggleEpisodesField();
@@ -572,12 +246,6 @@ function saveMovie() {
 
   if (!title || !duration || !yt || !desc || genres.length === 0) {
     showToast("Vui lòng điền đầy đủ các trường bắt buộc.");
-    return;
-  }
-
-  if (videoCheckState.status !== 'ok' || videoCheckState.videoId !== yt) {
-    showToast("Video chưa được xác nhận có thể phát trên website.");
-    scheduleYouTubeVideoCheck();
     return;
   }
 
@@ -636,11 +304,6 @@ function resetMovieForm() {
   document.getElementById('movie-id').value = '';
   document.getElementById('movie-form').reset();
   setSelectedGenres(['Acción']);
-  ['title', 'thumb', 'duration'].forEach(id => {
-    const input = document.getElementById(id);
-    if (input) input.dataset.autoFilled = '0';
-  });
-  markVideoCheckIdle();
   activeEpisodeTags = [];
   toggleEpisodesField();
   renderEpisodeTags();
