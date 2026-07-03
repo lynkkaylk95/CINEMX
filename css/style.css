@@ -871,22 +871,17 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
   line-height: 1.5;
 }
 .youtube-probe {
-  position: relative;
-  display: block;
-  width: 100%;
-  aspect-ratio: 16 / 9;
-  margin-top: 10px;
-  border-radius: 8px;
+  position: fixed;
+  left: -120vw;
+  top: 0;
+  width: 390px;
+  height: 219px;
   overflow: hidden;
-  background: #050507;
-  border: 1px solid rgba(255,255,255,.1);
-}
-.youtube-probe:empty {
-  display: none;
+  pointer-events: none;
+  opacity: .01;
+  z-index: -1;
 }
 .youtube-probe iframe {
-  position: absolute;
-  inset: 0;
   width: 100%;
   height: 100%;
   border: 0;

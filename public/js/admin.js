@@ -138,7 +138,7 @@ function resetYouTubeProbe() {
   if (probe) probe.innerHTML = '';
 }
 
-function markVideoCheckIdle(message = 'Dán link YouTube để tự lấy tên, thumbnail, thời lượng và kiểm tra nhúng.') {
+function markVideoCheckIdle(message = 'Dán link YouTube để kiểm tra khả năng nhúng trên thiết bị di động.') {
   videoCheckState = {
     ...videoCheckState,
     status: 'idle',
@@ -193,7 +193,7 @@ async function probeYouTubeEmbed(videoId) {
   resetYouTubeProbe();
 
   return new Promise((resolve) => {
-    const holderId = `yt-probe-${Date.now()}-${Math.round(Math.random() * 10000)}`;
+    const holderId = `yt-mobile-probe-${Date.now()}-${Math.round(Math.random() * 10000)}`;
     let player = null;
     let settled = false;
     let durationPoll = null;
@@ -204,16 +204,15 @@ async function probeYouTubeEmbed(videoId) {
       settled = true;
       window.clearTimeout(timeout);
       if (durationPoll) window.clearInterval(durationPoll);
-      if (result.ok) {
-        youtubeProbePlayer = player;
-      } else {
-        try {
-          if (player && typeof player.destroy === 'function') player.destroy();
-        } catch (err) {
-          console.warn('Không thể dọn trình kiểm tra YouTube.', err);
+      try {
+        if (player && typeof player.destroy === 'function') {
+          player.destroy();
         }
-        if (probe) probe.innerHTML = '';
+      } catch (err) {
+        console.warn('Không thể dọn trình kiểm tra YouTube.', err);
       }
+      youtubeProbePlayer = null;
+      if (probe) probe.innerHTML = '';
       resolve(result);
     };
 
@@ -229,10 +228,10 @@ async function probeYouTubeEmbed(videoId) {
       <iframe
         id="${holderId}"
         src="${getYouTubeEmbedUrl(videoId)}"
-        title="Kiểm tra video YouTube"
+        title="Kiểm tra nhúng YouTube trên di động"
         allow="autoplay; encrypted-media; picture-in-picture"
         allowfullscreen
-        referrerpolicy="strict-origin-when-cross-origin"
+        referrerpolicy="origin"
         frameborder="0"></iframe>
     `;
 
@@ -259,7 +258,7 @@ async function probeYouTubeEmbed(videoId) {
             return;
           }
           const reason = code === 153
-            ? 'YouTube từ chối phát trong khung nhúng. Video này không nên lưu.'
+            ? 'YouTube từ chối cấu hình nhúng trên thiết bị di động.'
             : 'Video không tồn tại, bị riêng tư hoặc YouTube từ chối phát.';
           finish({ ok: false, code, reason });
         }
@@ -353,7 +352,7 @@ async function checkYouTubeVideoNow() {
       },
       requestId
     };
-    setVideoCheckStatus('ok', embedData.warning || 'Đã lấy tên video, thumbnail, thời lượng và xác nhận video cho phép nhúng.');
+    setVideoCheckStatus('ok', 'Video có thể nhúng trên thiết bị di động. Đã cho phép lưu.');
   } catch (err) {
     if (videoCheckState.requestId !== requestId) return;
     videoCheckState = { status: 'bad', videoId, data: null, requestId };
