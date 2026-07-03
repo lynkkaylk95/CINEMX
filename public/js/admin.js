@@ -90,6 +90,22 @@ function getYouTubeWatchUrl(videoId) {
   return `https://www.youtube.com/watch?v=${encodeURIComponent(videoId)}`;
 }
 
+function getYouTubeEmbedUrl(videoId) {
+  const params = new URLSearchParams({
+    enablejsapi: '1',
+    playsinline: '1',
+    rel: '0',
+    modestbranding: '1'
+  });
+  if (window.location.origin && window.location.origin !== 'null') {
+    params.set('origin', window.location.origin);
+  }
+  if (window.location.href && !window.location.href.startsWith('file:')) {
+    params.set('widget_referrer', window.location.href);
+  }
+  return `https://www.youtube.com/embed/${encodeURIComponent(videoId)}?${params.toString()}`;
+}
+
 function setVideoCheckStatus(status, message) {
   const btn = document.getElementById('video-check-btn');
   const details = document.getElementById('video-check-details');
@@ -203,23 +219,24 @@ async function probeYouTubeEmbed(videoId) {
 
     const timeout = window.setTimeout(() => {
       finish({
-        ok: true,
+        ok: false,
         duration: 0,
-        warning: 'Preview trong admin phản hồi chậm, nhưng metadata YouTube hợp lệ.'
+        reason: 'Không kiểm tra được trình phát YouTube. Vui lòng thử lại sau.'
       });
     }, 12000);
 
+    probe.innerHTML = `
+      <iframe
+        id="${holderId}"
+        src="${getYouTubeEmbedUrl(videoId)}"
+        title="Kiểm tra video YouTube"
+        allow="autoplay; encrypted-media; picture-in-picture"
+        allowfullscreen
+        referrerpolicy="strict-origin-when-cross-origin"
+        frameborder="0"></iframe>
+    `;
+
     player = new YTApi.Player(holderId, {
-      width: '100%',
-      height: '100%',
-      videoId,
-      playerVars: {
-        enablejsapi: 1,
-        origin: window.location.origin,
-        playsinline: 1,
-        rel: 0,
-        modestbranding: 1
-      },
       events: {
         onReady: (event) => {
           let attempts = 0;
@@ -241,12 +258,10 @@ async function probeYouTubeEmbed(videoId) {
             finish({ ok: false, code, reason: 'Chủ video không cho phép nhúng trên website.' });
             return;
           }
-          finish({
-            ok: true,
-            code,
-            duration: 0,
-            warning: 'Preview trong admin không tải được, nhưng video không bị YouTube báo chặn nhúng.'
-          });
+          const reason = code === 153
+            ? 'YouTube từ chối phát trong khung nhúng. Video này không nên lưu.'
+            : 'Video không tồn tại, bị riêng tư hoặc YouTube từ chối phát.';
+          finish({ ok: false, code, reason });
         }
       }
     });
@@ -276,6 +291,16 @@ function fillVideoMetadata(videoId, metadata, embedResult) {
   }
 }
 
+function clearAutoFilledVideoMetadata() {
+  ['title', 'thumb', 'duration'].forEach(id => {
+    const input = document.getElementById(id);
+    if (input && input.dataset.autoFilled === '1') {
+      input.value = '';
+      input.dataset.autoFilled = '0';
+    }
+  });
+}
+
 async function checkYouTubeVideoNow() {
   const ytInput = document.getElementById('yt');
   if (!ytInput) return;
@@ -299,17 +324,19 @@ async function checkYouTubeVideoNow() {
 
     const metadata = metadataResult.status === 'fulfilled' ? metadataResult.value : null;
     if (!metadata) {
+      clearAutoFilledVideoMetadata();
       videoCheckState = { status: 'bad', videoId, data: null, requestId };
       setVideoCheckStatus('bad', metadataResult.reason?.message || 'Không lấy được thông tin video từ YouTube.');
       return;
     }
 
     const embedData = embedResult.status === 'fulfilled' ? embedResult.value : {
-      ok: true,
+      ok: false,
       duration: 0,
-      warning: 'Không kiểm tra được preview trong admin, nhưng metadata YouTube hợp lệ.'
+      reason: embedResult.reason?.message || 'Không kiểm tra được trình phát YouTube.'
     };
     if (!embedData.ok) {
+      clearAutoFilledVideoMetadata();
       videoCheckState = { status: 'bad', videoId, data: null, requestId };
       setVideoCheckStatus('bad', embedData.reason || 'Video này không thể nhúng trên website.');
       return;
@@ -341,6 +368,7 @@ function scheduleYouTubeVideoCheck() {
     markVideoCheckIdle();
     return;
   }
+  clearAutoFilledVideoMetadata();
   videoCheckState = {
     ...videoCheckState,
     status: 'checking',
