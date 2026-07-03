@@ -202,7 +202,11 @@ async function probeYouTubeEmbed(videoId) {
     };
 
     const timeout = window.setTimeout(() => {
-      finish({ ok: false, reason: 'YouTube không phản hồi khi kiểm tra nhúng.' });
+      finish({
+        ok: true,
+        duration: 0,
+        warning: 'Preview trong admin phản hồi chậm, nhưng metadata YouTube hợp lệ.'
+      });
     }, 12000);
 
     player = new YTApi.Player(holderId, {
@@ -233,10 +237,16 @@ async function probeYouTubeEmbed(videoId) {
         },
         onError: (event) => {
           const code = Number(event?.data);
-          const reason = code === 101 || code === 150
-            ? 'Chủ video không cho phép nhúng trên website.'
-            : 'Video không tồn tại, bị riêng tư hoặc YouTube từ chối phát.';
-          finish({ ok: false, code, reason });
+          if (code === 101 || code === 150) {
+            finish({ ok: false, code, reason: 'Chủ video không cho phép nhúng trên website.' });
+            return;
+          }
+          finish({
+            ok: true,
+            code,
+            duration: 0,
+            warning: 'Preview trong admin không tải được, nhưng video không bị YouTube báo chặn nhúng.'
+          });
         }
       }
     });
@@ -287,14 +297,24 @@ async function checkYouTubeVideoNow() {
     ]);
     if (videoCheckState.requestId !== requestId) return;
 
-    const embedData = embedResult.status === 'fulfilled' ? embedResult.value : { ok: false, reason: embedResult.reason?.message };
+    const metadata = metadataResult.status === 'fulfilled' ? metadataResult.value : null;
+    if (!metadata) {
+      videoCheckState = { status: 'bad', videoId, data: null, requestId };
+      setVideoCheckStatus('bad', metadataResult.reason?.message || 'Không lấy được thông tin video từ YouTube.');
+      return;
+    }
+
+    const embedData = embedResult.status === 'fulfilled' ? embedResult.value : {
+      ok: true,
+      duration: 0,
+      warning: 'Không kiểm tra được preview trong admin, nhưng metadata YouTube hợp lệ.'
+    };
     if (!embedData.ok) {
       videoCheckState = { status: 'bad', videoId, data: null, requestId };
       setVideoCheckStatus('bad', embedData.reason || 'Video này không thể nhúng trên website.');
       return;
     }
 
-    const metadata = metadataResult.status === 'fulfilled' ? metadataResult.value : {};
     fillVideoMetadata(videoId, metadata, embedData);
     videoCheckState = {
       status: 'ok',
@@ -306,7 +326,7 @@ async function checkYouTubeVideoNow() {
       },
       requestId
     };
-    setVideoCheckStatus('ok', 'Đã lấy tên video, thumbnail, thời lượng và xác nhận video cho phép nhúng.');
+    setVideoCheckStatus('ok', embedData.warning || 'Đã lấy tên video, thumbnail, thời lượng và xác nhận video cho phép nhúng.');
   } catch (err) {
     if (videoCheckState.requestId !== requestId) return;
     videoCheckState = { status: 'bad', videoId, data: null, requestId };
