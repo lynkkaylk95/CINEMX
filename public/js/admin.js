@@ -34,6 +34,7 @@ let videoCheckState = {
   data: null,
   requestId: 0
 };
+let youtubeProbePlayer = null;
 
 function loadSavedMovies() {
   try {
@@ -108,6 +109,19 @@ function setVideoCheckStatus(status, message) {
   if (submitBtn) submitBtn.disabled = status !== 'ok';
 }
 
+function resetYouTubeProbe() {
+  const probe = document.getElementById('youtube-probe');
+  try {
+    if (youtubeProbePlayer && typeof youtubeProbePlayer.destroy === 'function') {
+      youtubeProbePlayer.destroy();
+    }
+  } catch (err) {
+    console.warn('Không thể dọn trình kiểm tra YouTube.', err);
+  }
+  youtubeProbePlayer = null;
+  if (probe) probe.innerHTML = '';
+}
+
 function markVideoCheckIdle(message = 'Dán link YouTube để tự lấy tên, thumbnail, thời lượng và kiểm tra nhúng.') {
   videoCheckState = {
     ...videoCheckState,
@@ -116,6 +130,7 @@ function markVideoCheckIdle(message = 'Dán link YouTube để tự lấy tên, 
     data: null,
     requestId: videoCheckState.requestId + 1
   };
+  resetYouTubeProbe();
   setVideoCheckStatus('idle', message);
 }
 
@@ -159,6 +174,7 @@ async function probeYouTubeEmbed(videoId) {
   const YTApi = await loadYouTubeIframeAPI();
   const probe = document.getElementById('youtube-probe');
   if (!probe) throw new Error('Không tìm thấy vùng kiểm tra video.');
+  resetYouTubeProbe();
 
   return new Promise((resolve) => {
     const holderId = `yt-probe-${Date.now()}-${Math.round(Math.random() * 10000)}`;
@@ -172,12 +188,16 @@ async function probeYouTubeEmbed(videoId) {
       settled = true;
       window.clearTimeout(timeout);
       if (durationPoll) window.clearInterval(durationPoll);
-      try {
-        if (player && typeof player.destroy === 'function') player.destroy();
-      } catch (err) {
-        console.warn('Không thể dọn trình kiểm tra YouTube.', err);
+      if (result.ok) {
+        youtubeProbePlayer = player;
+      } else {
+        try {
+          if (player && typeof player.destroy === 'function') player.destroy();
+        } catch (err) {
+          console.warn('Không thể dọn trình kiểm tra YouTube.', err);
+        }
+        if (probe) probe.innerHTML = '';
       }
-      probe.innerHTML = '';
       resolve(result);
     };
 
@@ -186,8 +206,8 @@ async function probeYouTubeEmbed(videoId) {
     }, 12000);
 
     player = new YTApi.Player(holderId, {
-      width: '1',
-      height: '1',
+      width: '100%',
+      height: '100%',
       videoId,
       playerVars: {
         enablejsapi: 1,

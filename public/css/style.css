@@ -871,14 +871,25 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
   line-height: 1.5;
 }
 .youtube-probe {
-  position: fixed;
-  left: -9999px;
-  top: -9999px;
-  width: 1px;
-  height: 1px;
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  margin-top: 10px;
+  border-radius: 8px;
   overflow: hidden;
-  pointer-events: none;
-  opacity: 0;
+  background: #050507;
+  border: 1px solid rgba(255,255,255,.1);
+}
+.youtube-probe:empty {
+  display: none;
+}
+.youtube-probe iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
 }
 .genre-check-list {
   display: grid;
@@ -956,9 +967,38 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
 .admin-ep-remove:hover { color: var(--red); }
 
 @media (max-width: 768px) {
+  .admin-page {
+    padding: 16px 12px 64px;
+  }
+  .admin-header {
+    margin-bottom: 18px;
+  }
+  .admin-form-card {
+    padding: 16px 14px;
+    border-radius: 10px;
+  }
   .admin-layout { grid-template-columns: 1fr; }
   .form-row { grid-template-columns: 1fr; }
   .genre-check-list { grid-template-columns: 1fr; }
+  .video-check-panel {
+    padding: 9px;
+  }
+  .video-check-btn {
+    min-height: 42px;
+    font-size: 12px;
+  }
+  .admin-btns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+  .admin-btns .btn-save,
+  .admin-btns .btn-reset {
+    width: 100%;
+    padding: 12px 10px;
+  }
+  .btn-export {
+    width: 100%;
+  }
 }
 /* ===== YouTube Fallback ===== */
 
