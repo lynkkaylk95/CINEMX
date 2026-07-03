@@ -82,23 +82,23 @@ const MOVIES = [
   },
   {
     "id": 5,
-    "title": "Dragón Inigualable",
+    "title": "Buscar un Esposo para Mamá",
     "genre": "Romance",
-    "year": 2026,
-    "rating": 9.7,
-    "duration": "2h 20min",
+    "year": 2024,
+    "rating": 8.9,
+    "duration": "2h 48min",
     "type": "Película",
-    "yt": "qEjCvBvyhQQ&t=363s",
+    "yt": "6LBxSop300I",
     "emoji": "🎬",
-    "desc": "El Señor Dragón come fideos en la calle y mira a chicas, cuando unos gánsteres lo molestan y luego…\n\nActrices: Bai Fang Wen\nGénero: películas románticas, películas chinas, Pelicula de Accion de Artes Marciales, dramas coreanos en español, doramas en español latino completas, kdrama español completos, el gobernante ascendente, Identidad Misteriosa y Matrimonio Relámpago",
+    "desc": "La Cenicienta fue engañada por su hermana y tuvo dos hijos, inesperadamente, cuyo padre resultó ser un CEO.\n\nTienda de Peliculas presenta el regreso de una diseñadora de joyas tras cinco años en el extranjero. Enfrentada a falsas acusaciones de robo en una fiesta de élite, busca proteger a su familia mientras un poderoso ejecutivo comienza a sospechar la verdad sobre la conexión entre sus hijos y él.\n\nActrices: Chen Zheng Yang\nGénero: películas románticas, películas chinas, Multimillonario se hace pasar por pobre, peliculas completas en español latino, dramas coreanos en español",
     "badge": "NUEVO",
     "episodes": [],
     "genres": [
       "Romance",
       "Thriller"
     ],
-    "thumb": "https://i3.ytimg.com/vi/qEjCvBvyhQQ/maxresdefault.jpg",
-    "slug": "dragon-inigualable"
+    "thumb": "https://i3.ytimg.com/vi/6LBxSop300I/hqdefault.jpg",
+    "slug": "buscar-un-esposo-para-mama"
   },
   {
     "id": 6,
@@ -326,5 +326,44 @@ const MOVIES = [
     "badge": "NUEVO",
     "episodes": [],
     "id": 15
+  },
+  {
+    "title": "Señorita Tonta y CEO Discapacitado",
+    "slug": "senorita-tonta-y-ceo-discapacitado",
+    "genre": "Acción",
+    "genres": [
+      "Acción",
+      "Drama"
+    ],
+    "type": "Película",
+    "year": 2025,
+    "rating": 8.5,
+    "duration": "1h 34min",
+    "emoji": "🎬",
+    "yt": "mUY3QnlL8lc",
+    "thumb": "https://i3.ytimg.com/vi/mUY3QnlL8lc/hqdefault.jpg",
+    "desc": "Una joven finge ser tonta para infiltrarse en la mansión Lu y buscar un tesoro familiar perdido. Allí descubre secretos sobre su esposo discapacitado y se enfrenta a los peligros de una familia política hostil.\n\nActrices: Xu Yi Zhen\nGénero: películas románticas, películas chinas, Multimillonario se hace pasar por pobre, dramas coreanos en español, doramas en español latino completas, kdrama español completos, la tonta y el discapacitado,",
+    "badge": "NUEVO",
+    "episodes": [],
+    "id": 16
+  },
+  {
+    "title": "Amor Predestinado",
+    "slug": "amor-predestinado",
+    "genre": "Thriller",
+    "genres": [
+      "Thriller"
+    ],
+    "type": "Película",
+    "year": 2025,
+    "rating": 8.6,
+    "duration": "1h 45min",
+    "emoji": "🎬",
+    "yt": "W4-Su_aZEl8",
+    "thumb": "https://i3.ytimg.com/vi/W4-Su_aZEl8/hqdefault.jpg",
+    "desc": "Tienda de Peliculas presenta el conflicto de una persona que busca recuperar su carrera profesional como diseñadora tras años de matrimonio. Enfrentando el desdén de su expareja y un entorno laboral hostil, demuestra su talento cerrando un negocio desafiante.\n\nGénero: películas románticas, películas chinas, Multimillonario se hace pasar por pobre, dramas coreanos en español, doramas en español latino completas, kdrama español completos, Arrepentimiento después del divorcio, presidente disfrazado de pobre, Identidad Misteriosa y Matrimonio Relámpago,",
+    "badge": "NUEVO",
+    "episodes": [],
+    "id": 17
   }
 ];
