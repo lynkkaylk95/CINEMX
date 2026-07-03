@@ -365,5 +365,144 @@ const MOVIES = [
     "badge": "NUEVO",
     "episodes": [],
     "id": 17
+  },
+  {
+    "title": "Renacer del Abismo",
+    "slug": "renacer-del-abismo",
+    "genre": "Drama",
+    "genres": [
+      "Drama"
+    ],
+    "type": "Película",
+    "year": 2025,
+    "rating": 8.9,
+    "duration": "2h 54min",
+    "emoji": "🎬",
+    "yt": "OrZ60Bk7lcs",
+    "thumb": "https://i3.ytimg.com/vi/OrZ60Bk7lcs/hqdefault.jpg",
+    "desc": "Ye Fan lucha por mantener a su prometida y la familia codiciosa de ella. En su boda, su futura familia lo humilla y rompe el compromiso. Una chica amable se casa rápidamente con él, y resulta que Ye Fan es el hijo perdido del billonario más rico del mundo. ¡Todos los que lo despreciaron lo pagarán!\nActrices: Bai Fang Wen\nGénero: películas románticas, películas chinas, Multimillonario se hace pasar por pobre, dramas coreanos en español, doramas en español latino completas, La Amada Esposa del CEO, Matrimonio de Conveniencia, kdrama español completos, el gobernante ascendente, fortunas reveladas mi esposo es poderoso",
+    "badge": "NUEVO",
+    "episodes": [],
+    "id": 18
+  },
+  {
+    "title": "Destino de una Noche Equivocada",
+    "slug": "destino-de-una-noche-equivocada",
+    "genre": "Comedia",
+    "genres": [
+      "Comedia",
+      "Romance"
+    ],
+    "type": "Película",
+    "year": 2025,
+    "rating": 8.8,
+    "duration": "2h 34min",
+    "emoji": "🎬",
+    "yt": "dx3bzbKf88U",
+    "thumb": "https://i3.ytimg.com/vi/dx3bzbKf88U/hqdefault.jpg",
+    "desc": "Destino de una Noche Equivocada - Doramas en español latino completas\n\nActrices: Bai Fang Wen\nGénero: películas románticas, películas chinas, Multimillonario se hace pasar por pobre, dramas coreanos en español, doramas en español latino completas, kdrama español completos, presidente disfrazado de pobre, Identidad Misteriosa y Matrimonio Relámpago, tener hijo con CEO, Casarse primero amar después, tras una noche de pasion con el ceo",
+    "badge": "NUEVO",
+    "episodes": [],
+    "id": 19
+  },
+  {
+    "title": "Dios de Guerra del Norte",
+    "slug": "dios-de-guerra-del-norte",
+    "genre": "Acción",
+    "genres": [
+      "Acción",
+      "Viajes en el tiempo"
+    ],
+    "type": "Película",
+    "year": 2025,
+    "rating": 9.2,
+    "duration": "1h 36min",
+    "emoji": "🎬",
+    "yt": "Z4fDcafzaUE",
+    "thumb": "https://i3.ytimg.com/vi/Z4fDcafzaUE/hqdefault.jpg",
+    "desc": "La arrogante CEO burla de mendigo pero él es Dios de Guerra, y termina rogando perdón con millones\nGénero: películas románticas, películas chinas, Película de acción de artes marciales y kungfu, dramas coreanos en español, doramas en español latino completas, kdrama español completos, el gobernante ascendente, Identidad Misteriosa y Matrimonio Relámpago, el señor dragon oculto,",
+    "badge": "NUEVO",
+    "episodes": [],
+    "id": 20
+  },
+  {
+    "title": "Mis Padres son Agentes Secretos",
+    "slug": "mis-padres-son-agentes-secretos",
+    "genre": "Romance",
+    "genres": [
+      "Romance",
+      "Thriller"
+    ],
+    "type": "Película",
+    "year": 2026,
+    "rating": 8.9,
+    "duration": "2h 00min",
+    "emoji": "🎬",
+    "yt": "BBYJ45RiQng",
+    "thumb": "https://i3.ytimg.com/vi/BBYJ45RiQng/hqdefault.jpg",
+    "desc": "Una hermosa agente fue drogada y tuvo un rollo de una noche con un CEO oculto. 5 años después, se casó rápidamente con un profesor pobre. Inesperadamente, él también era un agente secreto y el padre biológico de su hijo.\n\n\nActrices: Shu Tong, Sun Lulu\nGénero: películas románticas, películas chinas, Multimillonario se hace pasar por pobre, dramas coreanos en español, peliculas completas en español latino, La Amada Esposa del CEO, Matrimonio de Conveniencia, kdrama español completos",
+    "badge": "NUEVO",
+    "episodes": [],
+    "id": 21
+  },
+  {
+    "title": "Encantador prometido",
+    "slug": "encantador-prometido",
+    "genre": "Romance",
+    "genres": [
+      "Romance",
+      "Thriller"
+    ],
+    "type": "Película",
+    "year": 2026,
+    "rating": 9.1,
+    "duration": "2h 45min",
+    "emoji": "🎬",
+    "yt": "5hA60YXKToE",
+    "thumb": "https://i3.ytimg.com/vi/5hA60YXKToE/hqdefault.jpg",
+    "desc": "Tienda de Peliculas presenta cómo una joven busca a su madre biológica tras salir de un orfanato, enfrentando maltratos familiares y engaños. En su camino, intenta proteger a un camarero, ignorando su verdadera identidad millonaria mientras busca cumplir una promesa de infancia.\nActrices: Bai Fang Wen, Zhu Mo Yan\nGénero: películas románticas, películas chinas, Multimillonario se hace pasar por pobre, dramas coreanos en español, doramas en español latino completas, kdrama español completos, el gobernante ascendente, chica se casa con chico pobre pero es rico, mi esposo es poderoso en español, Se casa a toda prisa",
+    "badge": "NUEVO",
+    "episodes": [],
+    "id": 22
+  },
+  {
+    "title": "La Señorita Perdida",
+    "slug": "la-senorita-perdida",
+    "genre": "Drama",
+    "genres": [
+      "Drama",
+      "Thriller"
+    ],
+    "type": "Película",
+    "year": 2026,
+    "rating": 9.6,
+    "duration": "1h 33min",
+    "emoji": "🎬",
+    "yt": "i5rBJqwYLsQ",
+    "thumb": "https://i3.ytimg.com/vi/i5rBJqwYLsQ/hqdefault.jpg",
+    "desc": "Una joven criada en un pueblo pesquero se ve envuelta en un conflicto inmobiliario cuando una poderosa familia intenta demoler su hogar. La búsqueda del pasado por parte de un magnate amenaza con destruir la vida que conoce.\n\nGénero: películas románticas, películas chinas, Multimillonario se hace pasar por pobre, dramas coreanos en español, doramas en español latino completas, La Amada Esposa del CEO, kdrama español completos, el gobernante ascendente,",
+    "badge": "NUEVO",
+    "episodes": [],
+    "id": 23
+  },
+  {
+    "title": "Matrimonio Predestinado",
+    "slug": "matrimonio-predestinado",
+    "genre": "Comedia",
+    "genres": [
+      "Comedia",
+      "Romance"
+    ],
+    "type": "Película",
+    "year": 2026,
+    "rating": 9.5,
+    "duration": "2h 07min",
+    "emoji": "🎬",
+    "yt": "Er7nuEBTiI8",
+    "thumb": "https://i3.ytimg.com/vi/Er7nuEBTiI8/hqdefault.jpg",
+    "desc": "Chanjunni se ve obligada a casarse con el heredero de la familia Fu para pagar una deuda. Mientras navega por un entorno familiar hostil y lleno de intrigas, Chanjunni intenta descubrir los secretos de su nuevo esposo y proteger su propia identidad oculta bajo una falsa apariencia de campesina.\n\nActrices: Zhen Ziqi, Jia Yixuan\nGénero: películas románticas, películas chinas, Multimillonario se hace pasar por pobre, dramas coreanos en español, doramas en español latino completas, kdrama español completos, identidad misteriosa y matrimonio relámpago, cenicienta se casa con un tio guapo, chica se casa con chico pobre pero es rico, peliculas completas en español latino, presidente disfrazado de pobre para poner a prueba",
+    "badge": "NUEVO",
+    "episodes": [],
+    "id": 24
   }
 ];
