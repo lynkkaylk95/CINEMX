@@ -148,6 +148,7 @@ ul { list-style: none; }
   background-size: cover;
   background-repeat: no-repeat;
   transform: scale(1.01);
+  opacity: .96;
   transition: opacity .35s ease, transform 6s ease;
 }
 #hero.has-featured-image .hero-bg {
@@ -162,8 +163,8 @@ ul { list-style: none; }
 .hero-fade {
   position: absolute; inset: 0;
   background:
-    linear-gradient(180deg,transparent 0%,transparent 26%,rgba(10,10,15,.58) 62%,rgba(10,10,15,.96) 86%,var(--bg) 100%),
-    linear-gradient(90deg,rgba(10,10,15,.94) 0%,rgba(10,10,15,.7) 34%,rgba(10,10,15,.22) 68%,rgba(10,10,15,.82) 100%);
+    linear-gradient(180deg,rgba(10,10,15,.04) 0%,rgba(10,10,15,.08) 34%,rgba(10,10,15,.55) 72%,rgba(10,10,15,.94) 92%,var(--bg) 100%),
+    linear-gradient(90deg,rgba(10,10,15,.72) 0%,rgba(10,10,15,.42) 34%,rgba(10,10,15,.08) 68%,rgba(10,10,15,.44) 100%);
 }
 .hero-deco {
   position: absolute; top: 0; right: 0; width: 52%; height: 100%;
@@ -183,15 +184,29 @@ ul { list-style: none; }
 }
 #hero-title {
   font-size: clamp(26px,5.5vw,60px); font-weight: 900;
-  line-height: 1.06; letter-spacing: -1.5px; color: var(--white);
+  line-height: 1.06; letter-spacing: 0; color: var(--white);
   text-shadow: 0 2px 18px rgba(0,0,0,.8); margin-bottom: 12px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
 }
 #hero-desc {
   font-size: clamp(13px,1.8vw,16px); color: var(--text2);
   line-height: 1.68; margin-bottom: 22px; max-width: 500px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
 }
 .hero-meta { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; flex-wrap: wrap; }
 .hero-meta-item { font-size: 13px; color: var(--text2); display: flex; align-items: center; gap: 4px; }
+.hero-meta-item:last-child {
+  max-width: min(100%, 320px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 .hero-meta-item .dot { width: 3px; height: 3px; border-radius: 50%; background: var(--text3); }
 .rating-pill { background: var(--gold); color: #000; font-weight: 700; padding: 2px 8px; border-radius: 4px; font-size: 12px; }
 .hero-btns { display: flex; gap: 10px; flex-wrap: wrap; }
@@ -413,6 +428,63 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
 @media (max-width: 768px) {
   .nav-links { display: none; }
   #hamburger { display: flex; }
+  #hero {
+    min-height: 430px;
+    height: min(72svh, 560px);
+  }
+  .hero-bg {
+    background-position: center top;
+    transform: none;
+  }
+  #hero.has-featured-image .hero-bg {
+    transform: none;
+  }
+  .hero-glow { opacity: .35; }
+  .hero-fade {
+    background:
+      linear-gradient(180deg,rgba(10,10,15,.02) 0%,rgba(10,10,15,.05) 34%,rgba(10,10,15,.64) 76%,rgba(10,10,15,.96) 100%),
+      linear-gradient(90deg,rgba(10,10,15,.38) 0%,rgba(10,10,15,.06) 54%,rgba(10,10,15,.24) 100%);
+  }
+  .hero-deco { display: none; }
+  #hero-content {
+    padding: 0 5vw 28px;
+    max-width: 100%;
+  }
+  .hero-badge {
+    margin-bottom: 8px;
+    padding: 3px 9px;
+    font-size: 10px;
+  }
+  #hero-title {
+    font-size: clamp(24px,7vw,34px);
+    line-height: 1.08;
+    margin-bottom: 8px;
+  }
+  #hero-desc {
+    max-width: 92vw;
+    margin-bottom: 14px;
+    font-size: 14px;
+    line-height: 1.48;
+    -webkit-line-clamp: 3;
+  }
+  .hero-meta {
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .hero-meta-item {
+    font-size: 12px;
+  }
+  .hero-meta-item:last-child {
+    max-width: 58vw;
+  }
+  .hero-btns {
+    gap: 8px;
+  }
+  .btn-play,
+  .btn-info {
+    padding: 11px 18px;
+    font-size: 13px;
+  }
   .movies-grid { grid-template-columns: repeat(auto-fill,minmax(130px,1fr)); gap: 9px; }
   .featured-row { grid-template-columns: 1fr; }
   .ad-zone {
@@ -430,7 +502,7 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
 }
 @media (max-width: 480px) {
   .footer-grid { grid-template-columns: 1fr; }
-  #hero { height: clamp(360px,88vw,480px); }
+  #hero { min-height: 420px; height: min(70svh, 520px); }
   .movies-grid { grid-template-columns: repeat(auto-fill,minmax(110px,1fr)); gap: 7px; }
   #affiliate-section { padding: 18px 14px; }
 }

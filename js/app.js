@@ -170,7 +170,7 @@ function initDailyHero() {
   }
 
   if (imageUrl && bgEl) {
-    bgEl.style.backgroundImage = `linear-gradient(90deg, rgba(10,10,15,.9) 0%, rgba(10,10,15,.62) 34%, rgba(10,10,15,.2) 68%, rgba(10,10,15,.72) 100%), url("${imageUrl.replace(/"/g, '\\"')}")`;
+    bgEl.style.backgroundImage = `url("${imageUrl.replace(/"/g, '\\"')}")`;
     hero.classList.add('has-featured-image');
   }
 
