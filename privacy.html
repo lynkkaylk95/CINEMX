@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+  <meta charset="UTF-8">
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="description" content="Consulta la Política de Privacidad de CineMax MX y conoce cómo se manejan datos, cookies, analítica, publicidad y enlaces externos.">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#0a0a0f">
+  <title>Política de Privacidad - CineMax MX</title>
+  <script src="js/analytics.js"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-55GL8N8TFV"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="ad-top-bar"><strong>CineMax MX</strong> &nbsp;|&nbsp; Mira miles de títulos gratis &nbsp;|&nbsp; <a href="index.html">Volver al inicio</a></div>
+  <nav id="navbar">
+    <div class="nav-logo" onclick="window.location.href='index.html'">CINE<span>MAX</span></div>
+    <div class="nav-links">
+      <a href="index.html">Inicio</a><a href="about.html">Sobre Nosotros</a><a href="privacy.html" class="active">Privacidad</a><a href="terms.html">Términos</a><a href="dmca.html">DMCA</a><a href="contact.html">Contacto</a>
+    </div>
+    <div class="nav-right"><button id="hamburger" onclick="toggleMenu()" aria-label="Menú"><span></span><span></span><span></span></button></div>
+  </nav>
+  <div id="mobile-menu">
+    <a href="index.html" onclick="closeMenu()">Inicio</a><a href="about.html" onclick="closeMenu()">Sobre Nosotros</a><a href="privacy.html" onclick="closeMenu()">Política de Privacidad</a><a href="terms.html" onclick="closeMenu()">Términos y Condiciones</a><a href="dmca.html" onclick="closeMenu()">DMCA</a><a href="contact.html" onclick="closeMenu()">Contacto</a>
+  </div>
+
+  <main class="legal-page">
+    <header class="legal-hero">
+      <span class="legal-kicker">Privacidad</span>
+      <h1>Política de Privacidad</h1>
+      <p>Esta Política de Privacidad explica cómo CineMax MX puede recopilar, usar y proteger información relacionada con la navegación de los usuarios dentro del sitio.</p>
+    </header>
+    <section class="legal-card" aria-label="Política de privacidad de CineMax MX">
+      <article>
+        <h2>Información que podemos recopilar</h2>
+        <p>CineMax MX puede recopilar información técnica básica, como tipo de dispositivo, navegador, páginas visitadas, idioma, país aproximado y datos de interacción. Esta información se usa para mejorar la experiencia, corregir errores y comprender el rendimiento del sitio.</p>
+      </article>
+      <article>
+        <h2>Cookies y tecnologías similares</h2>
+        <p>El sitio puede utilizar cookies o tecnologías similares para recordar preferencias, medir tráfico y mostrar publicidad. Puedes administrar o bloquear cookies desde la configuración de tu navegador, aunque algunas funciones podrían comportarse de manera limitada.</p>
+      </article>
+      <article>
+        <h2>Analítica y publicidad</h2>
+        <p>CineMax MX puede integrar herramientas de analítica y redes publicitarias externas. Estos proveedores pueden procesar datos conforme a sus propias políticas para medir audiencias, prevenir abuso y personalizar anuncios.</p>
+      </article>
+      <article>
+        <h2>Enlaces y reproductores externos</h2>
+        <p>Algunos contenidos pueden mostrarse mediante servicios externos, como reproductores de video o enlaces de terceros. Cuando interactúas con esos servicios, sus propias políticas de privacidad también pueden aplicar.</p>
+      </article>
+      <article>
+        <h2>Contacto sobre privacidad</h2>
+        <p>Si tienes preguntas sobre esta política o deseas reportar un problema relacionado con privacidad, puedes escribirnos desde la página de <a href="contact.html">Contacto</a>.</p>
+      </article>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand"><div class="logo">CINE<span>MAX</span></div><p>La mejor plataforma de streaming gratis en México. Disfruta el mejor cine y series desde tu smartphone.</p></div>
+      <div class="footer-col"><h4>Géneros</h4><ul><li><a href="index.html?genre=Acción">Acción</a></li><li><a href="index.html?genre=Comedia">Comedia</a></li><li><a href="index.html?genre=Drama">Drama</a></li><li><a href="index.html?genre=Terror">Terror</a></li></ul></div>
+      <div class="footer-col"><h4>Plataforma</h4><ul><li><a href="index.html">Inicio</a></li><li><a href="about.html">Sobre Nosotros</a></li><li><a href="privacy.html">Privacy Policy</a></li><li><a href="terms.html">Terms</a></li></ul></div>
+      <div class="footer-col"><h4>Contacto</h4><ul><li><a href="contact.html">Contact</a></li><li><a href="dmca.html">DMCA</a></li><li><a href="contact.html">Publicidad</a></li></ul></div>
+    </div>
+    <div class="footer-bottom"><p>© 2026 CineMax MX — Sitio estático optimizado para Cloudflare Pages.</p><button onclick="showToast('Idioma: Español (México)')">ES-MX</button></div>
+  </footer>
+  <button id="back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Volver arriba">↑</button>
+  <div id="toast"></div>
+  <script>function toggleMenu(){document.getElementById('mobile-menu')?.classList.toggle('open');document.getElementById('hamburger')?.classList.toggle('open');}function closeMenu(){document.getElementById('mobile-menu')?.classList.remove('open');document.getElementById('hamburger')?.classList.remove('open');}function showToast(msg){const t=document.getElementById('toast');if(!t)return;t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400);}</script>
+</body>
+</html>

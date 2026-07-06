@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+  <meta charset="UTF-8">
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="description" content="Lee los Términos y Condiciones de CineMax MX para conocer las reglas de uso, responsabilidades y límites del servicio.">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#0a0a0f">
+  <title>Términos y Condiciones - CineMax MX</title>
+  <script src="js/analytics.js"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-55GL8N8TFV"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="ad-top-bar"><strong>CineMax MX</strong> &nbsp;|&nbsp; Mira miles de títulos gratis &nbsp;|&nbsp; <a href="index.html">Volver al inicio</a></div>
+  <nav id="navbar">
+    <div class="nav-logo" onclick="window.location.href='index.html'">CINE<span>MAX</span></div>
+    <div class="nav-links"><a href="index.html">Inicio</a><a href="about.html">Sobre Nosotros</a><a href="privacy.html">Privacidad</a><a href="terms.html" class="active">Términos</a><a href="dmca.html">DMCA</a><a href="contact.html">Contacto</a></div>
+    <div class="nav-right"><button id="hamburger" onclick="toggleMenu()" aria-label="Menú"><span></span><span></span><span></span></button></div>
+  </nav>
+  <div id="mobile-menu"><a href="index.html" onclick="closeMenu()">Inicio</a><a href="about.html" onclick="closeMenu()">Sobre Nosotros</a><a href="privacy.html" onclick="closeMenu()">Política de Privacidad</a><a href="terms.html" onclick="closeMenu()">Términos y Condiciones</a><a href="dmca.html" onclick="closeMenu()">DMCA</a><a href="contact.html" onclick="closeMenu()">Contacto</a></div>
+
+  <main class="legal-page">
+    <header class="legal-hero">
+      <span class="legal-kicker">Condiciones de uso</span>
+      <h1>Términos y Condiciones</h1>
+      <p>Al acceder y utilizar CineMax MX aceptas estos términos. Si no estás de acuerdo con alguna condición, te recomendamos dejar de usar el sitio.</p>
+    </header>
+    <section class="legal-card" aria-label="Términos de servicio de CineMax MX">
+      <article>
+        <h2>Uso permitido del sitio</h2>
+        <p>CineMax MX está destinado al uso personal e informativo. No debes utilizar el sitio para actividades ilegales, abuso técnico, automatización no autorizada, extracción masiva de datos o acciones que afecten la disponibilidad del servicio.</p>
+      </article>
+      <article>
+        <h2>Contenido y disponibilidad</h2>
+        <p>La información de películas y series puede cambiar sin previo aviso. La disponibilidad de videos, miniaturas o reproductores externos depende de los proveedores correspondientes y puede variar por región, dispositivo o configuración del propietario del contenido.</p>
+      </article>
+      <article>
+        <h2>Propiedad intelectual</h2>
+        <p>Las marcas, nombres, imágenes, videos y materiales de terceros pertenecen a sus respectivos titulares. CineMax MX respeta los derechos de propiedad intelectual y atiende solicitudes válidas de retiro mediante su política DMCA.</p>
+      </article>
+      <article>
+        <h2>Limitación de responsabilidad</h2>
+        <p>El sitio se ofrece tal como está disponible. No garantizamos que todo contenido sea continuo, libre de errores o compatible con todos los dispositivos. El uso del sitio queda bajo responsabilidad del usuario.</p>
+      </article>
+      <article>
+        <h2>Cambios en los términos</h2>
+        <p>Podemos actualizar estos términos para reflejar cambios técnicos, legales o operativos. La versión publicada en esta página será la referencia vigente.</p>
+      </article>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand"><div class="logo">CINE<span>MAX</span></div><p>La mejor plataforma de streaming gratis en México. Disfruta el mejor cine y series desde tu smartphone.</p></div>
+      <div class="footer-col"><h4>Géneros</h4><ul><li><a href="index.html?genre=Acción">Acción</a></li><li><a href="index.html?genre=Comedia">Comedia</a></li><li><a href="index.html?genre=Drama">Drama</a></li><li><a href="index.html?genre=Terror">Terror</a></li></ul></div>
+      <div class="footer-col"><h4>Plataforma</h4><ul><li><a href="index.html">Inicio</a></li><li><a href="about.html">Sobre Nosotros</a></li><li><a href="privacy.html">Privacy Policy</a></li><li><a href="terms.html">Terms</a></li></ul></div>
+      <div class="footer-col"><h4>Contacto</h4><ul><li><a href="contact.html">Contact</a></li><li><a href="dmca.html">DMCA</a></li><li><a href="contact.html">Publicidad</a></li></ul></div>
+    </div>
+    <div class="footer-bottom"><p>© 2026 CineMax MX — Sitio estático optimizado para Cloudflare Pages.</p><button onclick="showToast('Idioma: Español (México)')">ES-MX</button></div>
+  </footer>
+  <button id="back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Volver arriba">↑</button>
+  <div id="toast"></div>
+  <script>function toggleMenu(){document.getElementById('mobile-menu')?.classList.toggle('open');document.getElementById('hamburger')?.classList.toggle('open');}function closeMenu(){document.getElementById('mobile-menu')?.classList.remove('open');document.getElementById('hamburger')?.classList.remove('open');}function showToast(msg){const t=document.getElementById('toast');if(!t)return;t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400);}</script>
+</body>
+</html>

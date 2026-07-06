@@ -1,0 +1,128 @@
+﻿<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+  <meta charset="UTF-8">
+  <base href="/">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <meta name="description" content="Conoce CineMax MX, una plataforma de entretenimiento en línea dedicada a organizar películas y series en español latino para usuarios de México.">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#0a0a0f">
+  <title>Sobre Nosotros - CineMax MX</title>
+  <script src="js/analytics.js"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-55GL8N8TFV"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div id="ad-top-bar">
+    <strong>CineMax MX</strong> &nbsp;|&nbsp; Mira miles de títulos gratis &nbsp;|&nbsp;
+    <a href="index.html">Volver al inicio</a>
+  </div>
+
+  <nav id="navbar">
+    <div class="nav-logo" onclick="window.location.href='index.html'">CINE<span>MAX</span></div>
+    <div class="nav-links">
+      <a href="index.html">Inicio</a>
+      <a href="about.html">Sobre Nosotros</a>
+      <a href="about.html" class="active">Sobre Nosotros</a>
+      <a href="privacy.html">Privacidad</a>
+      <a href="terms.html">Términos</a>
+      <a href="dmca.html">DMCA</a>
+      <a href="contact.html">Contacto</a>
+    </div>
+    <div class="nav-right">
+      <button id="hamburger" onclick="toggleMenu()" aria-label="Menú">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <div id="mobile-menu">
+    <a href="index.html" onclick="closeMenu()">Inicio</a>
+    <a href="about.html" onclick="closeMenu()">Sobre Nosotros</a>
+    <a href="privacy.html" onclick="closeMenu()">Política de Privacidad</a>
+    <a href="terms.html" onclick="closeMenu()">Términos y Condiciones</a>
+    <a href="dmca.html" onclick="closeMenu()">DMCA</a>
+    <a href="contact.html" onclick="closeMenu()">Contacto</a>
+  </div>
+
+  <main class="legal-page">
+    <header class="legal-hero">
+      <span class="legal-kicker">CineMax MX</span>
+      <h1>Sobre Nosotros</h1>
+      <p>CineMax MX es un sitio de entretenimiento en línea pensado para ayudar a los usuarios a descubrir películas y series en español latino desde una experiencia rápida, clara y adaptable a dispositivos móviles.</p>
+    </header>
+
+    <section class="legal-card" aria-label="Información sobre CineMax MX">
+      <article>
+        <h2>Nuestra misión</h2>
+        <p>Nuestra misión es organizar contenido audiovisual de forma sencilla para que los visitantes puedan encontrar títulos por género, año, popularidad y recomendaciones. Buscamos que la navegación sea directa, limpia y cómoda tanto en teléfonos como en pantallas de escritorio.</p>
+      </article>
+
+      <article>
+        <h2>Experiencia para el usuario</h2>
+        <p>El diseño de CineMax MX prioriza la velocidad, la legibilidad y el acceso rápido a la información de cada título. Cada página está pensada para mostrar el póster, la descripción, los datos principales y las opciones de reproducción de manera ordenada.</p>
+      </article>
+
+      <article>
+        <h2>Contenido y enlaces externos</h2>
+        <p>CineMax MX puede mostrar información, miniaturas y reproductores de servicios externos como YouTube. La disponibilidad de cada video depende de las políticas, restricciones y configuración del proveedor correspondiente.</p>
+      </article>
+
+      <article>
+        <h2>Compromiso del sitio</h2>
+        <p>Trabajamos para mantener una plataforma funcional, accesible y transparente. Si encuentras información incorrecta, contenido no disponible o un problema técnico, puedes comunicarte con nosotros desde la página de contacto.</p>
+      </article>
+    </section>
+  </main>
+
+  <footer>
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <div class="logo">CINE<span>MAX</span></div>
+        <p>La mejor plataforma de streaming gratis en México. Disfruta el mejor cine y series desde tu smartphone.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Géneros</h4>
+        <ul>
+          <li><a href="index.html?genre=Acción">Acción</a></li>
+          <li><a href="index.html?genre=Comedia">Comedia</a></li>
+          <li><a href="index.html?genre=Drama">Drama</a></li>
+          <li><a href="index.html?genre=Terror">Terror</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Plataforma</h4>
+        <ul>
+          <li><a href="index.html">Inicio</a></li>
+          <li><a href="about.html">Sobre Nosotros</a></li>
+          <li><a href="privacy.html">Privacy Policy</a></li>
+          <li><a href="terms.html">Terms</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Contacto</h4>
+        <ul>
+          <li><a href="contact.html">Contact</a></li>
+          <li><a href="dmca.html">DMCA</a></li>
+          <li><a href="contact.html">Publicidad</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 CineMax MX — Sitio estático optimizado para Cloudflare Pages.</p>
+      <button onclick="showToast('Idioma: Español (México)')">ES-MX</button>
+    </div>
+  </footer>
+
+  <button id="back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Volver arriba">↑</button>
+  <div id="toast"></div>
+  <script>
+    function toggleMenu(){document.getElementById('mobile-menu')?.classList.toggle('open');document.getElementById('hamburger')?.classList.toggle('open');}
+    function closeMenu(){document.getElementById('mobile-menu')?.classList.remove('open');document.getElementById('hamburger')?.classList.remove('open');}
+    function showToast(msg){const t=document.getElementById('toast');if(!t)return;t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2400);}
+  </script>
+</body>
+</html>

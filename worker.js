@@ -117,8 +117,10 @@ function xmlEscape(value) {
 function buildSitemap(request, movies) {
   const origin = new URL(request.url).origin;
   const years = [...new Set(movies.map((movie) => Number(movie.year)).filter(Boolean))].sort((a, b) => b - a);
+  const legalPages = ["about.html", "privacy.html", "terms.html", "dmca.html", "contact.html"];
   const urls = [
     { loc: `${origin}/`, priority: "1.0" },
+    ...legalPages.map((page) => ({ loc: `${origin}/${page}`, priority: "0.6" })),
     ...years.map((year) => ({ loc: `${origin}/ano/${year}`, priority: "0.8" })),
     ...movies.map((movie) => ({ loc: `${origin}/pelicula/${encodeURIComponent(getMovieSlug(movie))}`, priority: "0.9" }))
   ];
