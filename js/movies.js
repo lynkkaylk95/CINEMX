@@ -504,5 +504,65 @@ const MOVIES = [
     "badge": "NUEVO",
     "episodes": [],
     "id": 24
+  },
+  {
+    "title": "La Última Promesa del Amor",
+    "slug": "la-ultima-promesa-del-amor",
+    "genre": "Drama",
+    "genres": [
+      "Drama",
+      "Romance"
+    ],
+    "type": "Película",
+    "year": 2026,
+    "rating": 8.7,
+    "duration": "2h 57",
+    "emoji": "🎬",
+    "yt": "10nJmDvoyNA",
+    "thumb": "https://i3.ytimg.com/vi/10nJmDvoyNA/hqdefault.jpg",
+    "desc": "Bella recibe un devastador diagnóstico de leucemia terminal justo cuando su vida matrimonial comienza a derrumbarse. Mientras lucha por mantenerse con vida, su esposo Hugo se niega a creer en su enfermedad y desperdicia el dinero de la familia con su amante. Años atrás, Bella había sacrificado uno de sus riñones por amor, pero ahora descubre que ese sacrificio solo fue correspondido con indiferencia y traición. Sin otra opción, decide pedir el divorcio para conseguir los recursos necesarios para su cirugía. Enfrentada al abandono de la persona que más amaba, Bella encuentra la fuerza para luchar por sí misma. A medida que la verdad sale a la luz, Hugo comienza a darse cuenta del enorme daño que ha causado. Sin embargo, el arrepentimiento podría llegar demasiado tarde para recuperar el amor que destruyó. Entre secretos, dolor y decisiones difíciles, ambos deberán enfrentar las consecuencias de sus actos. La historia muestra que el verdadero amor no se demuestra con palabras, sino con sacrificios y lealtad. ¿Podrá Bella encontrar una nueva oportunidad para vivir y ser feliz, o el destino ya ha escrito su último capítulo?\n\ndrama chino, romance, leucemia, esposa traicionada, divorcio, infidelidad, millonario, sacrificio, amante, hospital, enfermedad terminal, segunda oportunidad, amor verdadero, venganza emocional, drama doblado al español",
+    "badge": "NUEVO",
+    "episodes": [],
+    "id": 25
+  },
+  {
+    "title": "El resplandor de un padre",
+    "slug": "el-resplandor-de-un-padre",
+    "genre": "Drama",
+    "genres": [
+      "Drama",
+      "Thriller"
+    ],
+    "type": "Película",
+    "year": 2026,
+    "rating": 8.4,
+    "duration": "2h 04min",
+    "emoji": "🎬",
+    "yt": "VqM-5N6egDU",
+    "thumb": "https://i3.ytimg.com/vi/VqM-5N6egDU/hqdefault.jpg",
+    "desc": "Siete años después de un trágico accidente, una pequeña busca desesperadamente ayuda médica para su madre enferma en las calles. Un encuentro inesperado con un poderoso CEO, sin saber que es su progenitor, desencadena una lucha por la supervivencia y la redención familiar.",
+    "badge": "NUEVO",
+    "episodes": [],
+    "id": 26
+  },
+  {
+    "title": "El Heredero Antes de Nacer",
+    "slug": "el-heredero-antes-de-nacer",
+    "genre": "Romance",
+    "genres": [
+      "Romance",
+      "Thriller"
+    ],
+    "type": "Película",
+    "year": 2026,
+    "rating": 8.9,
+    "duration": "2h 01min",
+    "emoji": "🎬",
+    "yt": "U7Vq_xywj1M",
+    "thumb": "https://i3.ytimg.com/vi/U7Vq_xywj1M/hqdefault.jpg",
+    "desc": "Lucía descubre que está embarazada del heredero de una de las familias más poderosas del país, un hecho que la convierte en el blanco de conspiraciones y traiciones. Rodeada de falsas amistades y personas que buscan aprovecharse de ella, deberá aprender a distinguir quiénes están realmente de su lado. Mientras sus enemigos intentan arrebatarle el futuro de su hijo, Lucía comienza a actuar con inteligencia y determinación. Guiada por un misterioso vínculo con el bebé que lleva en su vientre, toma decisiones que cambian el rumbo de su destino. Cada obstáculo fortalece su carácter y la acerca a descubrir la verdad detrás de quienes desean verla caer. Con valentía y estrategia, desenmascara las mentiras que amenazan con destruir su vida. A medida que la poderosa familia enfrenta sus propios secretos, la joven demuestra que nadie puede subestimar el instinto de una madre. Entre ambición, romance y traición, Lucía luchará por proteger a su hijo y reclamar el lugar que le corresponde. Su mayor fortaleza será la esperanza de un nuevo comienzo. Una historia llena de emociones, giros inesperados y justicia.\ndrama chino, romance, heredero, embarazo, familia poderosa, secretos familiares, traición, falsas amistades, venganza, amor, millonario, CEO, intriga, drama doblado al español, maternidad",
+    "badge": "NUEVO",
+    "episodes": [],
+    "id": 27
   }
 ];
