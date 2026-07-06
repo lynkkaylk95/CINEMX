@@ -3,6 +3,14 @@ const CINEMAX_SMARTLINK_URL = 'https://www.effectivecpmnetwork.com/mdgtfx72cr?ke
 const CINEMAX_NATIVE_SRC = 'https://pl30226244.effectivecpmnetwork.com/00e298bf7ba92d81b94f4dff373a728f/invoke.js';
 const CINEMAX_NATIVE_CONTAINER_ID = 'container-00e298bf7ba92d81b94f4dff373a728f';
 const CINEMAX_SOCIAL_BAR_SRC = 'https://pl30226245.effectivecpmnetwork.com/40/4b/00/404b00bb58a19ba41d2858f90d60c5da.js';
+const CINEMAX_FORMAT_BANNERS = {
+  '468x60': { key: '8389824bba4d8e870d5150e45184a022', width: 468, height: 60 },
+  '300x250': { key: 'a89c0e35563be5eed3604c499079b6e7', width: 300, height: 250 },
+  '160x300': { key: 'f982f1dc80b8113923c57774f16cfb02', width: 160, height: 300 },
+  '160x600': { key: 'b185da811b83e9f983183de21da98529', width: 160, height: 600 },
+  '320x50': { key: '624058fb77a2a18d0518dff8bf9ca113', width: 320, height: 50 },
+  '728x90': { key: 'a802d74f30e7b4a87e3a81c55a3b2377', width: 728, height: 90 }
+};
 
 function openSmartlinkAd() {
   const adWindow = window.open('about:blank', '_blank');
@@ -12,76 +20,6 @@ function openSmartlinkAd() {
     adWindow.blur();
   }
   window.focus();
-}
-
-function wireSmartlinkElement(element) {
-  if (!element) return;
-  if (element.dataset.nativeAd === 'true') return;
-  renderSmartlinkBanner(element);
-  element.classList.add('ad-clickable');
-  element.setAttribute('role', 'link');
-  element.setAttribute('tabindex', '0');
-  element.setAttribute('aria-label', 'Abrir publicidad');
-
-  element.addEventListener('click', event => {
-    const interactive = event.target.closest('a, button, input, select, textarea');
-    if (interactive && interactive !== element) return;
-    openSmartlinkAd();
-  });
-
-  element.addEventListener('keydown', event => {
-    if (event.key !== 'Enter' && event.key !== ' ') return;
-    event.preventDefault();
-    openSmartlinkAd();
-  });
-}
-
-function renderSmartlinkBanner(element) {
-  const text = element.textContent || '';
-  const hasRealAd = element.querySelector('iframe, img, object, embed, script');
-  if (hasRealAd || !/pega|script|banner/i.test(text)) return;
-
-  if (element.classList.contains('movie-ad-code')) {
-    element.classList.add('ad-fixed-slot', 'ad-fixed-slot--160x600');
-    element.innerHTML = `
-      <div class="cinemax-ad-banner cinemax-ad-banner--rail" data-ad-size="160x600">
-        <span class="ad-kicker">Publicidad</span>
-        <strong>CineMax MX</strong>
-        <small>Oferta exclusiva para disfrutar más contenido.</small>
-        <span class="ad-cta">Ver ahora</span>
-      </div>
-    `;
-    return;
-  }
-
-  const size = getSmartlinkSize(element);
-  element.classList.add('ad-fixed-slot', `ad-fixed-slot--${size}`);
-  element.innerHTML = `
-    <div class="cinemax-ad-banner" data-ad-size="${size.replace('x', '×')}">
-      <div class="ad-copy">
-        <span class="ad-kicker">Publicidad</span>
-        <strong>${getSmartlinkTitle(element)}</strong>
-        <small>Contenido recomendado para usuarios de CineMax MX.</small>
-      </div>
-      <span class="ad-cta">Ver oferta</span>
-    </div>
-  `;
-}
-
-function getSmartlinkSize(element) {
-  if (element.classList.contains('ad-zone-home-bottom')) return '728x90';
-  if (element.classList.contains('ad-zone-home-feed')) return '300x250';
-  if (element.classList.contains('movie-mobile-ad')) return '320x50';
-  if (element.classList.contains('ad-below-player')) return '300x250';
-  return '468x60';
-}
-
-function getSmartlinkTitle(element) {
-  if (element.classList.contains('ad-zone-home-bottom')) return 'Oferta destacada';
-  if (element.classList.contains('ad-zone-home-feed')) return 'Recomendado para ti';
-  if (element.classList.contains('movie-mobile-ad')) return 'Ver oferta exclusiva';
-  if (element.classList.contains('ad-below-player')) return 'Continúa disfrutando';
-  return 'Mira más títulos gratis';
 }
 
 function wireSmartlinkAnchor(anchor) {
@@ -97,6 +35,88 @@ function wireSmartlinkAnchor(anchor) {
     openSmartlinkAd();
     return false;
   };
+}
+
+function getFormatBannerSize(element) {
+  const isMobile = window.matchMedia('(max-width: 768px)').matches;
+
+  if (element.classList.contains('movie-ad-code')) {
+    return window.matchMedia('(max-width: 1400px)').matches ? '160x300' : '160x600';
+  }
+
+  if (element.classList.contains('movie-mobile-ad')) return '320x50';
+  if (element.classList.contains('movie-affiliate')) return '300x250';
+  if (element.id === 'affiliate-section') return isMobile ? '320x50' : '468x60';
+  if (element.classList.contains('ad-zone-home-bottom')) return isMobile ? '320x50' : '728x90';
+  if (element.classList.contains('ad-zone-home-feed')) return '300x250';
+  if (element.classList.contains('ad-zone-category-break')) return isMobile ? '320x50' : '468x60';
+  if (element.classList.contains('ad-below-player')) return '300x250';
+
+  return isMobile ? '320x50' : '468x60';
+}
+
+function mountFormatBanner(element, size) {
+  const banner = CINEMAX_FORMAT_BANNERS[size];
+  if (!element || !banner || element.dataset.nativeAd === 'true' || element.dataset.formatBannerMounted === 'true') return;
+  if (isHiddenAdSlot(element)) return;
+
+  element.dataset.formatBannerMounted = 'true';
+  element.dataset.adSize = size;
+  element.classList.remove('ad-clickable');
+  element.removeAttribute('role');
+  element.removeAttribute('tabindex');
+  element.removeAttribute('aria-label');
+  element.classList.add('ad-fixed-slot', `ad-fixed-slot--${size}`);
+  element.style.setProperty('--ad-w', `${banner.width}px`);
+  element.style.setProperty('--ad-h', `${banner.height}px`);
+  element.innerHTML = '';
+
+  const iframe = document.createElement('iframe');
+  iframe.className = 'format-ad-frame';
+  iframe.title = `Publicidad ${size}`;
+  iframe.width = String(banner.width);
+  iframe.height = String(banner.height);
+  iframe.loading = 'lazy';
+  iframe.referrerPolicy = 'no-referrer-when-downgrade';
+  iframe.setAttribute('scrolling', 'no');
+  iframe.srcdoc = `<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=${banner.width},initial-scale=1">
+  <style>html,body{margin:0;padding:0;width:${banner.width}px;height:${banner.height}px;overflow:hidden;background:transparent;}</style>
+</head>
+<body>
+  <script>
+    atOptions = {
+      'key': '${banner.key}',
+      'format': 'iframe',
+      'height': ${banner.height},
+      'width': ${banner.width},
+      'params': {}
+    };
+  <\/script>
+  <script src="https://www.highperformanceformat.com/${banner.key}/invoke.js"><\/script>
+</body>
+</html>`;
+
+  element.appendChild(iframe);
+}
+
+function isHiddenAdSlot(element) {
+  const style = window.getComputedStyle(element);
+  if (style.display === 'none' || style.visibility === 'hidden') return true;
+
+  const rail = element.closest('.movie-ad-rail');
+  if (rail && window.getComputedStyle(rail).display === 'none') return true;
+
+  return false;
+}
+
+function mountAllFormatBanners() {
+  document.querySelectorAll('.ad-zone, .ad-below-player, .movie-ad-code, #affiliate-section, .movie-affiliate').forEach(element => {
+    mountFormatBanner(element, getFormatBannerSize(element));
+  });
 }
 
 function loadNativeBanner() {
@@ -136,29 +156,12 @@ function loadSocialBar() {
   document.body.appendChild(script);
 }
 
-function renderAffiliateBanners() {
-  document.querySelectorAll('#affiliate-section, .movie-affiliate').forEach(section => {
-    const isMovie = section.classList.contains('movie-affiliate');
-    section.classList.add('affiliate-banner', 'ad-fixed-slot', isMovie ? 'ad-fixed-slot--300x250' : 'ad-fixed-slot--468x60');
-    section.innerHTML = `
-      <div class="affiliate-banner-copy">
-        <span class="aff-label">Ofertas para ti</span>
-        <h2 class="aff-title">Mejora tu experiencia de cine</h2>
-        <p class="aff-desc">Accede a ofertas recomendadas para ver películas y series desde tu móvil con mejor comodidad.</p>
-      </div>
-      <a class="aff-banner-btn" href="${CINEMAX_SMARTLINK_URL}" target="_blank" rel="noopener noreferrer">Ver oferta</a>
-    `;
-  });
-}
-
 document.addEventListener('DOMContentLoaded', () => {
   loadNativeBanner();
+  mountAllFormatBanners();
   loadSocialBar();
-  renderAffiliateBanners();
 
   document.querySelectorAll('#ad-top-bar a').forEach(wireSmartlinkAnchor);
-  document.querySelectorAll('.ad-zone, .ad-below-player, .movie-ad-code').forEach(wireSmartlinkElement);
-  document.querySelectorAll('.aff-banner-btn').forEach(wireSmartlinkAnchor);
 
   document.querySelectorAll('footer a').forEach(anchor => {
     if (anchor.textContent.trim().toLowerCase() === 'publicidad') {
