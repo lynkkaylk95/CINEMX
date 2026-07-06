@@ -47,7 +47,8 @@
       <a href="#" onclick="filterByGenre('Acción'); return false;">Acción</a>
       <a href="#" onclick="filterByGenre('Comedia'); return false;">Comedia</a>
       <a href="#" onclick="filterByGenre('Drama'); return false;">Drama</a>
-      <a href="#" onclick="filterByGenre('Terror'); return false;">Terror</a>
+      <a href="#" onclick="filterByGenre('Familia'); return false;">Familia</a>
+      <a href="#" onclick="filterByGenre('Emotivo'); return false;">Emotivo</a>
       <a href="#" onclick="filterByGenre('Series'); return false;">Series</a>
       <a href="#" onclick="filterByGenre('Escolar'); return false;">Escolar</a>
       <a href="#" onclick="filterByGenre('Viajes en el tiempo'); return false;">Viajes en el tiempo</a>
@@ -72,11 +73,11 @@
   <div id="mobile-menu">
     <a href="#" onclick="filterByGenre('Todos'); closeMenu(); return false;">🏠 Inicio</a>
        <a href="about.html" onclick="closeMenu()">Sobre Nosotros</a>
- <a href="about.html" onclick="closeMenu()">Sobre Nosotros</a>
     <a href="#" onclick="filterByGenre('Acción'); closeMenu(); return false;">💥 Acción</a>
     <a href="#" onclick="filterByGenre('Comedia'); closeMenu(); return false;">😂 Comedia</a>
     <a href="#" onclick="filterByGenre('Drama'); closeMenu(); return false;">🎭 Drama</a>
-    <a href="#" onclick="filterByGenre('Terror'); closeMenu(); return false;">👻 Terror</a>
+    <a href="#" onclick="filterByGenre('Familia'); closeMenu(); return false;">Familia</a>
+    <a href="#" onclick="filterByGenre('Emotivo'); closeMenu(); return false;">Emotivo</a>
     <a href="#" onclick="filterByGenre('Ciencia Ficción'); closeMenu(); return false;">🚀 Ciencia Ficción</a>
     <a href="#" onclick="filterByGenre('Romance'); closeMenu(); return false;">💖 Romance</a>
     <a href="#" onclick="filterByGenre('Thriller'); closeMenu(); return false;">🕵️ Thriller</a>
@@ -135,7 +136,8 @@
         <button class="genre-tab" onclick="filterByGenre('Acción')">💥 Acción</button>
         <button class="genre-tab" onclick="filterByGenre('Comedia')">😂 Comedia</button>
         <button class="genre-tab" onclick="filterByGenre('Drama')">🎭 Drama</button>
-        <button class="genre-tab" onclick="filterByGenre('Terror')">👻 Terror</button>
+        <button class="genre-tab" onclick="filterByGenre('Familia')">Familia</button>
+        <button class="genre-tab" onclick="filterByGenre('Emotivo')">Emotivo</button>
         <button class="genre-tab" onclick="filterByGenre('Ciencia Ficción')">🚀 Ciencia Ficción</button>
         <button class="genre-tab" onclick="filterByGenre('Romance')">💖 Romance</button>
         <button class="genre-tab" onclick="filterByGenre('Thriller')">🕵️ Thriller</button>
@@ -253,13 +255,22 @@
       <div class="movies-grid" id="grid-drama"></div>
     </section>
 
-    <!-- Section: Terror -->
-    <section id="sect-terror" class="content-section">
+    <!-- Section: Familia -->
+    <section id="sect-family" class="content-section">
       <div class="section-header">
-        <h2 class="section-title"><span class="icon">👻</span> Terror y Suspenso <span class="section-line"></span></h2>
-        <a href="#" class="view-all" onclick="filterByGenre('Terror'); return false;">Ver todo →</a>
+        <h2 class="section-title"><span class="icon"></span> Familia <span class="section-line"></span></h2>
+        <a href="#" class="view-all" onclick="filterByGenre('Familia'); return false;">Ver todo →</a>
       </div>
-      <div class="movies-grid" id="grid-terror"></div>
+      <div class="movies-grid" id="grid-family"></div>
+    </section>
+
+    <!-- Section: Emotivo -->
+    <section id="sect-emotive" class="content-section">
+      <div class="section-header">
+        <h2 class="section-title"><span class="icon"></span> Emotivo <span class="section-line"></span></h2>
+        <a href="#" class="view-all" onclick="filterByGenre('Emotivo'); return false;">Ver todo →</a>
+      </div>
+      <div class="movies-grid" id="grid-emotive"></div>
     </section>
 
     <!-- Section: Ciencia Ficción -->
@@ -348,7 +359,8 @@
           <li><a href="#" onclick="filterByGenre('Acción'); return false;">Acción</a></li>
           <li><a href="#" onclick="filterByGenre('Comedia'); return false;">Comedia</a></li>
           <li><a href="#" onclick="filterByGenre('Drama'); return false;">Drama</a></li>
-          <li><a href="#" onclick="filterByGenre('Terror'); return false;">Terror</a></li>
+          <li><a href="#" onclick="filterByGenre('Familia'); return false;">Familia</a></li>
+          <li><a href="#" onclick="filterByGenre('Emotivo'); return false;">Emotivo</a></li>
         </ul>
       </div>
       <div class="footer-col">
@@ -381,6 +393,6 @@
   <!-- Scripts -->
   <script src="js/movies.js?v=seo-20260702"></script>
   <script src="js/ads.js?v=ads-ui-20260706" defer></script>
-  <script src="js/app.js?v=seo-20260702"></script>
+  <script src="js/app.js?v=genres-20260706"></script>
 </body>
 </html>

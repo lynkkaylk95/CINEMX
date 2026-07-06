@@ -14,7 +14,8 @@ const ADMIN_GENRE_LABELS = {
   'Acción': 'Hành động',
   'Comedia': 'Hài hước',
   'Drama': 'Chính kịch',
-  'Terror': 'Kinh dị',
+  'Familia': 'Gia đình',
+  'Emotivo': 'Cảm động',
   'Ciencia Ficción': 'Viễn tưởng',
   'Romance': 'Lãng mạn',
   'Thriller': 'Gây cấn',
@@ -233,7 +234,6 @@ function editMovie(id) {
   document.getElementById('year').value = movie.year || 2026;
   document.getElementById('rating').value = movie.rating || 8.5;
   document.getElementById('duration').value = movie.duration || '';
-  document.getElementById('emoji').value = movie.emoji || '🎬';
   document.getElementById('yt').value = movie.yt || '';
   document.getElementById('thumb').value = movie.thumb || '';
   document.getElementById('desc').value = movie.desc || '';
@@ -255,7 +255,6 @@ function saveMovie() {
   const year = parseInt(document.getElementById('year').value);
   const rating = parseFloat(document.getElementById('rating').value);
   const duration = document.getElementById('duration').value.trim();
-  const emoji = document.getElementById('emoji').value.trim();
   const yt = extractYouTubeId(document.getElementById('yt').value);
   const thumb = getThumbnailUrl(document.getElementById('thumb').value, yt);
   const desc = document.getElementById('desc').value.trim();
@@ -274,7 +273,7 @@ function saveMovie() {
     year: isNaN(year) ? 2026 : year,
     rating: isNaN(rating) ? 8.5 : rating,
     duration,
-    emoji: emoji || "🎬",
+    emoji: "🎬",
     yt,
     thumb,
     desc,

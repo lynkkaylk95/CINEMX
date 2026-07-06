@@ -8,7 +8,8 @@ const STATIC_GENRES = [
   'Acción',
   'Comedia',
   'Drama',
-  'Terror',
+  'Familia',
+  'Emotivo',
   'Ciencia Ficción',
   'Romance',
   'Thriller',
@@ -272,7 +273,8 @@ function renderAll() {
     const action = moviesList.filter(m => hasGenre(m, 'Acción')).slice(0, 8);
     const comedy = moviesList.filter(m => hasGenre(m, 'Comedia')).slice(0, 8);
     const drama = moviesList.filter(m => hasGenre(m, 'Drama')).slice(0, 8);
-    const terror = moviesList.filter(m => hasGenre(m, 'Terror')).slice(0, 8);
+    const family = moviesList.filter(m => hasGenre(m, 'Familia')).slice(0, 8);
+    const emotive = moviesList.filter(m => hasGenre(m, 'Emotivo')).slice(0, 8);
     const sciFi = moviesList.filter(m => hasGenre(m, 'Ciencia Ficción')).slice(0, 8);
     const romance = moviesList.filter(m => hasGenre(m, 'Romance')).slice(0, 8);
     const thriller = moviesList.filter(m => hasGenre(m, 'Thriller')).slice(0, 8);
@@ -286,7 +288,8 @@ function renderAll() {
     renderGrid('grid-action', action);
     renderGrid('grid-comedy', comedy);
     renderGrid('grid-drama', drama);
-    renderGrid('grid-terror', terror);
+    renderGrid('grid-family', family);
+    renderGrid('grid-emotive', emotive);
     renderGrid('grid-sci-fi', sciFi);
     renderGrid('grid-romance', romance);
     renderGrid('grid-thriller', thriller);
@@ -297,7 +300,8 @@ function renderAll() {
     showSection('sect-series', 'block');
     showSection('sect-comedy', 'block');
     showSection('sect-drama', 'block');
-    showSection('sect-terror', 'block');
+    showSection('sect-family', family.length ? 'block' : 'none');
+    showSection('sect-emotive', emotive.length ? 'block' : 'none');
     showSection('sect-sci-fi', 'block');
     showSection('sect-romance', 'block');
     showSection('sect-thriller', 'block');
@@ -316,7 +320,8 @@ function renderAll() {
     renderGrid('grid-action', []);
     renderGrid('grid-comedy', []);
     renderGrid('grid-drama', []);
-    renderGrid('grid-terror', []);
+    renderGrid('grid-family', []);
+    renderGrid('grid-emotive', []);
     renderGrid('grid-sci-fi', []);
     renderGrid('grid-romance', []);
     renderGrid('grid-thriller', []);
@@ -327,7 +332,8 @@ function renderAll() {
     showSection('sect-series', 'none');
     showSection('sect-comedy', 'none');
     showSection('sect-drama', 'none');
-    showSection('sect-terror', 'none');
+    showSection('sect-family', 'none');
+    showSection('sect-emotive', 'none');
     showSection('sect-sci-fi', 'none');
     showSection('sect-romance', 'none');
     showSection('sect-thriller', 'none');

@@ -47,18 +47,19 @@
             <div class="form-group">
               <label>Thể loại:</label>
               <div class="genre-check-list" id="genre-options">
-                <label class="genre-check"><input type="checkbox" name="genres" value="Acción"> <span>💥 Hành động</span></label>
-                <label class="genre-check"><input type="checkbox" name="genres" value="Comedia"> <span>😂 Hài hước</span></label>
-                <label class="genre-check"><input type="checkbox" name="genres" value="Drama"> <span>🎭 Chính kịch</span></label>
-                <label class="genre-check"><input type="checkbox" name="genres" value="Terror"> <span>👻 Kinh dị</span></label>
-                <label class="genre-check"><input type="checkbox" name="genres" value="Ciencia Ficción"> <span>🚀 Viễn tưởng</span></label>
-                <label class="genre-check"><input type="checkbox" name="genres" value="Romance"> <span>💖 Lãng mạn</span></label>
-                <label class="genre-check"><input type="checkbox" name="genres" value="Thriller"> <span>🕵️ Gây cấn</span></label>
-                <label class="genre-check"><input type="checkbox" name="genres" value="Series"> <span>📺 Phim bộ</span></label>
-                <label class="genre-check"><input type="checkbox" name="genres" value="Escolar"> <span>🏫 Học đường</span></label>
-                <label class="genre-check"><input type="checkbox" name="genres" value="Viajes en el tiempo"> <span>⏳ Xuyên không</span></label>
-                <label class="genre-check"><input type="checkbox" name="genres" value="De época"> <span>👘 Cổ trang</span></label>
-                <label class="genre-check"><input type="checkbox" name="genres" value="Intrigas palaciegas"> <span>⚔️ Cung đấu</span></label>
+                <label class="genre-check"><input type="checkbox" name="genres" value="Acción"> <span>Hành động</span></label>
+                <label class="genre-check"><input type="checkbox" name="genres" value="Comedia"> <span>Hài hước</span></label>
+                <label class="genre-check"><input type="checkbox" name="genres" value="Drama"> <span>Chính kịch</span></label>
+                <label class="genre-check"><input type="checkbox" name="genres" value="Familia"> <span>Gia đình</span></label>
+                <label class="genre-check"><input type="checkbox" name="genres" value="Emotivo"> <span>Cảm động</span></label>
+                <label class="genre-check"><input type="checkbox" name="genres" value="Ciencia Ficción"> <span>Viễn tưởng</span></label>
+                <label class="genre-check"><input type="checkbox" name="genres" value="Romance"> <span>Lãng mạn</span></label>
+                <label class="genre-check"><input type="checkbox" name="genres" value="Thriller"> <span>Gây cấn</span></label>
+                <label class="genre-check"><input type="checkbox" name="genres" value="Series"> <span>Phim bộ</span></label>
+                <label class="genre-check"><input type="checkbox" name="genres" value="Escolar"> <span>Học đường</span></label>
+                <label class="genre-check"><input type="checkbox" name="genres" value="Viajes en el tiempo"> <span>Xuyên không</span></label>
+                <label class="genre-check"><input type="checkbox" name="genres" value="De época"> <span>Cổ trang</span></label>
+                <label class="genre-check"><input type="checkbox" name="genres" value="Intrigas palaciegas"> <span>Cung đấu</span></label>
               </div>
               <div class="form-hint">Có thể chọn nhiều thể loại cho cùng một phim.</div>
             </div>
@@ -87,10 +88,6 @@
               <label for="duration">Thời lượng / Số tập:</label>
               <input type="text" id="duration" placeholder="VD: 2h 15phút hoặc 8 tập" required>
             </div>
-            <div class="form-group">
-              <label for="emoji">Biểu tượng (Emoji):</label>
-              <input type="text" id="emoji" placeholder="VD: 🎬" value="🎬">
-            </div>
           </div>
 
           <div class="form-group">
@@ -102,7 +99,7 @@
           <div class="form-group">
             <label for="thumb">URL Ảnh bìa (Không bắt buộc):</label>
             <input type="url" id="thumb" placeholder="VD: https://img.youtube.com/vi/RWVu58ucAwk/hqdefault.jpg">
-            <div class="form-hint">Nếu bỏ trống, hệ thống sẽ tự động dùng biểu tượng (emoji) kèm nền chuyển sắc.</div>
+            <div class="form-hint">Nếu bỏ trống, hệ thống sẽ tự động dùng ảnh thu nhỏ từ YouTube khi có thể.</div>
           </div>
 
           <div class="form-group" id="episodes-group" style="display: none;">
@@ -153,6 +150,6 @@
 
   <!-- Scripts -->
   <script src="js/movies.js?v=seo-20260702"></script>
-  <script src="js/admin.js?v=seo-20260702"></script>
+  <script src="js/admin.js?v=genres-20260706"></script>
 </body>
 </html>
