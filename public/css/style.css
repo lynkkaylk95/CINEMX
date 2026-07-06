@@ -1,4 +1,4 @@
-/* ============================================================
+﻿/* ============================================================
    CineMax MX — style.css
    Netflix 2026 Dark Theme — Responsive Mobile-First
 ============================================================ */
@@ -369,9 +369,38 @@ ul { list-style: none; }
 }
 .ad-zone-label { pointer-events: none; }
 .ad-zone-label strong { display: block; color: var(--text2); font-size: 13px; margin-bottom: 3px; }
+.ad-fixed-slot {
+  width: var(--ad-w);
+  height: var(--ad-h);
+  min-height: 0;
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 0;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+.ad-zone.ad-fixed-slot,
+#affiliate-section.ad-fixed-slot,
+.movie-affiliate.ad-fixed-slot,
+.movie-mobile-ad.ad-fixed-slot {
+  min-height: 0;
+  height: var(--ad-h);
+}
+#affiliate-section.ad-fixed-slot,
+.movie-affiliate.ad-fixed-slot {
+  padding: 0 16px;
+}
+.ad-fixed-slot--728x90 { --ad-w: 728px; --ad-h: 90px; }
+.ad-fixed-slot--468x60 { --ad-w: 468px; --ad-h: 60px; }
+.ad-fixed-slot--320x50 { --ad-w: 320px; --ad-h: 50px; }
+.ad-fixed-slot--300x250 { --ad-w: 300px; --ad-h: 250px; }
+.ad-fixed-slot--160x300 { --ad-w: 160px; --ad-h: 300px; }
+.ad-fixed-slot--160x600 { --ad-w: 160px; --ad-h: 600px; }
 .cinemax-ad-banner {
   width: 100%;
-  min-height: 76px;
+  height: 100%;
+  min-height: 0;
   border-radius: 12px;
   border: 1px solid rgba(245,197,24,.22);
   background:
@@ -384,6 +413,16 @@ ul { list-style: none; }
   padding: 14px 16px;
   text-align: left;
   box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 12px 28px rgba(0,0,0,.22);
+  position: relative;
+}
+.cinemax-ad-banner::after {
+  content: attr(data-ad-size);
+  position: absolute;
+  right: 8px;
+  bottom: 6px;
+  color: rgba(255,255,255,.32);
+  font-size: 9px;
+  font-weight: 800;
 }
 .cinemax-ad-banner .ad-copy {
   min-width: 0;
@@ -430,13 +469,42 @@ ul { list-style: none; }
   white-space: nowrap;
 }
 .cinemax-ad-banner--rail {
-  min-height: 100%;
   flex-direction: column;
   justify-content: center;
   text-align: center;
   padding: 18px 12px;
 }
 .cinemax-ad-banner--rail strong {
+  white-space: normal;
+}
+.ad-fixed-slot--320x50 .cinemax-ad-banner,
+.ad-fixed-slot--468x60 .cinemax-ad-banner {
+  padding: 8px 12px;
+  border-radius: 8px;
+}
+.ad-fixed-slot--320x50 .ad-kicker,
+.ad-fixed-slot--320x50 small,
+.ad-fixed-slot--468x60 small,
+.ad-fixed-slot--320x50 .cinemax-ad-banner::after {
+  display: none;
+}
+.ad-fixed-slot--320x50 .cinemax-ad-banner strong,
+.ad-fixed-slot--468x60 .cinemax-ad-banner strong {
+  font-size: 13px;
+}
+.ad-fixed-slot--320x50 .ad-cta,
+.ad-fixed-slot--468x60 .ad-cta,
+.ad-fixed-slot--468x60 .aff-banner-btn {
+  padding: 7px 10px;
+  font-size: 11px;
+}
+.ad-fixed-slot--300x250 .cinemax-ad-banner {
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 18px;
+}
+.ad-fixed-slot--300x250 .cinemax-ad-banner strong {
   white-space: normal;
 }
 .ad-clickable {
@@ -481,9 +549,16 @@ ul { list-style: none; }
     linear-gradient(135deg, rgba(22,22,30,.96), rgba(30,18,22,.96)),
     radial-gradient(circle at 88% 16%, rgba(229,9,20,.24), transparent 36%);
   border-color: rgba(245,197,24,.20);
+  padding: 0 16px;
 }
 .affiliate-banner-copy {
   min-width: 0;
+}
+.ad-fixed-slot--300x250.affiliate-banner {
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 18px;
 }
 .affiliate-banner .aff-title {
   margin: 4px 0 5px;
@@ -709,6 +784,15 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
     min-height: 76px;
     padding: 8px;
   }
+  .ad-fixed-slot {
+    min-height: 0;
+    padding: 0;
+  }
+  .ad-fixed-slot--728x90,
+  .ad-fixed-slot--468x60 {
+    --ad-w: 320px;
+    --ad-h: 50px;
+  }
   .ad-zone-home-top {
     margin: 14px 4vw 0;
     min-height: 72px;
@@ -717,8 +801,8 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
     min-height: 96px;
   }
   .cinemax-ad-banner {
-    min-height: 74px;
-    padding: 12px;
+    min-height: 0;
+    padding: 8px 12px;
     gap: 10px;
   }
   .cinemax-ad-banner small {
@@ -736,13 +820,29 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
   #hero { min-height: 420px; height: min(70svh, 520px); }
   .movies-grid { grid-template-columns: repeat(auto-fill,minmax(110px,1fr)); gap: 7px; }
   #affiliate-section { padding: 12px; }
+  #affiliate-section.ad-fixed-slot {
+    padding: 0 12px;
+  }
+  .ad-zone.ad-fixed-slot,
+  .movie-mobile-ad.ad-fixed-slot {
+    min-height: 0;
+  }
   .affiliate-banner {
     align-items: stretch;
-    flex-direction: column;
-    gap: 12px;
+    flex-direction: row;
+    gap: 10px;
+    padding: 0 12px;
+  }
+  .affiliate-banner .aff-label,
+  .affiliate-banner .aff-desc {
+    display: none;
+  }
+  .affiliate-banner .aff-title {
+    font-size: 13px;
+    margin: 0;
   }
   .affiliate-banner .aff-banner-btn {
-    width: 100%;
+    width: auto;
     text-align: center;
   }
   .cinemax-ad-banner {
@@ -804,7 +904,6 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
   margin-bottom: 4px;
 }
 .movie-ad-code {
-  flex: 1;
   border-radius: 12px;
   background: rgba(255,255,255,.03);
   border: 1px solid rgba(255,255,255,.08);
@@ -816,6 +915,10 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
   font-size: 12px;
   line-height: 1.55;
   min-height: 320px;
+}
+.movie-ad-code.ad-fixed-slot {
+  flex: 0 0 auto;
+  min-height: 0;
 }
 .movie-ad-code iframe,
 .movie-ad-code img,
@@ -927,6 +1030,13 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
   display: flex; align-items: center; justify-content: center;
   margin-bottom: 28px; font-size: 12px; color: var(--text3);
   /* 🔴 ZONA ADSTERRA BAJO PLAYER — pega tu script */
+}
+
+.ad-below-player[data-native-ad="true"] {
+  width: min(100%, 300px);
+  min-height: 250px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* Episode list */
@@ -1049,6 +1159,13 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
     max-width: 180px;
     min-height: 520px;
   }
+  .movie-ad-code.ad-fixed-slot--160x600 {
+    --ad-w: 160px;
+    --ad-h: 300px;
+  }
+  .movie-ad-code .cinemax-ad-banner::after {
+    content: '160×300';
+  }
 }
 
 @media (max-width: 1180px) {
@@ -1060,6 +1177,10 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
   }
   .movie-mobile-ad {
     display: flex;
+  }
+  .movie-mobile-ad.ad-fixed-slot {
+    --ad-w: 320px;
+    --ad-h: 50px;
   }
 }
 

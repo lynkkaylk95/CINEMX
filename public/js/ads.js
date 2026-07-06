@@ -42,8 +42,9 @@ function renderSmartlinkBanner(element) {
   if (hasRealAd || !/pega|script|banner/i.test(text)) return;
 
   if (element.classList.contains('movie-ad-code')) {
+    element.classList.add('ad-fixed-slot', 'ad-fixed-slot--160x600');
     element.innerHTML = `
-      <div class="cinemax-ad-banner cinemax-ad-banner--rail">
+      <div class="cinemax-ad-banner cinemax-ad-banner--rail" data-ad-size="160x600">
         <span class="ad-kicker">Publicidad</span>
         <strong>CineMax MX</strong>
         <small>Oferta exclusiva para disfrutar más contenido.</small>
@@ -53,16 +54,34 @@ function renderSmartlinkBanner(element) {
     return;
   }
 
+  const size = getSmartlinkSize(element);
+  element.classList.add('ad-fixed-slot', `ad-fixed-slot--${size}`);
   element.innerHTML = `
-    <div class="cinemax-ad-banner">
+    <div class="cinemax-ad-banner" data-ad-size="${size.replace('x', '×')}">
       <div class="ad-copy">
         <span class="ad-kicker">Publicidad</span>
-        <strong>Mira más títulos gratis</strong>
+        <strong>${getSmartlinkTitle(element)}</strong>
         <small>Contenido recomendado para usuarios de CineMax MX.</small>
       </div>
       <span class="ad-cta">Ver oferta</span>
     </div>
   `;
+}
+
+function getSmartlinkSize(element) {
+  if (element.classList.contains('ad-zone-home-bottom')) return '728x90';
+  if (element.classList.contains('ad-zone-home-feed')) return '300x250';
+  if (element.classList.contains('movie-mobile-ad')) return '320x50';
+  if (element.classList.contains('ad-below-player')) return '300x250';
+  return '468x60';
+}
+
+function getSmartlinkTitle(element) {
+  if (element.classList.contains('ad-zone-home-bottom')) return 'Oferta destacada';
+  if (element.classList.contains('ad-zone-home-feed')) return 'Recomendado para ti';
+  if (element.classList.contains('movie-mobile-ad')) return 'Ver oferta exclusiva';
+  if (element.classList.contains('ad-below-player')) return 'Continúa disfrutando';
+  return 'Mira más títulos gratis';
 }
 
 function wireSmartlinkAnchor(anchor) {
@@ -86,9 +105,7 @@ function loadNativeBanner() {
   const targetSelectors = [
     '.ad-below-player',
     '.ad-zone-home-mid',
-    '.movie-mobile-ad-top',
-    '.ad-zone-home-feed',
-    '.ad-zone-home-top'
+    '.movie-mobile-ad-top'
   ];
   const target = targetSelectors.map(selector => document.querySelector(selector)).find(Boolean);
   if (!target) return;
@@ -121,7 +138,8 @@ function loadSocialBar() {
 
 function renderAffiliateBanners() {
   document.querySelectorAll('#affiliate-section, .movie-affiliate').forEach(section => {
-    section.classList.add('affiliate-banner');
+    const isMovie = section.classList.contains('movie-affiliate');
+    section.classList.add('affiliate-banner', 'ad-fixed-slot', isMovie ? 'ad-fixed-slot--300x250' : 'ad-fixed-slot--468x60');
     section.innerHTML = `
       <div class="affiliate-banner-copy">
         <span class="aff-label">Ofertas para ti</span>
