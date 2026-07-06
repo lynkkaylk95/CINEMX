@@ -46,7 +46,7 @@
 
   <!-- Adsterra Smartlink - Top Bar -->
   <div id="ad-top-bar">
-    ?? <strong>CineMax MX</strong> &nbsp;|&nbsp; Mira miles de títulos gratis &nbsp;|&nbsp;
+    &#127916; <strong>CineMax MX</strong> &nbsp;|&nbsp; Mira miles de títulos gratis &nbsp;|&nbsp;
     <a href="#" onclick="showToast('¡Oferta Adsterra Smartlink!'); return false;">Ver oferta exclusiva ?</a>
   </div>
 
@@ -69,7 +69,7 @@
     </div>
     <div class="nav-right">
       <a href="index.html" style="font-size: 14px; font-weight: 600; color: var(--text2); display: flex; align-items: center; gap: 4px;">
-        ?? <span>Volver</span>
+        &#8592; <span>Volver</span>
       </a>
     </div>
   </nav>
@@ -98,13 +98,13 @@
       </nav>
 
       <a href="index.html" class="movie-back-btn">
-        ? Volver al catálogo
+        &#8592; Volver al catálogo
       </a>
 
       <!-- Mobile Adsterra Banner -->
       <div class="ad-zone movie-mobile-ad movie-mobile-ad-top ad-zone--rectangle">
         <div class="ad-zone-label">
-          <strong>?? Publicidad</strong>
+          <strong>&#128226; Publicidad</strong>
           Banner móvil superior
         </div>
       </div>
@@ -117,7 +117,7 @@
           <span class="movie-meta-tag" id="movie-year">-</span>
           <span class="movie-meta-tag" id="movie-duration">-</span>
           <span class="movie-meta-tag" id="movie-genre">-</span>
-          <span class="movie-page-rating" id="movie-rating">? 0.0</span>
+          <span class="movie-page-rating" id="movie-rating">&#9733; 0.0</span>
         </div>
       </div>
 
@@ -141,7 +141,7 @@
 
         <div id="youtube-fallback" style="display:none">
           <div class="fallback-box">
-            <h3>?? Este video no está disponible aquí.</h3>
+            <h3>&#9888; Este video no está disponible aquí.</h3>
             <p>YouTube restringe la reproducción en sitios externos.</p>
             <a
               id="watchYoutube"
@@ -149,7 +149,7 @@
               target="_blank"
               rel="noopener noreferrer"
               href="#">
-              ?? Ver en YouTube
+              &#9654; Ver en YouTube
             </a>
           </div>
         </div>
@@ -158,14 +158,14 @@
       <!-- Adsterra Smartlink - Below Player -->
       <div class="ad-below-player">
         <div class="ad-zone-label">
-          <strong>?? Publicidad</strong>
+          <strong>&#128226; Publicidad</strong>
           Zona Adsterra Smartlink — Pega aquí tu script Adsterra (bajo el player)
         </div>
       </div>
 
       <!-- Episode list (Visible only for Series) -->
       <div id="ep-section" style="display: none;">
-        <h3 class="ep-section-title">?? Temporada 1 — Episodios</h3>
+        <h3 class="ep-section-title">&#127916; Temporada 1 — Episodios</h3>
         <div class="ep-grid" id="ep-grid-container"></div>
       </div>
 
@@ -187,30 +187,30 @@
 
       <!-- Movie Page Affiliate Section -->
       <div class="movie-affiliate">
-        <h3>?? Recomendaciones de compra</h3>
+        <h3>&#128722; Recomendaciones de compra</h3>
         <div class="movie-aff-links">
           <a href="#" class="aff-btn aff-btn-1" onclick="showToast('Redirigiendo a Amazon México...'); return true;">
-            ?? Smart TV 4K — Ver oferta
+            &#128250; Smart TV 4K — Ver oferta
           </a>
           <a href="#" class="aff-btn aff-btn-2" onclick="showToast('Redirigiendo a Mercado Libre...'); return true;">
-            ?? Audífonos Bluetooth — Ver oferta
+            &#127911; Audífonos Bluetooth — Ver oferta
           </a>
           <a href="#" class="aff-btn aff-btn-3" onclick="showToast('Redirigiendo a NordVPN...'); return true;">
-            ?? VPN Premium — Descuento
+            &#128640; VPN Premium — Descuento
           </a>
         </div>
       </div>
 
       <!-- Recommended Section -->
       <div class="rec-section">
-        <h3 class="rec-title">?? También te puede gustar</h3>
+        <h3 class="rec-title">&#10024; También te puede gustar</h3>
         <div class="rec-grid" id="rec-grid-container"></div>
       </div>
 
       <!-- Mobile Adsterra Banner -->
       <div class="ad-zone movie-mobile-ad movie-mobile-ad-bottom ad-zone--rectangle">
         <div class="ad-zone-label">
-          <strong>?? Publicidad</strong>
+          <strong>&#128226; Publicidad</strong>
           Banner móvil inferior
         </div>
       </div>
@@ -265,7 +265,7 @@
     </div>
     <div class="footer-bottom">
       <p>© 2026 CineMax MX — Sitio estático optimizado para Cloudflare Pages.</p>
-      <button onclick="showToast('Idioma: Español (México)')">???? ES-MX</button>
+      <button onclick="showToast('Idioma: Español (México)')">&#127474;&#127485; ES-MX</button>
     </div>
   </footer>
 
@@ -689,9 +689,9 @@
               <div class="card-thumb" style="${bgStyle}">
                 ${hasThumb
                   ? `<img class="card-thumb-img" src="${escapeAttr(recThumb)}" alt="Poster de ${escapeAttr(m.title)}" loading="lazy" decoding="async">`
-                  : `<div class="card-thumb-emoji" style="font-size:38px;">${escapeHTML(m.emoji || '??')}</div>`
+                  : `<div class="card-thumb-emoji" style="font-size:38px;">${escapeHTML(m.emoji || '🎬')}</div>`
                 }
-                <div class="card-rating">? ${escapeHTML(m.rating)}</div>
+                <div class="card-rating">★ ${escapeHTML(m.rating)}</div>
               </div>
               <div class="card-info" style="padding: 8px;">
                 <div class="card-title" style="font-size: 11px;">${escapeHTML(m.title)}</div>

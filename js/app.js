@@ -255,9 +255,9 @@ function createCard(m) {
   return `
     <a class="card" href="${escapeAttr(getMovieUrl(m))}">
       <div class="card-thumb" style="${bgStyle}">
-        ${hasThumb ? `<img class="card-thumb-img" src="${escapeAttr(thumbUrl)}" alt="Poster de ${escapeAttr(m.title)}" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='https://i3.ytimg.com/vi/${escapeAttr(getYouTubeId(m.yt))}/hqdefault.jpg';">` : `<div class="card-thumb-emoji">${escapeHTML(m.emoji || '??')}</div>`}
+        ${hasThumb ? `<img class="card-thumb-img" src="${escapeAttr(thumbUrl)}" alt="Poster de ${escapeAttr(m.title)}" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='https://i3.ytimg.com/vi/${escapeAttr(getYouTubeId(m.yt))}/hqdefault.jpg';">` : `<div class="card-thumb-emoji">${escapeHTML(m.emoji || '🎬')}</div>`}
         ${m.badge ? `<div class="card-badge">${escapeHTML(m.badge)}</div>` : ''}
-        <div class="card-rating">? ${escapeHTML(m.rating)}</div>
+        <div class="card-rating">★ ${escapeHTML(m.rating)}</div>
         <div class="card-overlay"><div class="card-play">?</div></div>
       </div>
       <div class="card-info">
@@ -274,17 +274,17 @@ function createFeatCard(m) {
   return `
     <a class="feat-card" href="${escapeAttr(getMovieUrl(m))}">
       <div class="feat-thumb" style="${bgStyle}">
-        ${hasThumb ? `<img class="card-thumb-img" src="${escapeAttr(thumbUrl)}" alt="Poster de ${escapeAttr(m.title)}" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='https://i3.ytimg.com/vi/${escapeAttr(getYouTubeId(m.yt))}/hqdefault.jpg';">` : `<div class="feat-thumb-emoji">${escapeHTML(m.emoji || '??')}</div>`}
+        ${hasThumb ? `<img class="card-thumb-img" src="${escapeAttr(thumbUrl)}" alt="Poster de ${escapeAttr(m.title)}" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='https://i3.ytimg.com/vi/${escapeAttr(getYouTubeId(m.yt))}/hqdefault.jpg';">` : `<div class="feat-thumb-emoji">${escapeHTML(m.emoji || '🎬')}</div>`}
         <div class="feat-play-wrap"><div class="feat-play-btn">?</div></div>
         ${m.badge ? `<div class="card-badge">${escapeHTML(m.badge)}</div>` : ''}
-        <div class="card-rating">? ${escapeHTML(m.rating)}</div>
+        <div class="card-rating">★ ${escapeHTML(m.rating)}</div>
       </div>
       <div class="feat-info">
         <div class="feat-title">${escapeHTML(m.title)}</div>
         <div class="feat-desc">${escapeHTML(m.desc)}</div>
         <div class="feat-footer">
           <div class="feat-tags"><span class="feat-tag">${escapeHTML(m.type)}</span><span class="feat-tag">${escapeHTML(m.year)}</span><span class="feat-tag">${escapeHTML(m.duration)}</span></div>
-          <div class="feat-rating">? ${escapeHTML(m.rating)}</div>
+          <div class="feat-rating">★ ${escapeHTML(m.rating)}</div>
         </div>
       </div>
     </a>`;
@@ -381,7 +381,7 @@ function renderAll() {
     showSection('sect-new', 'block');
     showSection('sect-action', 'block');
     const titleEl = document.querySelector('#sect-trending .section-title');
-    if (titleEl) titleEl.innerHTML = '<span class="icon">??</span> Más Vistos Esta Semana <span class="section-line"></span>';
+    if (titleEl) titleEl.innerHTML = '<span class="icon">&#128293;</span> Más Vistos Esta Semana <span class="section-line"></span>';
   } else {
     renderGrid('grid-trending', filtered);
     renderGrid('grid-new', []);
@@ -415,10 +415,10 @@ function renderAll() {
     const titleEl = document.querySelector('#sect-trending .section-title');
     if (titleEl) {
       titleEl.innerHTML = currentSearch
-        ? `<span class="icon">??</span> Resultados para "${escapeHTML(currentSearch)}" <span class="section-line"></span>`
+        ? `<span class="icon">&#128269;</span> Resultados para "${escapeHTML(currentSearch)}" <span class="section-line"></span>`
         : currentYear
-          ? `<span class="icon">??</span> Películas de ${escapeHTML(currentYear)} <span class="section-line"></span>`
-          : `<span class="icon">??</span> ${escapeHTML(currentGenre)} <span class="section-line"></span>`;
+          ? `<span class="icon">&#127916;</span> Películas de ${escapeHTML(currentYear)} <span class="section-line"></span>`
+          : `<span class="icon">&#127916;</span> ${escapeHTML(currentGenre)} <span class="section-line"></span>`;
     }
   }
 }
