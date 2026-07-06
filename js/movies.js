@@ -564,5 +564,205 @@ const MOVIES = [
     "badge": "NUEVO",
     "episodes": [],
     "id": 27
+  },
+  {
+    "title": "Las Decisiones del Destino",
+    "slug": "las-decisiones-del-destino",
+    "genre": "Familia",
+    "genres": [
+      "Familia",
+      "Emotivo"
+    ],
+    "type": "Película",
+    "year": 2026,
+    "rating": 8.7,
+    "duration": "1h 13min",
+    "emoji": "🎬",
+    "yt": "yBPreFmXWMk",
+    "thumb": "https://i3.ytimg.com/vi/yBPreFmXWMk/hqdefault.jpg",
+    "desc": "Tras la muerte de su madre, dos hermanas eligen caminos opuestos entre una vida de lujos vacíos y una existencia humilde en el campo. Años después, el reencuentro en una fiesta de cumpleaños revela cómo la envidia y las decisiones pasadas han transformado sus vidas drásticamente, obligándolas a confrontar sus verdades.",
+    "badge": "NUEVO",
+    "episodes": [],
+    "id": 28
+  },
+  {
+    "title": "La Novia Sustituta del Imperio Olivar",
+    "slug": "la-novia-sustituta-del-imperio-olivar",
+    "genre": "Comedia",
+    "genres": [
+      "Comedia",
+      "Thriller"
+    ],
+    "type": "Película",
+    "year": 2026,
+    "rating": 9.3,
+    "duration": "1h 56min",
+    "emoji": "🎬",
+    "yt": "BM2j6wELL1Q",
+    "thumb": "https://i3.ytimg.com/vi/BM2j6wELL1Q/hqdefault.jpg",
+    "desc": "Para salvar a su familia de la ruina, una joven inocente acepta casarse en lugar de su hermana con el heredero de la influyente familia Olivar. Lo que parecía un simple sacrificio pronto se convierte en una pesadilla llena de humillaciones, abusos y peligros ocultos. En la imponente mansión Olivar, cada miembro de la familia parece esconder un oscuro interés. Mientras lucha por sobrevivir en un ambiente donde nadie parece estar de su lado, descubre que las personas en quienes confiaba la han traicionado desde el principio. Todo cambia cuando un secreto del pasado sale a la luz y revela la verdadera razón de su matrimonio. Con la verdad de su lado, la joven deja atrás su ingenuidad y comienza a enfrentarse a quienes intentaron manipular su destino. Entre conspiraciones familiares, ambición y romance, demostrará que el coraje puede vencer incluso a los enemigos más poderosos. Cada revelación la acerca a recuperar la dignidad que le arrebataron. Sin embargo, la batalla más difícil será decidir en quién puede confiar realmente. Una historia de amor, traición y superación donde el destino cambia por completo con un solo secreto.\ndrama chino, novia sustituta, matrimonio por contrato, familia poderosa, secretos familiares, romance, traición, heredero, mansión, venganza, amor, conspiración, drama doblado al español, giros inesperados, CEO",
+    "badge": "NUEVO",
+    "episodes": [],
+    "id": 29
+  },
+  {
+    "title": "Cuando Dejaron de Elegirme",
+    "slug": "cuando-dejaron-de-elegirme",
+    "genre": "Familia",
+    "genres": [
+      "Familia",
+      "Emotivo"
+    ],
+    "type": "Película",
+    "year": 2026,
+    "rating": 9.6,
+    "duration": "3h 34min",
+    "emoji": "🎬",
+    "yt": "2nHxoG2_EhA",
+    "thumb": "https://i3.ytimg.com/vi/2nHxoG2_EhA/hqdefault.jpg",
+    "desc": "Después de años atrapada en un matrimonio sin amor, una mujer descubre la dolorosa verdad que cambiará su vida para siempre. Su esposo ya no la considera parte de su futuro y su propia hija ha entregado su cariño a otra mujer. Traicionada por las dos personas que más amaba, comprende que ha vivido sacrificándose por una familia que nunca supo valorarla. Decidida a recuperar su dignidad, pone fin a una relación marcada por la indiferencia y el desprecio. Mientras reconstruye su vida desde cero, quienes la ignoraron comienzan a enfrentar las consecuencias de sus decisiones. Los secretos, el arrepentimiento y las heridas del pasado salen a la luz cuando la familia empieza a desmoronarse. Lo que parecía una despedida definitiva se convierte en el inicio de una transformación inesperada. Entre el dolor, la esperanza y el deseo de justicia, ella descubrirá que merece una vida mucho mejor. Sin embargo, cuando su exesposo intenta recuperarla, tal vez ya sea demasiado tarde para reparar el daño causado. Una emotiva historia sobre el amor propio, la traición y las segundas oportunidades.\n\ndrama chino, matrimonio roto, esposa traicionada, infidelidad, familia, hija, segunda oportunidad, romance, divorcio, arrepentimiento, drama familiar, amor propio, melodrama, drama doblado al español, venganza emocional",
+    "badge": "NUEVO",
+    "episodes": [],
+    "id": 30
+  },
+  {
+    "title": "El Erudito y sus Esposas Legendarias",
+    "slug": "el-erudito-y-sus-esposas-legendarias",
+    "genre": "Ciencia Ficción",
+    "genres": [
+      "Ciencia Ficción",
+      "Viajes en el tiempo"
+    ],
+    "type": "Película",
+    "year": 2026,
+    "rating": 8.7,
+    "duration": "1h 50min",
+    "emoji": "🎬",
+    "yt": "cgBjDKxOcZo",
+    "thumb": "https://i3.ytimg.com/vi/cgBjDKxOcZo/hqdefault.jpg",
+    "desc": "Obligado a contraer matrimonio para sobrevivir en una época marcada por el caos, un joven erudito cree que su destino está sellado. Sin embargo, pronto descubre que cada una de sus nuevas esposas posee talentos extraordinarios capaces de cambiar el curso de la historia. Cuando un misterioso sistema de recompensas despierta en su interior, obtiene habilidades que lo ayudan a superar desafíos cada vez más peligrosos. Mientras las intrigas políticas y las luchas de poder amenazan con destruir su hogar, deberá tomar decisiones estratégicas para proteger a su familia. La escasez de recursos y los conflictos bélicos pondrán a prueba su inteligencia y liderazgo. Con la ayuda de sus extraordinarias compañeras, convertirá cada crisis en una oportunidad para fortalecerse. Enfrentando enemigos poderosos y conspiraciones inesperadas, el joven demostrará que la sabiduría puede ser más poderosa que la fuerza. A medida que su influencia crece, también aumentan los riesgos que amenazan a quienes ama. Entre acción, estrategia y lealtad, luchará por construir un futuro próspero para todos. Una épica historia de superación, poder y alianzas que desafían al destino.\ndrama chino, fantasía, sistema de recompensas, erudito, esposas poderosas, artes marciales, estrategia, guerra, imperio, familia, aventura, protagonista inteligente, reencarnación, drama doblado al español, acción china",
+    "badge": "NUEVO",
+    "episodes": [],
+    "id": 31
+  },
+  {
+    "title": "Cinco Años para Perdonarte",
+    "slug": "cinco-anos-para-perdonarte",
+    "genre": "Drama",
+    "genres": [
+      "Drama",
+      "Thriller"
+    ],
+    "type": "Película",
+    "year": 2026,
+    "rating": 8.6,
+    "duration": "2h 10min",
+    "emoji": "🎬",
+    "yt": "KpRxEdHmxBM",
+    "thumb": "https://i3.ytimg.com/vi/KpRxEdHmxBM/hqdefault.jpg",
+    "desc": "Olivia vive atormentada por la culpa después de que un accidente provocado por sus padres destruyera la vida de Sebastián y de toda su familia. Convencido de que ella también merece pagar por aquella tragedia, Sebastián la somete durante cinco años a un doloroso ciclo de desprecio y sufrimiento. Aunque Olivia soporta cada humillación en silencio, nunca deja de buscar una oportunidad para redimirse. Cuando una inesperada tragedia vuelve a sacudir sus vidas, ambos se ven obligados a enfrentar las heridas que el tiempo nunca logró sanar. La verdad sobre el pasado comienza a salir a la luz, revelando que las apariencias ocultaban secretos mucho más profundos. Mientras el odio da paso a las dudas, Sebastián deberá decidir si la venganza realmente puede aliviar su dolor. Olivia, por su parte, descubrirá que el perdón también implica aprender a perdonarse a sí misma. Entre sacrificios, arrepentimientos y sentimientos que jamás desaparecieron, ambos lucharán contra un destino marcado por el sufrimiento. El amor y el rencor se enfrentarán en una batalla donde una sola decisión puede cambiarlo todo. Una intensa historia de redención, justicia y segundas oportunidades.\ndrama chino, romance, redención, venganza, accidente, culpa, amor imposible, secretos familiares, segunda oportunidad, arrepentimiento, tragedia, melodrama, justicia, drama doblado al español, final emocionante",
+    "badge": "NUEVO",
+    "episodes": [],
+    "id": 32
+  },
+  {
+    "title": "El Precio de una Mala Elección",
+    "slug": "el-precio-de-una-mala-eleccion",
+    "genre": "Familia",
+    "genres": [
+      "Familia",
+      "Thriller"
+    ],
+    "type": "Película",
+    "year": 2026,
+    "rating": 8.9,
+    "duration": "1h 52min",
+    "emoji": "🎬",
+    "yt": "SyVNznQdWK4",
+    "thumb": "https://i3.ytimg.com/vi/SyVNznQdWK4/hqdefault.jpg",
+    "desc": "Un devastador accidente obliga a un hombre a tomar una decisión que cambiará su vida para siempre. Convencido de que debe salvar a su primer amor y al hijo de ella, ignora las desesperadas súplicas de su esposa para rescatar a su propia hija. La negligencia y el egoísmo desencadenan una tragedia irreparable que destruye a toda la familia. Consumida por el dolor, la madre enfrenta la pérdida más grande de su vida mientras descubre la verdadera naturaleza del hombre en quien confiaba. El remordimiento comienza a perseguir al responsable cuando comprende que su decisión tuvo consecuencias imposibles de reparar. Los secretos, la culpa y el sufrimiento salen a la luz, rompiendo para siempre los lazos que los unían. Mientras intenta encontrar justicia y reconstruir su vida, la familia deberá afrontar un futuro marcado por la ausencia y el arrepentimiento. El amor del pasado se convierte en el origen de una tragedia que nadie pudo evitar. Cada decisión tendrá un precio, y no todos estarán dispuestos a pagarlo. Una conmovedora historia sobre la responsabilidad, la traición y las consecuencias de elegir a quién salvar.\ndrama chino, tragedia familiar, accidente, esposa traicionada, hija, primer amor, decisiones difíciles, culpa, arrepentimiento, drama emocional, familia, justicia, melodrama, drama doblado al español, final impactante",
+    "badge": "NUEVO",
+    "episodes": [],
+    "id": 33
+  },
+  {
+    "title": "La Heredera que Nadie Pudo Detener",
+    "slug": "la-heredera-que-nadie-pudo-detener",
+    "genre": "Drama",
+    "genres": [
+      "Drama",
+      "Emotivo"
+    ],
+    "type": "Película",
+    "year": 2026,
+    "rating": 8.9,
+    "duration": "2h 43min",
+    "emoji": "🎬",
+    "yt": "qTxnzcSfsc4",
+    "thumb": "https://i3.ytimg.com/vi/qTxnzcSfsc4/hqdefault.jpg",
+    "desc": "Después de descubrir que su matrimonio fue construido sobre mentiras y engaños, una brillante profesional decide poner fin a una vida de humillaciones. Cuando la verdad sobre su identidad sale a la luz, es reconocida como la única heredera de una inmensa fortuna y de un poderoso imperio empresarial. Con una nueva oportunidad frente a ella, abandona el papel de víctima y comienza a recuperar todo lo que le fue arrebatado. Mientras sus antiguos enemigos intentan detener su ascenso, ella responde con inteligencia, determinación y una estrategia impecable. Cada paso la acerca a desenmascarar a quienes conspiraron para destruir su futuro. En medio de luchas por el poder, traiciones y alianzas inesperadas, descubrirá que la confianza es un lujo que pocos merecen. Su transformación inspira a quienes la rodean y despierta el arrepentimiento de quienes la subestimaron. Sin embargo, el camino hacia el éxito también traerá nuevos desafíos y sentimientos que pondrán a prueba su corazón. Entre negocios, romance y justicia, luchará por construir el futuro que siempre le perteneció. Una historia de ambición, venganza y superación donde la verdadera fuerza nace después de la traición.\ndrama chino, heredera millonaria, CEO, romance, matrimonio falso, traición, imperio empresarial, mujer poderosa, venganza, secretos familiares, éxito, negocios, segunda oportunidad, drama doblado al español, protagonista femenina",
+    "badge": "NUEVO",
+    "episodes": [],
+    "id": 34
+  },
+  {
+    "title": "Renacer Entre Ruinas",
+    "slug": "renacer-entre-ruinas",
+    "genre": "Familia",
+    "genres": [
+      "Familia",
+      "Romance"
+    ],
+    "type": "Película",
+    "year": 2026,
+    "rating": 8.1,
+    "duration": "2h 54min",
+    "emoji": "🎬",
+    "yt": "dWQH8VozSzM",
+    "thumb": "https://i3.ytimg.com/vi/dWQH8VozSzM/hqdefault.jpg",
+    "desc": "Tras perder a sus padres y sufrir un doloroso divorcio lleno de injusticias, Elena cree haber tocado fondo. Traicionada por el hombre que alguna vez amó y humillada por su nueva pareja, decide que ha llegado el momento de luchar por sí misma. Cuando un poderoso magnate aparece inesperadamente en su vida, encuentra el apoyo necesario para reconstruir todo lo que había perdido. Con inteligencia y determinación, Elena diseña un plan para desenmascarar a quienes destruyeron su felicidad y recuperar la dignidad que le arrebataron. Mientras asciende en el competitivo mundo empresarial, sus antiguos enemigos comienzan a perder el control sobre sus propias ambiciones. Entre conspiraciones, traiciones y alianzas inesperadas, descubrirá que la verdadera fortaleza nace de las adversidades. Su transformación inspira a quienes la rodean y despierta el arrepentimiento de quienes la subestimaron. Sin embargo, el éxito también pondrá a prueba su capacidad para volver a confiar en alguien. Entre el amor, la venganza y la justicia, Elena demostrará que ningún obstáculo es suficiente para detener a una mujer decidida a cambiar su destino. Una historia de superación, poder y segundas oportunidades que demuestra que el mejor triunfo es renacer más fuerte que nunca.\ndrama chino, romance, divorcio, heredera, magnate, CEO, mujer poderosa, venganza, traición, negocios, segunda oportunidad, superación, drama doblado al español, imperio empresarial, justicia",
+    "badge": "NUEVO",
+    "episodes": [],
+    "id": 35
+  },
+  {
+    "title": "Renací con un Nuevo Nombre",
+    "slug": "renaci-con-un-nuevo-nombre",
+    "genre": "Familia",
+    "genres": [
+      "Familia",
+      "Emotivo"
+    ],
+    "type": "Película",
+    "year": 2026,
+    "rating": 8.5,
+    "duration": "2h 08min",
+    "emoji": "🎬",
+    "yt": "tlA5vhs_3Ik",
+    "thumb": "https://i3.ytimg.com/vi/tlA5vhs_3Ik/hqdefault.jpg",
+    "desc": "Después de ser abandonada en una isla y traicionada por su propio esposo y su familia, Valeria pierde toda esperanza de recuperar la vida que conocía. Al borde de la muerte, recibe una oportunidad inesperada para empezar de nuevo al asumir una nueva identidad. Mientras intenta reconstruir su futuro lejos de quienes la lastimaron, descubre que su familia sigue dispuesta a sacrificarla para salvar a su hermana adoptiva, exigiéndole donar un riñón una vez más. Decidida a no volver a ser una víctima, Valeria enfrenta el pasado con valentía y comienza a desenmascarar las mentiras que destruyeron su vida. Cada revelación expone la codicia y la crueldad de quienes alguna vez llamaba familia. Con el apoyo de nuevos aliados, recupera poco a poco la confianza en sí misma y lucha por reclamar lo que siempre le perteneció. Mientras sus enemigos intentan ocultar la verdad, ella se convierte en una mujer más fuerte, inteligente e imposible de manipular. Entre traiciones, secretos familiares y una inesperada oportunidad para amar de nuevo, Valeria demostrará que el verdadero renacer comienza cuando uno deja de vivir para los demás. El pasado regresará para exigir cuentas, pero esta vez ella estará preparada para enfrentarlo. Una apasionante historia de venganza, redención y segundas oportunidades donde la justicia finalmente encuentra su camino.\ndrama chino, romance, nueva identidad, esposa traicionada, isla, secretos familiares, hermana adoptiva, donación de riñón, venganza, mujer poderosa, segunda oportunidad, justicia, melodrama, drama doblado al español, final emocionante",
+    "badge": "NUEVO",
+    "episodes": [],
+    "id": 36
+  },
+  {
+    "title": "La Pequeña Heredera del Destino",
+    "slug": "la-pequena-heredera-del-destino",
+    "genre": "Familia",
+    "genres": [
+      "Familia",
+      "Ciencia Ficción"
+    ],
+    "type": "Película",
+    "year": 2026,
+    "rating": 9.1,
+    "duration": "2h 03min",
+    "emoji": "🎬",
+    "yt": "4Tr8IX8qOak",
+    "thumb": "https://i3.ytimg.com/vi/4Tr8IX8qOak/hqdefault.jpg",
+    "desc": "Abandonada por su familia adoptiva tras ser considerada un símbolo de mala suerte, una valiente niña queda completamente sola frente a un destino incierto. Todo cambia cuando salva la vida de un poderoso magnate, quien decide protegerla y darle el hogar que nunca tuvo. Aunque aún es pequeña, demuestra una inteligencia y habilidades extraordinarias que sorprenden a todos los que la rodean. Mientras se adapta a su nueva vida, comienza a descubrir oscuros secretos sobre su pasado y las verdaderas razones por las que fue rechazada. Las intrigas familiares y la ambición de quienes buscan controlar una inmensa fortuna amenazan con destruir la paz que finalmente ha encontrado. Sin embargo, la niña enfrenta cada obstáculo con una valentía que inspira a quienes creen en ella. A medida que las piezas del pasado encajan, salen a la luz verdades capaces de cambiar el destino de dos poderosas familias. Con el apoyo del magnate y de nuevos aliados, luchará por descubrir su verdadera identidad y reclamar el lugar que siempre le perteneció. Entre amor familiar, traiciones y sorprendentes revelaciones, demostrará que el valor no depende de la edad. Una conmovedora historia sobre la esperanza, el destino y la fuerza de una niña extraordinaria.\ndrama chino, niña prodigio, heredera, magnate, familia poderosa, secretos familiares, identidad oculta, adopción, destino, niña abandonada, fortuna, drama familiar, doblado al español, giros inesperados, emociones",
+    "badge": "NUEVO",
+    "episodes": [],
+    "id": 37
   }
 ];
