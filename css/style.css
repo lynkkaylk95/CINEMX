@@ -348,6 +348,76 @@ ul { list-style: none; }
 }
 .ad-zone-label { pointer-events: none; }
 .ad-zone-label strong { display: block; color: var(--text2); font-size: 13px; margin-bottom: 3px; }
+.cinemax-ad-banner {
+  width: 100%;
+  min-height: 76px;
+  border-radius: 12px;
+  border: 1px solid rgba(245,197,24,.22);
+  background:
+    linear-gradient(135deg, rgba(229,9,20,.18), rgba(245,197,24,.10) 42%, rgba(23,23,32,.92)),
+    radial-gradient(circle at 88% 18%, rgba(245,197,24,.20), transparent 34%);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 16px;
+  text-align: left;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.05), 0 12px 28px rgba(0,0,0,.22);
+}
+.cinemax-ad-banner .ad-copy {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+.cinemax-ad-banner .ad-kicker,
+.affiliate-banner .aff-label {
+  color: var(--gold);
+  font-size: 10px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: .8px;
+}
+.cinemax-ad-banner strong {
+  color: var(--white);
+  font-size: clamp(14px, 3.8vw, 18px);
+  font-weight: 900;
+  line-height: 1.15;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.cinemax-ad-banner small {
+  color: var(--text2);
+  font-size: 11px;
+  line-height: 1.35;
+  display: -webkit-box;
+  line-clamp: 1;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.ad-cta,
+.aff-banner-btn {
+  flex: 0 0 auto;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--red), #ff4a35);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 900;
+  padding: 9px 13px;
+  box-shadow: 0 10px 24px rgba(229,9,20,.28);
+  white-space: nowrap;
+}
+.cinemax-ad-banner--rail {
+  min-height: 100%;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  padding: 18px 12px;
+}
+.cinemax-ad-banner--rail strong {
+  white-space: normal;
+}
 .ad-clickable {
   cursor: pointer;
   transition: border-color var(--tr), background var(--tr), color var(--tr);
@@ -381,6 +451,35 @@ ul { list-style: none; }
 .aff-btn-2 { background: linear-gradient(135deg,#667eea,#764ba2); color: #fff; }
 .aff-btn-3 { background: var(--bg4); color: var(--text); border: 1px solid var(--border); }
 .aff-btn:hover { opacity: .86; transform: translateY(-1px); }
+.affiliate-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  background:
+    linear-gradient(135deg, rgba(22,22,30,.96), rgba(30,18,22,.96)),
+    radial-gradient(circle at 88% 16%, rgba(229,9,20,.24), transparent 36%);
+  border-color: rgba(245,197,24,.20);
+}
+.affiliate-banner-copy {
+  min-width: 0;
+}
+.affiliate-banner .aff-title {
+  margin: 4px 0 5px;
+}
+.affiliate-banner .aff-desc {
+  max-width: 620px;
+  margin: 0;
+  display: -webkit-box;
+  line-clamp: 2;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.affiliate-banner .aff-banner-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 14px 28px rgba(229,9,20,.36);
+}
 
 /* ---- NO RESULTS ---- */
 #no-results { display: none; text-align: center; padding: 60px 20px; color: var(--text3); }
@@ -587,21 +686,47 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
   .ad-zone {
     margin: 22px 0;
     min-height: 76px;
-    padding: 10px;
+    padding: 8px;
   }
   .ad-zone-home-top {
     margin: 14px 4vw 0;
     min-height: 72px;
   }
   .ad-zone--rectangle {
-    min-height: 220px;
+    min-height: 96px;
+  }
+  .cinemax-ad-banner {
+    min-height: 74px;
+    padding: 12px;
+    gap: 10px;
+  }
+  .cinemax-ad-banner small {
+    -webkit-line-clamp: 1;
+    line-clamp: 1;
+  }
+  .ad-cta,
+  .aff-banner-btn {
+    font-size: 11px;
+    padding: 8px 11px;
   }
 }
 @media (max-width: 480px) {
   .footer-grid { grid-template-columns: 1fr; }
   #hero { min-height: 420px; height: min(70svh, 520px); }
   .movies-grid { grid-template-columns: repeat(auto-fill,minmax(110px,1fr)); gap: 7px; }
-  #affiliate-section { padding: 18px 14px; }
+  #affiliate-section { padding: 12px; }
+  .affiliate-banner {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .affiliate-banner .aff-banner-btn {
+    width: 100%;
+    text-align: center;
+  }
+  .cinemax-ad-banner {
+    border-radius: 10px;
+  }
 }
 
 /* ============================================================

@@ -17,7 +17,7 @@ function openSmartlinkAd() {
 function wireSmartlinkElement(element) {
   if (!element) return;
   if (element.dataset.nativeAd === 'true') return;
-  polishAdPlaceholder(element);
+  renderSmartlinkBanner(element);
   element.classList.add('ad-clickable');
   element.setAttribute('role', 'link');
   element.setAttribute('tabindex', '0');
@@ -36,20 +36,33 @@ function wireSmartlinkElement(element) {
   });
 }
 
-function polishAdPlaceholder(element) {
+function renderSmartlinkBanner(element) {
   const text = element.textContent || '';
   const hasRealAd = element.querySelector('iframe, img, object, embed, script');
   if (hasRealAd || !/pega|script|banner/i.test(text)) return;
 
-  const label = element.querySelector('.ad-zone-label');
-  if (label) {
-    label.innerHTML = '<strong>Publicidad</strong>Ver anuncio';
+  if (element.classList.contains('movie-ad-code')) {
+    element.innerHTML = `
+      <div class="cinemax-ad-banner cinemax-ad-banner--rail">
+        <span class="ad-kicker">Publicidad</span>
+        <strong>CineMax MX</strong>
+        <small>Oferta exclusiva para disfrutar más contenido.</small>
+        <span class="ad-cta">Ver ahora</span>
+      </div>
+    `;
     return;
   }
 
-  if (element.classList.contains('movie-ad-code')) {
-    element.innerHTML = '<span><strong>Publicidad</strong><br>Ver anuncio</span>';
-  }
+  element.innerHTML = `
+    <div class="cinemax-ad-banner">
+      <div class="ad-copy">
+        <span class="ad-kicker">Publicidad</span>
+        <strong>Mira más títulos gratis</strong>
+        <small>Contenido recomendado para usuarios de CineMax MX.</small>
+      </div>
+      <span class="ad-cta">Ver oferta</span>
+    </div>
+  `;
 }
 
 function wireSmartlinkAnchor(anchor) {
@@ -106,12 +119,28 @@ function loadSocialBar() {
   document.body.appendChild(script);
 }
 
+function renderAffiliateBanners() {
+  document.querySelectorAll('#affiliate-section, .movie-affiliate').forEach(section => {
+    section.classList.add('affiliate-banner');
+    section.innerHTML = `
+      <div class="affiliate-banner-copy">
+        <span class="aff-label">Ofertas para ti</span>
+        <h2 class="aff-title">Mejora tu experiencia de cine</h2>
+        <p class="aff-desc">Accede a ofertas recomendadas para ver películas y series desde tu móvil con mejor comodidad.</p>
+      </div>
+      <a class="aff-banner-btn" href="${CINEMAX_SMARTLINK_URL}" target="_blank" rel="noopener noreferrer">Ver oferta</a>
+    `;
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   loadNativeBanner();
   loadSocialBar();
+  renderAffiliateBanners();
 
   document.querySelectorAll('#ad-top-bar a').forEach(wireSmartlinkAnchor);
   document.querySelectorAll('.ad-zone, .ad-below-player, .movie-ad-code').forEach(wireSmartlinkElement);
+  document.querySelectorAll('.aff-banner-btn').forEach(wireSmartlinkAnchor);
 
   document.querySelectorAll('footer a').forEach(anchor => {
     if (anchor.textContent.trim().toLowerCase() === 'publicidad') {
