@@ -1,5 +1,8 @@
-/* CineMax MX - Adsterra Smartlink */
-const CINEMAX_SMARTLINK_URL = 'https://www.effectivecpmnetwork.com/fqnfqrdx?key=ca18fc268feaa5010eabed567ae9a466';
+/* CineMax MX - Ads */
+const CINEMAX_SMARTLINK_URL = 'https://www.effectivecpmnetwork.com/mdgtfx72cr?key=ddb2f05c770276460358480543facd5a';
+const CINEMAX_NATIVE_SRC = 'https://pl30226244.effectivecpmnetwork.com/00e298bf7ba92d81b94f4dff373a728f/invoke.js';
+const CINEMAX_NATIVE_CONTAINER_ID = 'container-00e298bf7ba92d81b94f4dff373a728f';
+const CINEMAX_SOCIAL_BAR_SRC = 'https://pl30226245.effectivecpmnetwork.com/40/4b/00/404b00bb58a19ba41d2858f90d60c5da.js';
 
 function openSmartlinkAd() {
   const adWindow = window.open('about:blank', '_blank');
@@ -13,6 +16,7 @@ function openSmartlinkAd() {
 
 function wireSmartlinkElement(element) {
   if (!element) return;
+  if (element.dataset.nativeAd === 'true') return;
   polishAdPlaceholder(element);
   element.classList.add('ad-clickable');
   element.setAttribute('role', 'link');
@@ -63,7 +67,49 @@ function wireSmartlinkAnchor(anchor) {
   };
 }
 
+function loadNativeBanner() {
+  if (document.getElementById(CINEMAX_NATIVE_CONTAINER_ID)) return;
+
+  const targetSelectors = [
+    '.ad-below-player',
+    '.ad-zone-home-mid',
+    '.movie-mobile-ad-top',
+    '.ad-zone-home-feed',
+    '.ad-zone-home-top'
+  ];
+  const target = targetSelectors.map(selector => document.querySelector(selector)).find(Boolean);
+  if (!target) return;
+
+  target.dataset.nativeAd = 'true';
+  target.classList.remove('ad-clickable');
+  target.removeAttribute('role');
+  target.removeAttribute('tabindex');
+  target.removeAttribute('aria-label');
+  target.innerHTML = '';
+
+  const script = document.createElement('script');
+  script.async = true;
+  script.dataset.cfasync = 'false';
+  script.src = CINEMAX_NATIVE_SRC;
+
+  const container = document.createElement('div');
+  container.id = CINEMAX_NATIVE_CONTAINER_ID;
+
+  target.append(script, container);
+}
+
+function loadSocialBar() {
+  if (document.querySelector(`script[src="${CINEMAX_SOCIAL_BAR_SRC}"]`)) return;
+
+  const script = document.createElement('script');
+  script.src = CINEMAX_SOCIAL_BAR_SRC;
+  document.body.appendChild(script);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+  loadNativeBanner();
+  loadSocialBar();
+
   document.querySelectorAll('#ad-top-bar a').forEach(wireSmartlinkAnchor);
   document.querySelectorAll('.ad-zone, .ad-below-player, .movie-ad-code').forEach(wireSmartlinkElement);
 
