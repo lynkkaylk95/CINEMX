@@ -1,4 +1,4 @@
-﻿/* ============================================================
+/* ============================================================
    CineMax MX — admin.js
    Logic for admin.html (Offline Admin Panel)
 ============================================================ */
@@ -6,8 +6,8 @@
 const MOVIES_STORAGE_KEY = 'cinemax_movies';
 const GENRE_ALIASES = {
   'Học đường': 'Escolar',
-  'Xuyên không': 'Viajes en el tiempo',
-  'Cổ trang': 'De época',
+  'Xuy\u00EAn kh\u00F4ng': 'Viajes en el tiempo',
+  'C\u1ED5 trang': 'De época',
   'Cung đấu': 'Intrigas palaciegas'
 };
 const ADMIN_GENRE_LABELS = {
@@ -351,7 +351,7 @@ const MOVIES = ${JSON.stringify(currentMovies, null, 2)};
 `;
   const blob = new Blob([jsContent], { type: 'application/javascript;charset=utf-8' });
   const url = URL.createObjectURL(blob);
-  
+
   const a = document.createElement('a');
   a.href = url;
   a.download = 'movies.js';
@@ -359,7 +359,7 @@ const MOVIES = ${JSON.stringify(currentMovies, null, 2)};
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
-  
+
   showToast("Xuất file movies.js thành công!");
 }
 

@@ -20,10 +20,10 @@ const STATIC_GENRES = [
   'Intrigas palaciegas'
 ];
 const GENRE_ALIASES = {
-  'Học đường': 'Escolar',
-  'Xuyên không': 'Viajes en el tiempo',
-  'Cổ trang': 'De época',
-  'Cung đấu': 'Intrigas palaciegas'
+  'H\u1ECDc \u0111\u01B0\u1EDDng': 'Escolar',
+  'Xuy\u00EAn kh\u00F4ng': 'Viajes en el tiempo',
+  'C\u1ED5 trang': 'De época',
+  'Cung \u0111\u1EA5u': 'Intrigas palaciegas'
 };
 let currentGenre = 'Todos';
 let currentSearch = '';
@@ -59,6 +59,75 @@ function escapeAttr(value) {
   return escapeHTML(value).replace(/`/g, '&#96;');
 }
 
+
+
+
+
+
+
+
+function renderExpandableTextElement(element) {
+  const expanded = element.dataset.expanded === 'true';
+  const text = expanded ? element.dataset.fullText : element.dataset.shortText;
+  const label = expanded ? 'Ver menos' : 'Ver más';
+  const ariaExpanded = expanded ? 'true' : 'false';
+  element.innerHTML = `${escapeHTML(text)} <button type="button" class="read-more-inline" data-read-more-toggle="true" aria-expanded="${ariaExpanded}" onpointerdown="return handleReadMoreButton(this,event)" onmousedown="return handleReadMoreButton(this,event)" ontouchstart="return handleReadMoreButton(this,event)" onclick="return handleReadMoreButton(this,event)">${label}</button>`;
+}
+
+function handleReadMoreButton(toggle, event) {
+  if (event) {
+    event.preventDefault();
+    event.stopPropagation();
+    if (typeof event.stopImmediatePropagation === 'function') event.stopImmediatePropagation();
+  }
+  const element = toggle?.closest('[data-read-more-root="true"]');
+  if (!element) return false;
+  const now = Date.now();
+  const lastToggleAt = Number(element.dataset.lastToggleAt || 0);
+  if (now - lastToggleAt < 450) return false;
+  element.dataset.lastToggleAt = String(now);
+  element.dataset.expanded = element.dataset.expanded === 'true' ? 'false' : 'true';
+  renderExpandableTextElement(element);
+  return false;
+}
+
+function bindReadMoreToggle() {
+  if (document.documentElement.dataset.readMoreBound === 'true') return;
+  document.documentElement.dataset.readMoreBound = 'true';
+  const handleEvent = event => {
+    const toggle = event.target?.closest?.('[data-read-more-toggle="true"]');
+    if (!toggle) return;
+    handleReadMoreButton(toggle, event);
+  };
+  const options = { capture: true, passive: false };
+  ['pointerdown', 'mousedown', 'touchstart', 'click'].forEach(type => {
+    window.addEventListener(type, handleEvent, options);
+    document.addEventListener(type, handleEvent, options);
+  });
+}
+
+function setExpandableText(element, value, limit = 360) {
+  if (!element) return;
+  const fullText = String(value || '').trim();
+  element.classList.remove('is-expandable');
+  element.removeAttribute('data-read-more-root');
+  element.removeAttribute('data-expanded');
+  element.textContent = '';
+
+  if (fullText.length <= limit) {
+    element.textContent = fullText;
+    return;
+  }
+
+  const shortText = fullText.slice(0, limit).replace(/\s+\S*$/, '').trim() + '...';
+  element.classList.add('is-expandable');
+  element.dataset.readMoreRoot = 'true';
+  element.dataset.expanded = 'false';
+  element.dataset.fullText = fullText;
+  element.dataset.shortText = shortText;
+  bindReadMoreToggle();
+  renderExpandableTextElement(element);
+}
 function getMovieGenres(movie) {
   const values = Array.isArray(movie?.genres) ? movie.genres : [];
   const legacy = movie?.genre ? [movie.genre] : [];
@@ -153,7 +222,7 @@ function initDailyHero() {
   const movieId = Number(movie.id);
 
   titleEl.textContent = movie.title || 'CineMax MX';
-  descEl.textContent = movie.desc || 'Disfruta una selección destacada de películas y series en español de México.';
+  setExpandableText(descEl, movie.desc || 'Disfruta una selección destacada de películas y series en español de México.', 230);
 
   if (badgeEl) {
     badgeEl.textContent = movie.type === 'Serie' ? 'Serie destacada del día' : 'Película destacada del día';
@@ -162,7 +231,7 @@ function initDailyHero() {
   if (metaEl) {
     metaEl.innerHTML = `
       <span class="hero-meta-item">
-        <span class="rating-pill">★ ${escapeHTML(movie.rating || '0.0')}</span>
+        <span class="rating-pill">? ${escapeHTML(movie.rating || '0.0')}</span>
       </span>
       <span class="hero-meta-item"><span class="dot"></span> ${escapeHTML(movie.year || '-')}</span>
       <span class="hero-meta-item"><span class="dot"></span> ${escapeHTML(movie.duration || '-')}</span>
@@ -186,10 +255,10 @@ function createCard(m) {
   return `
     <a class="card" href="${escapeAttr(getMovieUrl(m))}">
       <div class="card-thumb" style="${bgStyle}">
-        ${hasThumb ? `<img class="card-thumb-img" src="${escapeAttr(thumbUrl)}" alt="Poster de ${escapeAttr(m.title)}" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='https://i3.ytimg.com/vi/${escapeAttr(getYouTubeId(m.yt))}/hqdefault.jpg';">` : `<div class="card-thumb-emoji">${escapeHTML(m.emoji || '🎬')}</div>`}
+        ${hasThumb ? `<img class="card-thumb-img" src="${escapeAttr(thumbUrl)}" alt="Poster de ${escapeAttr(m.title)}" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='https://i3.ytimg.com/vi/${escapeAttr(getYouTubeId(m.yt))}/hqdefault.jpg';">` : `<div class="card-thumb-emoji">${escapeHTML(m.emoji || '??')}</div>`}
         ${m.badge ? `<div class="card-badge">${escapeHTML(m.badge)}</div>` : ''}
-        <div class="card-rating">⭐ ${escapeHTML(m.rating)}</div>
-        <div class="card-overlay"><div class="card-play">▶</div></div>
+        <div class="card-rating">? ${escapeHTML(m.rating)}</div>
+        <div class="card-overlay"><div class="card-play">?</div></div>
       </div>
       <div class="card-info">
         <div class="card-title">${escapeHTML(m.title)}</div>
@@ -205,17 +274,17 @@ function createFeatCard(m) {
   return `
     <a class="feat-card" href="${escapeAttr(getMovieUrl(m))}">
       <div class="feat-thumb" style="${bgStyle}">
-        ${hasThumb ? `<img class="card-thumb-img" src="${escapeAttr(thumbUrl)}" alt="Poster de ${escapeAttr(m.title)}" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='https://i3.ytimg.com/vi/${escapeAttr(getYouTubeId(m.yt))}/hqdefault.jpg';">` : `<div class="feat-thumb-emoji">${escapeHTML(m.emoji || '🎬')}</div>`}
-        <div class="feat-play-wrap"><div class="feat-play-btn">▶</div></div>
+        ${hasThumb ? `<img class="card-thumb-img" src="${escapeAttr(thumbUrl)}" alt="Poster de ${escapeAttr(m.title)}" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='https://i3.ytimg.com/vi/${escapeAttr(getYouTubeId(m.yt))}/hqdefault.jpg';">` : `<div class="feat-thumb-emoji">${escapeHTML(m.emoji || '??')}</div>`}
+        <div class="feat-play-wrap"><div class="feat-play-btn">?</div></div>
         ${m.badge ? `<div class="card-badge">${escapeHTML(m.badge)}</div>` : ''}
-        <div class="card-rating">⭐ ${escapeHTML(m.rating)}</div>
+        <div class="card-rating">? ${escapeHTML(m.rating)}</div>
       </div>
       <div class="feat-info">
         <div class="feat-title">${escapeHTML(m.title)}</div>
         <div class="feat-desc">${escapeHTML(m.desc)}</div>
         <div class="feat-footer">
           <div class="feat-tags"><span class="feat-tag">${escapeHTML(m.type)}</span><span class="feat-tag">${escapeHTML(m.year)}</span><span class="feat-tag">${escapeHTML(m.duration)}</span></div>
-          <div class="feat-rating">⭐ ${escapeHTML(m.rating)}</div>
+          <div class="feat-rating">? ${escapeHTML(m.rating)}</div>
         </div>
       </div>
     </a>`;
@@ -312,7 +381,7 @@ function renderAll() {
     showSection('sect-new', 'block');
     showSection('sect-action', 'block');
     const titleEl = document.querySelector('#sect-trending .section-title');
-    if (titleEl) titleEl.innerHTML = '<span class="icon">🔥</span> Más Vistos Esta Semana <span class="section-line"></span>';
+    if (titleEl) titleEl.innerHTML = '<span class="icon">??</span> Más Vistos Esta Semana <span class="section-line"></span>';
   } else {
     renderGrid('grid-trending', filtered);
     renderGrid('grid-new', []);
@@ -346,10 +415,10 @@ function renderAll() {
     const titleEl = document.querySelector('#sect-trending .section-title');
     if (titleEl) {
       titleEl.innerHTML = currentSearch
-        ? `<span class="icon">🔍</span> Resultados para "${escapeHTML(currentSearch)}" <span class="section-line"></span>`
+        ? `<span class="icon">??</span> Resultados para "${escapeHTML(currentSearch)}" <span class="section-line"></span>`
         : currentYear
-          ? `<span class="icon">📅</span> Películas de ${escapeHTML(currentYear)} <span class="section-line"></span>`
-          : `<span class="icon">🎬</span> ${escapeHTML(currentGenre)} <span class="section-line"></span>`;
+          ? `<span class="icon">??</span> Películas de ${escapeHTML(currentYear)} <span class="section-line"></span>`
+          : `<span class="icon">??</span> ${escapeHTML(currentGenre)} <span class="section-line"></span>`;
     }
   }
 }
