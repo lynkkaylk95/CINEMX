@@ -343,11 +343,20 @@ ul { list-style: none; }
 .card-badge-new { background: var(--red); }
 .card-badge-dubbed { background: rgba(35,45,70,.9); border: 1px solid rgba(255,255,255,.16); }
 .card-rating { position: absolute; top: 7px; right: 7px; background: rgba(0,0,0,.72); color: var(--gold); font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px; backdrop-filter: blur(4px); }
-.card-quality {
+.card-quality-row {
   position: absolute;
   right: 7px;
   bottom: 7px;
   z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  max-width: calc(100% - 14px);
+}
+.card-quality {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   background: rgba(0,0,0,.78);
   color: #fff;
   border: 1px solid rgba(255,255,255,.18);
@@ -358,6 +367,12 @@ ul { list-style: none; }
   line-height: 1;
   padding: 4px 6px;
   box-shadow: 0 5px 16px rgba(0,0,0,.36);
+}
+.card-quality-dubbed {
+  background: rgba(35,45,70,.92);
+  max-width: 72px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .card-info { padding: 10px 11px 12px; }
 .card-title { font-size: 12px; font-weight: 700; color: var(--white); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

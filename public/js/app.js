@@ -235,10 +235,12 @@ function createThumbBadges(movie) {
     ${isNew ? `
       <div class="card-badge-row">
         <span class="card-badge card-badge-new">NUEVO</span>
-        <span class="card-badge card-badge-dubbed">DOBLADO</span>
       </div>
     ` : ''}
-    <div class="card-quality">HD</div>
+    <div class="card-quality-row">
+      <span class="card-quality">HD</span>
+      <span class="card-quality card-quality-dubbed">DOBLADO</span>
+    </div>
   `;
 }
 
