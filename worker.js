@@ -130,6 +130,39 @@ async function handleMovieViews(request, env, slug) {
   }, { headers });
 }
 
+async function handleMovieViewsBatch(request, env) {
+  const viewsStore = env.CINEMAX_VIEWS;
+  const url = new URL(request.url);
+  const slugs = (url.searchParams.get("slugs") || "")
+    .split(",")
+    .map((slug) => slug.trim())
+    .filter((slug, index, list) => isValidSlug(slug) && list.indexOf(slug) === index)
+    .slice(0, 80);
+
+  if (!viewsStore || !slugs.length) {
+    return jsonResponse({
+      ok: true,
+      configured: Boolean(viewsStore),
+      views: Object.fromEntries(slugs.map((slug) => [slug, 0]))
+    });
+  }
+
+  const entries = await Promise.all(slugs.map(async (slug) => [
+    slug,
+    Number(await viewsStore.get(`movie:${slug}`) || 0)
+  ]));
+
+  return jsonResponse({
+    ok: true,
+    configured: true,
+    views: Object.fromEntries(entries)
+  }, {
+    headers: {
+      "cache-control": "public, max-age=60"
+    }
+  });
+}
+
 async function loadMovies(request, env) {
   const moviesUrl = new URL("/js/movies.js", request.url);
   const response = await env.ASSETS.fetch(new Request(moviesUrl, { method: "GET" }));
@@ -223,6 +256,10 @@ async function serveIndexShell(request, env) {
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+
+    if (url.pathname === "/api/views" && request.method === "GET") {
+      return handleMovieViewsBatch(request, env);
+    }
 
     const viewsMatch = url.pathname.match(/^\/api\/views\/([^/]+)$/);
     if (viewsMatch && (request.method === "GET" || request.method === "POST")) {

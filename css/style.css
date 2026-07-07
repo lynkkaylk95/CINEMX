@@ -314,9 +314,35 @@ ul { list-style: none; }
 .card:hover .card-overlay { opacity: 1; }
 .card-play { width: 46px; height: 46px; border-radius: 50%; background: rgba(229,9,20,.88); display: flex; align-items: center; justify-content: center; font-size: 17px; box-shadow: var(--glow-red); transform: scale(.8); transition: transform var(--tr); }
 .card:hover .card-play { transform: scale(1); }
-.card-badge-row {
+.card-view-count {
   position: absolute;
   top: 7px;
+  left: 7px;
+  z-index: 3;
+  min-width: 48px;
+  min-height: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 7px;
+  border-radius: 999px;
+  background: rgba(0,0,0,.72);
+  border: 1px solid rgba(255,255,255,.14);
+  color: var(--white);
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 5px 16px rgba(0,0,0,.35);
+}
+.card-view-count span:first-child {
+  color: var(--gold);
+  font-size: 11px;
+  line-height: 1;
+}
+.card-badge-row {
+  position: absolute;
+  top: 31px;
   left: 7px;
   right: 42px;
   display: flex;

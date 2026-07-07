@@ -174,6 +174,58 @@ function getMovieUrl(movie) {
   return `/pelicula/${encodeURIComponent(getMovieSlug(movie))}`;
 }
 
+function formatViewNumber(value) {
+  const num = Math.max(0, Number(value) || 0);
+  const units = [
+    { value: 1000000000, suffix: 'B' },
+    { value: 1000000, suffix: 'M' },
+    { value: 1000, suffix: 'K' }
+  ];
+  const unit = units.find(item => num >= item.value);
+  if (!unit) return String(Math.round(num));
+  const amount = num / unit.value;
+  const rounded = amount >= 100 ? Math.round(amount) : Math.round(amount * 10) / 10;
+  return `${String(rounded).replace(/\.0$/, '')}${unit.suffix}`;
+}
+
+function getDisplayedViews(realViews) {
+  return formatViewNumber((Number(realViews) || 0) * 100);
+}
+
+function updateCardViewCounters(viewMap = {}) {
+  document.querySelectorAll('[data-view-slug]').forEach(card => {
+    const slug = card.getAttribute('data-view-slug') || '';
+    const count = card.querySelector('[data-card-view-count]');
+    if (!count) return;
+    count.textContent = getDisplayedViews(viewMap[slug] || 0);
+    card.classList.add('views-loaded');
+  });
+}
+
+let cardViewsRequestId = 0;
+async function loadCardViewCounters() {
+  const cards = [...document.querySelectorAll('[data-view-slug]')];
+  const slugs = [...new Set(cards.map(card => card.getAttribute('data-view-slug')).filter(Boolean))].slice(0, 80);
+  const requestId = ++cardViewsRequestId;
+  if (!slugs.length || !window.location.protocol.startsWith('http')) {
+    updateCardViewCounters({});
+    return;
+  }
+
+  try {
+    const response = await fetch(`/api/views?slugs=${encodeURIComponent(slugs.join(','))}`, {
+      method: 'GET',
+      credentials: 'same-origin'
+    });
+    if (!response.ok) throw new Error('views_batch_failed');
+    const data = await response.json();
+    if (requestId !== cardViewsRequestId) return;
+    updateCardViewCounters(data.views || {});
+  } catch (err) {
+    if (requestId === cardViewsRequestId) updateCardViewCounters({});
+  }
+}
+
 function getAbsoluteUrl(path = '/') {
   const cleanPath = String(path || '/');
   const origin = window.location.origin && window.location.origin !== 'null' ? window.location.origin : SITE_ORIGIN;
@@ -302,10 +354,12 @@ function createCard(m) {
   const thumbUrl = getMovieImage(m);
   const hasThumb = thumbUrl !== '';
   const bgStyle = hasThumb ? '' : `background: linear-gradient(135deg, ${hashColor(m.id)})`;
+  const slug = getMovieSlug(m);
   return `
-    <a class="card" href="${escapeAttr(getMovieUrl(m))}">
+    <a class="card" href="${escapeAttr(getMovieUrl(m))}" data-view-slug="${escapeAttr(slug)}">
       <div class="card-thumb" style="${bgStyle}">
         ${hasThumb ? `<img class="card-thumb-img" src="${escapeAttr(thumbUrl)}" alt="Poster de ${escapeAttr(m.title)}" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='https://i3.ytimg.com/vi/${escapeAttr(getYouTubeId(m.yt))}/hqdefault.jpg';">` : `<div class="card-thumb-emoji">${escapeHTML(m.emoji || '\uD83C\uDFAC')}</div>`}
+        <div class="card-view-count" aria-label="Vistas"><span aria-hidden="true">&#128065;</span><span data-card-view-count>-</span></div>
         ${createThumbBadges(m)}
         <div class="card-rating">&#9733; ${escapeHTML(m.rating)}</div>
         <div class="card-overlay"><div class="card-play">&#9654;</div></div>
@@ -321,10 +375,12 @@ function createFeatCard(m) {
   const thumbUrl = getMovieImage(m);
   const hasThumb = thumbUrl !== '';
   const bgStyle = hasThumb ? '' : `background: linear-gradient(135deg, ${hashColor(m.id)})`;
+  const slug = getMovieSlug(m);
   return `
-    <a class="feat-card" href="${escapeAttr(getMovieUrl(m))}">
+    <a class="feat-card" href="${escapeAttr(getMovieUrl(m))}" data-view-slug="${escapeAttr(slug)}">
       <div class="feat-thumb" style="${bgStyle}">
         ${hasThumb ? `<img class="card-thumb-img" src="${escapeAttr(thumbUrl)}" alt="Poster de ${escapeAttr(m.title)}" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='https://i3.ytimg.com/vi/${escapeAttr(getYouTubeId(m.yt))}/hqdefault.jpg';">` : `<div class="feat-thumb-emoji">${escapeHTML(m.emoji || '\uD83C\uDFAC')}</div>`}
+        <div class="card-view-count" aria-label="Vistas"><span aria-hidden="true">&#128065;</span><span data-card-view-count>-</span></div>
         <div class="feat-play-wrap"><div class="feat-play-btn">&#9654;</div></div>
         ${createThumbBadges(m)}
         <div class="card-rating">&#9733; ${escapeHTML(m.rating)}</div>
@@ -471,6 +527,8 @@ function renderAll() {
           : `<span class="icon">&#127916;</span> ${escapeHTML(currentGenre)} <span class="section-line"></span>`;
     }
   }
+
+  requestAnimationFrame(loadCardViewCounters);
 }
 
 function navigateToMovie(id) {
