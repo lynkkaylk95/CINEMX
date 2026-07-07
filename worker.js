@@ -51,6 +51,85 @@ function truncate(value, max = 160) {
   return text.length > max ? `${text.slice(0, max - 3).trim()}...` : text;
 }
 
+function jsonResponse(data, init = {}) {
+  const headers = new Headers(init.headers || {});
+  headers.set("content-type", "application/json;charset=UTF-8");
+  headers.set("cache-control", "no-store");
+  return new Response(JSON.stringify(data), { ...init, headers });
+}
+
+function parseCookies(request) {
+  const cookieHeader = request.headers.get("Cookie") || "";
+  return Object.fromEntries(cookieHeader.split(";").map((part) => {
+    const [name, ...rest] = part.trim().split("=");
+    return [name, rest.join("=")];
+  }).filter(([name]) => name));
+}
+
+function isValidSlug(value) {
+  return /^[a-z0-9][a-z0-9-]{0,120}$/.test(String(value || ""));
+}
+
+async function sha256(value) {
+  const data = new TextEncoder().encode(value);
+  const digest = await crypto.subtle.digest("SHA-256", data);
+  return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
+function getClientIp(request) {
+  return request.headers.get("CF-Connecting-IP")
+    || request.headers.get("X-Forwarded-For")?.split(",")[0]?.trim()
+    || "";
+}
+
+function createVisitorId() {
+  if (crypto.randomUUID) return crypto.randomUUID();
+  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
+}
+
+async function handleMovieViews(request, env, slug) {
+  if (!isValidSlug(slug)) {
+    return jsonResponse({ ok: false, error: "invalid_movie", views: 0 }, { status: 400 });
+  }
+
+  const viewsStore = env.CINEMAX_VIEWS;
+  if (!viewsStore) {
+    return jsonResponse({ ok: true, configured: false, views: 0, counted: false });
+  }
+
+  const counterKey = `movie:${slug}`;
+  const cookies = parseCookies(request);
+  const visitorId = cookies.cmx_vid || createVisitorId();
+  const userAgent = request.headers.get("User-Agent") || "";
+  const visitorHash = await sha256(`${slug}|${visitorId}|${getClientIp(request)}|${userAgent}`);
+  const throttleKey = `movie-view-lock:${slug}:${visitorHash}`;
+  const headers = new Headers({
+    "Set-Cookie": `cmx_vid=${encodeURIComponent(visitorId)}; Max-Age=31536000; Path=/; SameSite=Lax; Secure; HttpOnly`
+  });
+
+  let realViews = Number(await viewsStore.get(counterKey) || 0);
+  let counted = false;
+
+  if (request.method === "POST") {
+    const isLocked = await viewsStore.get(throttleKey);
+    if (!isLocked) {
+      realViews += 1;
+      counted = true;
+      await Promise.all([
+        viewsStore.put(counterKey, String(realViews)),
+        viewsStore.put(throttleKey, "1", { expirationTtl: 30 * 60 })
+      ]);
+    }
+  }
+
+  return jsonResponse({
+    ok: true,
+    configured: true,
+    views: realViews,
+    counted
+  }, { headers });
+}
+
 async function loadMovies(request, env) {
   const moviesUrl = new URL("/js/movies.js", request.url);
   const response = await env.ASSETS.fetch(new Request(moviesUrl, { method: "GET" }));
@@ -144,6 +223,11 @@ async function serveIndexShell(request, env) {
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+
+    const viewsMatch = url.pathname.match(/^\/api\/views\/([^/]+)$/);
+    if (viewsMatch && (request.method === "GET" || request.method === "POST")) {
+      return handleMovieViews(request, env, decodeURIComponent(viewsMatch[1]));
+    }
 
     if (url.pathname === "/sitemap.xml") {
       return buildSitemap(request, await loadMovies(request, env));

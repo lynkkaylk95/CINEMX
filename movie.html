@@ -40,7 +40,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=badgefix-20260707">
+  <link rel="stylesheet" href="css/style.css?v=views-20260707">
 </head>
 <body>
 
@@ -118,6 +118,11 @@
           <span class="movie-meta-tag" id="movie-duration">-</span>
           <span class="movie-meta-tag" id="movie-genre">-</span>
           <span class="movie-page-rating" id="movie-rating">&#9733; 0.0</span>
+        </div>
+        <div class="movie-views" id="movie-views" aria-live="polite">
+          <span class="movie-views-icon" aria-hidden="true">&#128065;</span>
+          <span id="movie-views-count">-</span>
+          <span>visualizaciones</span>
         </div>
       </div>
 
@@ -436,6 +441,56 @@
       return `/pelicula/${encodeURIComponent(getMovieSlug(movie))}`;
     }
 
+    function formatViewNumber(value) {
+      const num = Math.max(0, Number(value) || 0);
+      const units = [
+        { value: 1000000000, suffix: 'B' },
+        { value: 1000000, suffix: 'M' },
+        { value: 1000, suffix: 'K' }
+      ];
+      const unit = units.find(item => num >= item.value);
+      if (!unit) return String(Math.round(num));
+      const amount = num / unit.value;
+      const rounded = amount >= 100 ? Math.round(amount) : Math.round(amount * 10) / 10;
+      return `${String(rounded).replace(/\.0$/, '')}${unit.suffix}`;
+    }
+
+    function updateViewCounter(realViews) {
+      const count = document.getElementById('movie-views-count');
+      const wrap = document.getElementById('movie-views');
+      if (!count || !wrap) return;
+      count.textContent = formatViewNumber((Number(realViews) || 0) * 100);
+      wrap.classList.add('is-loaded');
+    }
+
+    async function loadMovieViews(movie) {
+      const slug = getMovieSlug(movie);
+      if (!slug || !window.location.protocol.startsWith('http')) {
+        updateViewCounter(0);
+        return;
+      }
+
+      const seenKey = `cinemax_view_seen_${slug}`;
+      const lastSeen = Number(localStorage.getItem(seenKey) || 0);
+      const shouldCount = Date.now() - lastSeen > 30 * 60 * 1000;
+
+      try {
+        const response = await fetch(`/api/views/${encodeURIComponent(slug)}`, {
+          method: shouldCount ? 'POST' : 'GET',
+          credentials: 'same-origin',
+          headers: shouldCount ? { 'Content-Type': 'application/json' } : undefined
+        });
+        if (!response.ok) throw new Error('views_request_failed');
+        const data = await response.json();
+        updateViewCounter(data.views || 0);
+        if (shouldCount && data.counted) {
+          localStorage.setItem(seenKey, String(Date.now()));
+        }
+      } catch (err) {
+        updateViewCounter(0);
+      }
+    }
+
     function getCurrentMovieSlug() {
       const parts = window.location.pathname.split('/').filter(Boolean);
       const movieIndex = parts.indexOf('pelicula');
@@ -641,6 +696,7 @@
       document.getElementById('movie-duration').textContent = movie.duration || '-';
       document.getElementById('movie-genre').textContent = getGenreLabel(movie);
       document.getElementById('movie-rating').textContent = `\u2605 ${movie.rating || '0.0'}`;
+      loadMovieViews(movie);
 
       const poster = document.getElementById('video-poster');
       const posterUrl = getThumbnailUrl(movie.thumb, movieYtId);
