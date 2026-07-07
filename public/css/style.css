@@ -888,26 +888,23 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
   justify-content: center;
 }
 .movie-ad-slot {
-  width: 100%;
-  max-width: 220px;
-  min-height: 600px;
-  padding: 14px;
-  border: 1px dashed rgba(255,255,255,.14);
-  border-radius: 14px;
-  background: linear-gradient(180deg, rgba(24,24,31,.92), rgba(12,12,18,.94));
-  box-shadow: 0 18px 44px rgba(0,0,0,.28);
+  width: max-content;
+  max-width: 184px;
+  min-height: 0;
+  padding: 10px;
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 12px;
+  background: rgba(15,15,22,.62);
+  box-shadow: 0 16px 38px rgba(0,0,0,.24);
   color: var(--text2);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  gap: 12px;
+  justify-content: center;
+  gap: 0;
+  overflow: hidden;
 }
 .movie-ad-label {
-  font-size: 11px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: .7px;
-  color: var(--text3);
+  display: none;
 }
 .movie-ad-label strong {
   display: block;
@@ -916,21 +913,25 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
   margin-bottom: 4px;
 }
 .movie-ad-code {
-  border-radius: 12px;
-  background: rgba(255,255,255,.03);
-  border: 1px solid rgba(255,255,255,.08);
-  padding: 16px 12px;
+  width: var(--ad-w, 160px);
+  min-height: var(--ad-h, 600px);
+  border-radius: 10px;
+  background: #07070b;
+  border: 1px solid rgba(255,255,255,.06);
+  padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   font-size: 12px;
   line-height: 1.55;
-  min-height: 320px;
+  overflow: hidden;
 }
 .movie-ad-code.ad-fixed-slot {
+  width: var(--ad-w);
+  height: var(--ad-h);
   flex: 0 0 auto;
-  min-height: 0;
+  min-height: var(--ad-h);
 }
 .movie-ad-code iframe,
 .movie-ad-code img,
@@ -938,9 +939,10 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
 .movie-ad-code embed {
   display: block;
   width: 100%;
+  height: 100%;
   max-width: 100%;
   border: 0;
-  border-radius: 10px;
+  border-radius: 8px;
 }
 .movie-mobile-ad {
   display: none;
@@ -1169,7 +1171,7 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
   }
   .movie-ad-slot {
     max-width: 180px;
-    min-height: 520px;
+    min-height: 0;
   }
   .movie-ad-code.ad-fixed-slot--160x600 {
     --ad-w: 160px;
@@ -1177,6 +1179,15 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
   }
   .movie-ad-code .cinemax-ad-banner::after {
     content: '160×300';
+  }
+}
+
+@media (max-width: 1320px) {
+  .movie-shell {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .movie-ad-rail {
+    display: none;
   }
 }
 
