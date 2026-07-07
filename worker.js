@@ -257,7 +257,7 @@ export default {
   async fetch(request, env) {
     const url = new URL(request.url);
 
-    if (url.pathname === "/api/views" && request.method === "GET") {
+    if ((url.pathname === "/api/views" || url.pathname === "/api/view-counts") && request.method === "GET") {
       return handleMovieViewsBatch(request, env);
     }
 

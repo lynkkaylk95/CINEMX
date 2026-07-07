@@ -213,7 +213,7 @@ async function loadCardViewCounters() {
   }
 
   try {
-    const response = await fetch(`/api/views?slugs=${encodeURIComponent(slugs.join(','))}`, {
+    const response = await fetch(`/api/view-counts?slugs=${encodeURIComponent(slugs.join(','))}`, {
       method: 'GET',
       credentials: 'same-origin'
     });
