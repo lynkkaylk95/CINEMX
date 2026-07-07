@@ -47,7 +47,7 @@
   <!-- Adsterra Smartlink - Top Bar -->
   <div id="ad-top-bar">
     &#127916; <strong>CineMax MX</strong> &nbsp;|&nbsp; Mira miles de títulos gratis &nbsp;|&nbsp;
-    <a href="#" onclick="showToast('¡Oferta Adsterra Smartlink!'); return false;">Ver oferta exclusiva ?</a>
+    <a href="#" onclick="showToast('¡Oferta Adsterra Smartlink!'); return false;">Ver oferta exclusiva &#8594;</a>
   </div>
 
   <!-- Navbar -->
@@ -640,7 +640,7 @@
       document.getElementById('movie-year').textContent = movie.year || '-';
       document.getElementById('movie-duration').textContent = movie.duration || '-';
       document.getElementById('movie-genre').textContent = getGenreLabel(movie);
-      document.getElementById('movie-rating').textContent = `? ${movie.rating || '0.0'}`;
+      document.getElementById('movie-rating').textContent = `\u2605 ${movie.rating || '0.0'}`;
 
       const poster = document.getElementById('video-poster');
       const posterUrl = getThumbnailUrl(movie.thumb, movieYtId);
@@ -689,9 +689,9 @@
               <div class="card-thumb" style="${bgStyle}">
                 ${hasThumb
                   ? `<img class="card-thumb-img" src="${escapeAttr(recThumb)}" alt="Poster de ${escapeAttr(m.title)}" loading="lazy" decoding="async">`
-                  : `<div class="card-thumb-emoji" style="font-size:38px;">${escapeHTML(m.emoji || '🎬')}</div>`
+                  : `<div class="card-thumb-emoji" style="font-size:38px;">${escapeHTML(m.emoji || '\uD83C\uDFAC')}</div>`
                 }
-                <div class="card-rating">★ ${escapeHTML(m.rating)}</div>
+                <div class="card-rating">&#9733; ${escapeHTML(m.rating)}</div>
               </div>
               <div class="card-info" style="padding: 8px;">
                 <div class="card-title" style="font-size: 11px;">${escapeHTML(m.title)}</div>
