@@ -25,6 +25,8 @@ const GENRE_ALIASES = {
   'C\u1ED5 trang': 'De época',
   'Cung \u0111\u1EA5u': 'Intrigas palaciegas'
 };
+const SITE_ORIGIN = 'https://cinemx.moviemx.workers.dev';
+const DEFAULT_SHARE_IMAGE = 'https://i3.ytimg.com/vi/Qb-2xKrPsP0/maxresdefault.jpg';
 let currentGenre = 'Todos';
 let currentSearch = '';
 let currentYear = '';
@@ -160,6 +162,20 @@ function getMovieUrl(movie) {
   return `/pelicula/${encodeURIComponent(getMovieSlug(movie))}`;
 }
 
+function getAbsoluteUrl(path = '/') {
+  const cleanPath = String(path || '/');
+  const origin = window.location.origin && window.location.origin !== 'null' ? window.location.origin : SITE_ORIGIN;
+  return `${origin}${cleanPath.startsWith('/') ? cleanPath : `/${cleanPath}`}`;
+}
+
+function getGenreUrl(genre) {
+  return genre && genre !== 'Todos' ? `/?genre=${encodeURIComponent(genre)}` : '/';
+}
+
+function getYearUrl(year) {
+  return `/ano/${encodeURIComponent(year)}`;
+}
+
 function hasGenre(movie, genre) {
   return genre === 'Todos' || getMovieGenres(movie).includes(genre);
 }
@@ -231,7 +247,7 @@ function initDailyHero() {
   if (metaEl) {
     metaEl.innerHTML = `
       <span class="hero-meta-item">
-        <span class="rating-pill">? ${escapeHTML(movie.rating || '0.0')}</span>
+        <span class="rating-pill">&#9733; ${escapeHTML(movie.rating || '0.0')}</span>
       </span>
       <span class="hero-meta-item"><span class="dot"></span> ${escapeHTML(movie.year || '-')}</span>
       <span class="hero-meta-item"><span class="dot"></span> ${escapeHTML(movie.duration || '-')}</span>
@@ -548,14 +564,18 @@ function applyInitialQueryParams() {
 }
 
 function updatePageSeo() {
-  const origin = window.location.origin && window.location.origin !== 'null' ? window.location.origin : '';
   const canonical = document.getElementById('canonical-link');
   const desc = document.getElementById('meta-desc');
   const ogTitle = document.getElementById('og-title');
   const ogDesc = document.getElementById('og-desc');
   const ogUrl = document.getElementById('og-url');
+  const ogImage = document.getElementById('og-image');
   const twitterTitle = document.getElementById('twitter-title');
   const twitterDesc = document.getElementById('twitter-desc');
+  const twitterImage = document.getElementById('twitter-image');
+  const structured = document.getElementById('structured-data');
+  const path = currentYear ? getYearUrl(currentYear) : '/';
+  const canonicalUrl = getAbsoluteUrl(path);
   const title = currentYear
     ? `Películas ${currentYear} en español latino — CineMax MX`
     : 'CineMax MX — Películas y Series en Línea';
@@ -564,12 +584,61 @@ function updatePageSeo() {
     : 'Películas completas y series en español latino, con estrenos, romance, acción, drama y títulos populares para ver en línea.';
   document.title = title;
   if (desc) desc.content = description;
-  if (canonical) canonical.href = origin ? `${origin}${currentYear ? `/ano/${currentYear}` : '/'}` : (currentYear ? `/ano/${currentYear}` : '/');
+  if (canonical) canonical.href = canonicalUrl;
   if (ogTitle) ogTitle.content = title;
   if (ogDesc) ogDesc.content = description;
-  if (ogUrl) ogUrl.content = canonical?.href || window.location.href;
+  if (ogUrl) ogUrl.content = canonicalUrl;
+  if (ogImage) ogImage.content = DEFAULT_SHARE_IMAGE;
   if (twitterTitle) twitterTitle.content = title;
   if (twitterDesc) twitterDesc.content = description;
+  if (twitterImage) twitterImage.content = DEFAULT_SHARE_IMAGE;
+  if (structured) {
+    const itemList = filterMovies(currentGenre, currentSearch).slice(0, 12).map((movie, index) => ({
+      '@type': 'ListItem',
+      position: index + 1,
+      url: getAbsoluteUrl(getMovieUrl(movie)),
+      name: movie.title
+    }));
+    structured.textContent = JSON.stringify({
+      '@context': 'https://schema.org',
+      '@graph': [
+        {
+          '@type': 'WebSite',
+          name: 'CineMax MX',
+          url: getAbsoluteUrl('/'),
+          inLanguage: 'es-MX',
+          potentialAction: {
+            '@type': 'SearchAction',
+            target: `${getAbsoluteUrl('/')}?q={search_term_string}`,
+            'query-input': 'required name=search_term_string'
+          }
+        },
+        {
+          '@type': 'CollectionPage',
+          name: title,
+          description,
+          url: canonicalUrl,
+          image: DEFAULT_SHARE_IMAGE,
+          inLanguage: 'es-MX',
+          mainEntity: {
+            '@type': 'ItemList',
+            itemListElement: itemList
+          }
+        },
+        {
+          '@type': 'BreadcrumbList',
+          itemListElement: currentYear
+            ? [
+                { '@type': 'ListItem', position: 1, name: 'Inicio', item: getAbsoluteUrl('/') },
+                { '@type': 'ListItem', position: 2, name: String(currentYear), item: canonicalUrl }
+              ]
+            : [
+                { '@type': 'ListItem', position: 1, name: 'Inicio', item: canonicalUrl }
+              ]
+        }
+      ]
+    });
+  }
 }
 
 window.addEventListener('scroll', () => {

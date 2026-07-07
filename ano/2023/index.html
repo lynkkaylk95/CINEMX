@@ -4,21 +4,22 @@
   <meta charset="UTF-8">
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-  <meta name="description" id="meta-desc" content="Mira pel?culas y series de 2023 en espa?ol latino en CineMax MX. Estrenos, dramas, romance, acci?n y t?tulos populares.">
+  <meta name="description" id="meta-desc" content="Mira películas y series de 2023 en español latino en CineMax MX. Estrenos, dramas, romance, acción y títulos populares.">
   <meta name="robots" content="index, follow">
   <meta name="theme-color" content="#0a0a0f">
   <link rel="canonical" id="canonical-link" href="https://cinemx.moviemx.workers.dev/ano/2023">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="CineMax MX">
-  <meta property="og:title" id="og-title" content="Pel?culas 2023 en espa?ol latino - CineMax MX">
-  <meta property="og:description" id="og-desc" content="Mira pel?culas y series de 2023 en espa?ol latino en CineMax MX. Estrenos, dramas, romance, acci?n y t?tulos populares.">
+  <meta property="og:title" id="og-title" content="Películas 2023 en español latino - CineMax MX">
+  <meta property="og:description" id="og-desc" content="Mira películas y series de 2023 en español latino en CineMax MX. Estrenos, dramas, romance, acción y títulos populares.">
   <meta property="og:url" id="og-url" content="https://cinemx.moviemx.workers.dev/ano/2023">
   <meta property="og:image" id="og-image" content="https://i3.ytimg.com/vi/Qb-2xKrPsP0/maxresdefault.jpg">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" id="twitter-title" content="Pel?culas 2023 en espa?ol latino - CineMax MX">
-  <meta name="twitter:description" id="twitter-desc" content="Mira pel?culas y series de 2023 en espa?ol latino en CineMax MX. Estrenos, dramas, romance, acci?n y t?tulos populares.">
+  <meta name="twitter:title" id="twitter-title" content="Películas 2023 en español latino - CineMax MX">
+  <meta name="twitter:description" id="twitter-desc" content="Mira películas y series de 2023 en español latino en CineMax MX. Estrenos, dramas, romance, acción y títulos populares.">
   <meta name="twitter:image" id="twitter-image" content="https://i3.ytimg.com/vi/Qb-2xKrPsP0/maxresdefault.jpg">
-  <title>Pel?culas 2023 en espa?ol latino - CineMax MX</title>
+  <title>Películas 2023 en español latino - CineMax MX</title>
+  <script type="application/ld+json" id="structured-data"></script>
 
   <!-- Google Analytics -->
   <script src="js/analytics.js"></script>
@@ -42,18 +43,18 @@
     <div class="nav-logo" onclick="window.location.href='index.html'">CINE<span>MAX</span></div>
 
     <div class="nav-links">
-      <a href="#" class="active" onclick="filterByGenre('Todos'); return false;">Inicio</a>
+      <a href="index.html" class="active" onclick="filterByGenre('Todos'); return false;">Inicio</a>
       <a href="about.html">Sobre Nosotros</a>
-      <a href="#" onclick="filterByGenre('Acción'); return false;">Acción</a>
-      <a href="#" onclick="filterByGenre('Comedia'); return false;">Comedia</a>
-      <a href="#" onclick="filterByGenre('Drama'); return false;">Drama</a>
-      <a href="#" onclick="filterByGenre('Familia'); return false;">Familia</a>
-      <a href="#" onclick="filterByGenre('Emotivo'); return false;">Emotivo</a>
-      <a href="#" onclick="filterByGenre('Series'); return false;">Series</a>
-      <a href="#" onclick="filterByGenre('Escolar'); return false;">Escolar</a>
-      <a href="#" onclick="filterByGenre('Viajes en el tiempo'); return false;">Viajes en el tiempo</a>
-      <a href="#" onclick="filterByGenre('De época'); return false;">De época</a>
-      <a href="#" onclick="filterByGenre('Intrigas palaciegas'); return false;">Intrigas palaciegas</a>
+      <a href="index.html?genre=Acci%C3%B3n" onclick="filterByGenre('Acción'); return false;">Acción</a>
+      <a href="index.html?genre=Comedia" onclick="filterByGenre('Comedia'); return false;">Comedia</a>
+      <a href="index.html?genre=Drama" onclick="filterByGenre('Drama'); return false;">Drama</a>
+      <a href="index.html?genre=Familia" onclick="filterByGenre('Familia'); return false;">Familia</a>
+      <a href="index.html?genre=Emotivo" onclick="filterByGenre('Emotivo'); return false;">Emotivo</a>
+      <a href="index.html?genre=Series" onclick="filterByGenre('Series'); return false;">Series</a>
+      <a href="index.html?genre=Escolar" onclick="filterByGenre('Escolar'); return false;">Escolar</a>
+      <a href="index.html?genre=Viajes%20en%20el%20tiempo" onclick="filterByGenre('Viajes en el tiempo'); return false;">Viajes en el tiempo</a>
+      <a href="index.html?genre=De%20%C3%A9poca" onclick="filterByGenre('De época'); return false;">De época</a>
+      <a href="index.html?genre=Intrigas%20palaciegas" onclick="filterByGenre('Intrigas palaciegas'); return false;">Intrigas palaciegas</a>
     </div>
 
     <div class="nav-right">
@@ -71,21 +72,21 @@
 
   <!-- Mobile Menu -->
   <div id="mobile-menu">
-    <a href="#" onclick="filterByGenre('Todos'); closeMenu(); return false;">🏠 Inicio</a>
+    <a href="index.html" onclick="filterByGenre('Todos'); closeMenu(); return false;">🏠 Inicio</a>
     <a href="about.html" onclick="closeMenu()">Sobre Nosotros</a>
-    <a href="#" onclick="filterByGenre('Acción'); closeMenu(); return false;">💥 Acción</a>
-    <a href="#" onclick="filterByGenre('Comedia'); closeMenu(); return false;">😂 Comedia</a>
-    <a href="#" onclick="filterByGenre('Drama'); closeMenu(); return false;">🎭 Drama</a>
-    <a href="#" onclick="filterByGenre('Familia'); closeMenu(); return false;">Familia</a>
-    <a href="#" onclick="filterByGenre('Emotivo'); closeMenu(); return false;">Emotivo</a>
-    <a href="#" onclick="filterByGenre('Ciencia Ficción'); closeMenu(); return false;">🚀 Ciencia Ficción</a>
-    <a href="#" onclick="filterByGenre('Romance'); closeMenu(); return false;">💖 Romance</a>
-    <a href="#" onclick="filterByGenre('Thriller'); closeMenu(); return false;">🕵️ Thriller</a>
-    <a href="#" onclick="filterByGenre('Series'); closeMenu(); return false;">📺 Series</a>
-    <a href="#" onclick="filterByGenre('Escolar'); closeMenu(); return false;">🏫 Escolar</a>
-    <a href="#" onclick="filterByGenre('Viajes en el tiempo'); closeMenu(); return false;">⏳ Viajes en el tiempo</a>
-    <a href="#" onclick="filterByGenre('De época'); closeMenu(); return false;">👘 De época</a>
-    <a href="#" onclick="filterByGenre('Intrigas palaciegas'); closeMenu(); return false;">⚔️ Intrigas palaciegas</a>
+    <a href="index.html?genre=Acci%C3%B3n" onclick="filterByGenre('Acción'); closeMenu(); return false;">💥 Acción</a>
+    <a href="index.html?genre=Comedia" onclick="filterByGenre('Comedia'); closeMenu(); return false;">😂 Comedia</a>
+    <a href="index.html?genre=Drama" onclick="filterByGenre('Drama'); closeMenu(); return false;">🎭 Drama</a>
+    <a href="index.html?genre=Familia" onclick="filterByGenre('Familia'); closeMenu(); return false;">Familia</a>
+    <a href="index.html?genre=Emotivo" onclick="filterByGenre('Emotivo'); closeMenu(); return false;">Emotivo</a>
+    <a href="index.html?genre=Ciencia%20Ficci%C3%B3n" onclick="filterByGenre('Ciencia Ficción'); closeMenu(); return false;">🚀 Ciencia Ficción</a>
+    <a href="index.html?genre=Romance" onclick="filterByGenre('Romance'); closeMenu(); return false;">💖 Romance</a>
+    <a href="index.html?genre=Thriller" onclick="filterByGenre('Thriller'); closeMenu(); return false;">🕵️ Thriller</a>
+    <a href="index.html?genre=Series" onclick="filterByGenre('Series'); closeMenu(); return false;">📺 Series</a>
+    <a href="index.html?genre=Escolar" onclick="filterByGenre('Escolar'); closeMenu(); return false;">🏫 Escolar</a>
+    <a href="index.html?genre=Viajes%20en%20el%20tiempo" onclick="filterByGenre('Viajes en el tiempo'); closeMenu(); return false;">⏳ Viajes en el tiempo</a>
+    <a href="index.html?genre=De%20%C3%A9poca" onclick="filterByGenre('De época'); closeMenu(); return false;">👘 De época</a>
+    <a href="index.html?genre=Intrigas%20palaciegas" onclick="filterByGenre('Intrigas palaciegas'); closeMenu(); return false;">⚔️ Intrigas palaciegas</a>
     <div id="mob-search">
       <input type="search" id="mob-search-input" placeholder="🔍 Buscar película o serie..." oninput="handleSearch(this.value)" autocomplete="off">
     </div>
@@ -144,10 +145,10 @@
 
     <div class="genre-bar year-bar">
       <div class="genre-tabs" id="year-tabs-container">
-        <button class="genre-tab year-tab" onclick="filterByYear(2023)">2023</button>
-        <button class="genre-tab year-tab" onclick="filterByYear(2024)">2024</button>
-        <button class="genre-tab year-tab" onclick="filterByYear(2025)">2025</button>
-        <button class="genre-tab year-tab" onclick="filterByYear(2026)">2026</button>
+        <a class="genre-tab year-tab" href="ano/2023" onclick="filterByYear(2023); return false;">2023</a>
+        <a class="genre-tab year-tab" href="ano/2024" onclick="filterByYear(2024); return false;">2024</a>
+        <a class="genre-tab year-tab" href="ano/2025" onclick="filterByYear(2025); return false;">2025</a>
+        <a class="genre-tab year-tab" href="ano/2026" onclick="filterByYear(2026); return false;">2026</a>
       </div>
     </div>
 
@@ -429,11 +430,11 @@
       <div class="footer-col">
         <h4>Géneros</h4>
         <ul>
-          <li><a href="#" onclick="filterByGenre('Acción'); return false;">Acción</a></li>
-          <li><a href="#" onclick="filterByGenre('Comedia'); return false;">Comedia</a></li>
-          <li><a href="#" onclick="filterByGenre('Drama'); return false;">Drama</a></li>
-          <li><a href="#" onclick="filterByGenre('Familia'); return false;">Familia</a></li>
-          <li><a href="#" onclick="filterByGenre('Emotivo'); return false;">Emotivo</a></li>
+          <li><a href="index.html?genre=Acci%C3%B3n" onclick="filterByGenre('Acción'); return false;">Acción</a></li>
+          <li><a href="index.html?genre=Comedia" onclick="filterByGenre('Comedia'); return false;">Comedia</a></li>
+          <li><a href="index.html?genre=Drama" onclick="filterByGenre('Drama'); return false;">Drama</a></li>
+          <li><a href="index.html?genre=Familia" onclick="filterByGenre('Familia'); return false;">Familia</a></li>
+          <li><a href="index.html?genre=Emotivo" onclick="filterByGenre('Emotivo'); return false;">Emotivo</a></li>
         </ul>
       </div>
       <div class="footer-col">
@@ -466,6 +467,6 @@
   <!-- Scripts -->
   <script src="js/movies.js?v=seo-20260702"></script>
   <script src="js/ads.js?v=formatads-20260706" defer></script>
-  <script src="js/app.js?v=readmore-20260706"></script>
+  <script src="js/app.js?v=seo-20260707"></script>
 </body>
 </html>
