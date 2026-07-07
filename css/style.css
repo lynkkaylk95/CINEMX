@@ -314,8 +314,51 @@ ul { list-style: none; }
 .card:hover .card-overlay { opacity: 1; }
 .card-play { width: 46px; height: 46px; border-radius: 50%; background: rgba(229,9,20,.88); display: flex; align-items: center; justify-content: center; font-size: 17px; box-shadow: var(--glow-red); transform: scale(.8); transition: transform var(--tr); }
 .card:hover .card-play { transform: scale(1); }
-.card-badge { position: absolute; top: 7px; left: 7px; background: var(--red); color: #fff; font-size: 9px; font-weight: 700; padding: 3px 6px; border-radius: 4px; letter-spacing: .6px; text-transform: uppercase; }
+.card-badge-row {
+  position: absolute;
+  top: 7px;
+  left: 7px;
+  right: 42px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+  z-index: 2;
+}
+.card-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 18px;
+  color: #fff;
+  font-size: 8px;
+  font-weight: 800;
+  padding: 3px 6px;
+  border-radius: 4px;
+  letter-spacing: .4px;
+  line-height: 1;
+  text-transform: uppercase;
+  box-shadow: 0 5px 16px rgba(0,0,0,.35);
+}
+.card-badge-new { background: var(--red); }
+.card-badge-dubbed { background: rgba(35,45,70,.9); border: 1px solid rgba(255,255,255,.16); }
 .card-rating { position: absolute; top: 7px; right: 7px; background: rgba(0,0,0,.72); color: var(--gold); font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 4px; backdrop-filter: blur(4px); }
+.card-quality {
+  position: absolute;
+  right: 7px;
+  bottom: 7px;
+  z-index: 2;
+  background: rgba(0,0,0,.78);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,.18);
+  border-radius: 4px;
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: .5px;
+  line-height: 1;
+  padding: 4px 6px;
+  box-shadow: 0 5px 16px rgba(0,0,0,.36);
+}
 .card-info { padding: 10px 11px 12px; }
 .card-title { font-size: 12px; font-weight: 700; color: var(--white); margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .card-meta { font-size: 10px; color: var(--text3); display: flex; gap: 5px; align-items: center; }

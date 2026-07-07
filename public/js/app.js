@@ -32,15 +32,27 @@ let currentSearch = '';
 let currentYear = '';
 let moviesList = loadMoviesList();
 
+function getMovieSortValue(movie) {
+  const addedTime = Date.parse(movie?.addedAt || movie?.createdAt || '');
+  if (!Number.isNaN(addedTime)) return addedTime;
+  return Number(movie?.id || 0);
+}
+
+function sortMoviesNewestFirst(movies) {
+  return [...movies].sort((a, b) => getMovieSortValue(b) - getMovieSortValue(a));
+}
+
 function loadMoviesList() {
+  let list = [];
   try {
     const saved = localStorage.getItem(MOVIES_STORAGE_KEY);
     const parsed = saved ? JSON.parse(saved) : null;
-    if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    if (Array.isArray(parsed) && parsed.length > 0) list = parsed;
   } catch (err) {
     console.warn('No se pudo leer la lista local de peliculas.', err);
   }
-  return typeof MOVIES !== 'undefined' ? [...MOVIES] : [];
+  if (!list.length) list = typeof MOVIES !== 'undefined' ? [...MOVIES] : [];
+  return sortMoviesNewestFirst(list);
 }
 
 function normalizeText(value) {
@@ -210,6 +222,26 @@ function getMovieImage(movie) {
   return getThumbnailUrl(movie?.thumb, getYouTubeId(movie?.yt));
 }
 
+function isRecentlyAdded(movie) {
+  const addedTime = Date.parse(movie?.addedAt || '');
+  if (Number.isNaN(addedTime)) return false;
+  const sevenDays = 7 * 24 * 60 * 60 * 1000;
+  return Date.now() - addedTime >= 0 && Date.now() - addedTime < sevenDays;
+}
+
+function createThumbBadges(movie) {
+  const isNew = isRecentlyAdded(movie);
+  return `
+    ${isNew ? `
+      <div class="card-badge-row">
+        <span class="card-badge card-badge-new">NUEVO</span>
+        <span class="card-badge card-badge-dubbed">DOBLADO</span>
+      </div>
+    ` : ''}
+    <div class="card-quality">HD</div>
+  `;
+}
+
 function dailyHeroIndex(total) {
   const today = new Date();
   const key = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
@@ -272,7 +304,7 @@ function createCard(m) {
     <a class="card" href="${escapeAttr(getMovieUrl(m))}">
       <div class="card-thumb" style="${bgStyle}">
         ${hasThumb ? `<img class="card-thumb-img" src="${escapeAttr(thumbUrl)}" alt="Poster de ${escapeAttr(m.title)}" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='https://i3.ytimg.com/vi/${escapeAttr(getYouTubeId(m.yt))}/hqdefault.jpg';">` : `<div class="card-thumb-emoji">${escapeHTML(m.emoji || '\uD83C\uDFAC')}</div>`}
-        ${m.badge ? `<div class="card-badge">${escapeHTML(m.badge)}</div>` : ''}
+        ${createThumbBadges(m)}
         <div class="card-rating">&#9733; ${escapeHTML(m.rating)}</div>
         <div class="card-overlay"><div class="card-play">&#9654;</div></div>
       </div>
@@ -292,7 +324,7 @@ function createFeatCard(m) {
       <div class="feat-thumb" style="${bgStyle}">
         ${hasThumb ? `<img class="card-thumb-img" src="${escapeAttr(thumbUrl)}" alt="Poster de ${escapeAttr(m.title)}" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='https://i3.ytimg.com/vi/${escapeAttr(getYouTubeId(m.yt))}/hqdefault.jpg';">` : `<div class="feat-thumb-emoji">${escapeHTML(m.emoji || '\uD83C\uDFAC')}</div>`}
         <div class="feat-play-wrap"><div class="feat-play-btn">&#9654;</div></div>
-        ${m.badge ? `<div class="card-badge">${escapeHTML(m.badge)}</div>` : ''}
+        ${createThumbBadges(m)}
         <div class="card-rating">&#9733; ${escapeHTML(m.rating)}</div>
       </div>
       <div class="feat-info">

@@ -28,18 +28,31 @@ const ADMIN_GENRE_LABELS = {
 let currentMovies = loadSavedMovies().map(normalizeMovieGenres);
 let activeEpisodeTags = [];
 
+function getMovieSortValue(movie) {
+  const addedTime = Date.parse(movie?.addedAt || movie?.createdAt || '');
+  if (!Number.isNaN(addedTime)) return addedTime;
+  return Number(movie?.id || 0);
+}
+
+function sortMoviesNewestFirst(movies) {
+  return [...movies].sort((a, b) => getMovieSortValue(b) - getMovieSortValue(a));
+}
+
 function loadSavedMovies() {
+  let list = [];
   try {
     const saved = localStorage.getItem(MOVIES_STORAGE_KEY);
     const parsed = saved ? JSON.parse(saved) : null;
-    if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    if (Array.isArray(parsed) && parsed.length > 0) list = parsed;
   } catch (err) {
     console.warn('Không đọc được danh sách phim đã lưu.', err);
   }
-  return typeof MOVIES !== 'undefined' ? [...MOVIES] : [];
+  if (!list.length) list = typeof MOVIES !== 'undefined' ? [...MOVIES] : [];
+  return sortMoviesNewestFirst(list);
 }
 
 function persistMovies() {
+  currentMovies = sortMoviesNewestFirst(currentMovies);
   localStorage.setItem(MOVIES_STORAGE_KEY, JSON.stringify(currentMovies));
 }
 
@@ -157,14 +170,15 @@ function renderAdminList(searchQuery = '') {
            m.type.toLowerCase().includes(query);
   });
 
-  countBadge.textContent = filtered.length;
+  const sorted = sortMoviesNewestFirst(filtered);
+  countBadge.textContent = sorted.length;
 
-  if (filtered.length === 0) {
+  if (sorted.length === 0) {
     container.innerHTML = `<div style="padding: 24px; text-align: center; color: var(--text3); font-size: 13px;">Không tìm thấy phim nào.</div>`;
     return;
   }
 
-  container.innerHTML = filtered.map(m => `
+  container.innerHTML = sorted.map(m => `
     <div class="admin-movie-item" id="admin-item-${m.id}">
       <div class="admin-movie-emoji">${m.emoji || "🎬"}</div>
       <div class="admin-movie-info">
@@ -277,7 +291,6 @@ function saveMovie() {
     yt,
     thumb,
     desc,
-    badge: type === 'Serie' ? 'SERIE' : 'NUEVO',
     episodes: type === 'Serie' ? [...activeEpisodeTags] : []
   };
 
@@ -292,7 +305,7 @@ function saveMovie() {
   } else {
     // Creating new movie
     const newId = getNextId();
-    currentMovies.push({ ...movieData, id: newId });
+    currentMovies.unshift({ ...movieData, id: newId, addedAt: new Date().toISOString() });
     showToast("Đã thêm phim mới thành công!");
   }
 
@@ -346,6 +359,7 @@ function showAlert() {
 
 // Export the updated MOVIES list as movies.js
 function exportMoviesJS() {
+  currentMovies = sortMoviesNewestFirst(currentMovies);
   const jsContent = `// Base de datos de películas y series de CineMax MX
 const MOVIES = ${JSON.stringify(currentMovies, null, 2)};
 `;
