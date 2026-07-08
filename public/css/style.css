@@ -319,7 +319,8 @@ ul { list-style: none; }
   top: 7px;
   left: 7px;
   z-index: 3;
-  min-width: 48px;
+  min-width: 74px;
+  max-width: calc(100% - 48px);
   min-height: 20px;
   display: inline-flex;
   align-items: center;
@@ -332,6 +333,7 @@ ul { list-style: none; }
   font-size: 10px;
   font-weight: 800;
   line-height: 1;
+  white-space: nowrap;
   backdrop-filter: blur(6px);
   box-shadow: 0 5px 16px rgba(0,0,0,.35);
 }

@@ -40,7 +40,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=views-fix-20260707">
+  <link rel="stylesheet" href="css/style.css?v=views-label-20260708">
 </head>
 <body>
 
@@ -121,8 +121,7 @@
         </div>
         <div class="movie-views" id="movie-views" aria-live="polite">
           <span class="movie-views-icon" aria-hidden="true">&#128065;</span>
-          <span id="movie-views-count">-</span>
-          <span>visualizaciones</span>
+          <span id="movie-views-count">- views</span>
         </div>
       </div>
 
@@ -278,7 +277,7 @@
 
   <!-- Scripts -->
   <script src="js/movies.js?v=seo-20260702"></script>
-  <script src="js/ads.js?v=formatads-20260706" defer></script>
+  <script src="js/ads.js?v=afterload-20260708" defer></script>
   <script>
     const MOVIES_STORAGE_KEY = 'cinemax_movies';
     let currentMovieYtId = '';
@@ -440,6 +439,7 @@
     function getMovieUrl(movie) {
       return `/pelicula/${encodeURIComponent(getMovieSlug(movie))}`;
     }
+
     function formatViewNumber(value) {
       const num = Math.max(0, Number(value) || 0);
       const units = [
@@ -454,12 +454,47 @@
       return `${String(rounded).replace(/\.0$/, '')}${unit.suffix}`;
     }
 
+    function getDisplayedViews(realViews) {
+      return `${formatViewNumber((Number(realViews) || 0) * 100)} views`;
+    }
+
     function updateViewCounter(realViews) {
       const count = document.getElementById('movie-views-count');
       const wrap = document.getElementById('movie-views');
       if (!count || !wrap) return;
-      count.textContent = formatViewNumber((Number(realViews) || 0) * 100);
+      count.textContent = getDisplayedViews(realViews);
       wrap.classList.add('is-loaded');
+    }
+
+    function updateCardViewCounters(viewMap = {}, root = document) {
+      root.querySelectorAll('[data-view-slug]').forEach(card => {
+        const slug = card.getAttribute('data-view-slug') || '';
+        const count = card.querySelector('[data-card-view-count]');
+        if (!count) return;
+        count.textContent = getDisplayedViews(viewMap[slug] || 0);
+        card.classList.add('views-loaded');
+      });
+    }
+
+    async function loadRecommendedViewCounters(movies = []) {
+      const slugs = [...new Set(movies.map(getMovieSlug).filter(Boolean))];
+      const recGrid = document.getElementById('rec-grid-container');
+      if (!slugs.length || !recGrid || !window.location.protocol.startsWith('http')) {
+        updateCardViewCounters({}, recGrid || document);
+        return;
+      }
+
+      try {
+        const response = await fetch(`/api/view-counts?slugs=${encodeURIComponent(slugs.join(','))}`, {
+          method: 'GET',
+          credentials: 'same-origin'
+        });
+        if (!response.ok) throw new Error('views_batch_failed');
+        const data = await response.json();
+        updateCardViewCounters(data.views || {}, recGrid);
+      } catch (err) {
+        updateCardViewCounters({}, recGrid);
+      }
     }
 
     async function loadMovieViews(movie) {
@@ -695,6 +730,7 @@
       document.getElementById('movie-duration').textContent = movie.duration || '-';
       document.getElementById('movie-genre').textContent = getGenreLabel(movie);
       document.getElementById('movie-rating').textContent = `\u2605 ${movie.rating || '0.0'}`;
+      loadMovieViews(movie);
 
       const poster = document.getElementById('video-poster');
       const posterUrl = getThumbnailUrl(movie.thumb, movieYtId);
@@ -739,12 +775,13 @@
           const hasThumb = recThumb !== '';
           const bgStyle = hasThumb ? '' : `background: linear-gradient(135deg, ${hashColor(m.id)})`;
           return `
-            <a class="card" href="${escapeAttr(getMovieUrl(m))}">
+            <a class="card" href="${escapeAttr(getMovieUrl(m))}" data-view-slug="${escapeAttr(getMovieSlug(m))}">
               <div class="card-thumb" style="${bgStyle}">
                 ${hasThumb
                   ? `<img class="card-thumb-img" src="${escapeAttr(recThumb)}" alt="Poster de ${escapeAttr(m.title)}" loading="lazy" decoding="async">`
                   : `<div class="card-thumb-emoji" style="font-size:38px;">${escapeHTML(m.emoji || '\uD83C\uDFAC')}</div>`
                 }
+                <div class="card-view-count" aria-label="Views"><span aria-hidden="true">&#128065;</span><span data-card-view-count>- views</span></div>
                 <div class="card-rating">&#9733; ${escapeHTML(m.rating)}</div>
               </div>
               <div class="card-info" style="padding: 8px;">
@@ -752,6 +789,7 @@
               </div>
             </a>`;
         }).join('');
+        loadRecommendedViewCounters(recommended);
       } else {
         recGrid.innerHTML = '<p style="font-size: 13px; color: var(--text3)">No hay recomendaciones de este género todavía.</p>';
       }
