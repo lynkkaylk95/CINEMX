@@ -9,7 +9,7 @@
   const CINEMAX_SOCIAL_BAR_SRC = 'https://pl30226245.effectivecpmnetwork.com/40/4b/00/404b00bb58a19ba41d2858f90d60c5da.js';
   const CINEMAX_EXOCLICK_INTERSTITIAL_SRC = 'https://a.pemsrv.com/ad-provider.js';
   const CINEMAX_EXOCLICK_INTERSTITIAL_CLASS = 'eas6a97888e33';
-  const CINEMAX_EXOCLICK_INTERSTITIAL_ZONE = '5969602';
+  const CINEMAX_EXOCLICK_INTERSTITIAL_ZONE = '5969616';
   const CINEMAX_ENABLE_SOCIAL_BAR = document.body?.dataset.enableSocialBar === 'true';
   const CINEMAX_FORMAT_BANNERS = {
     '468x60': { key: '8389824bba4d8e870d5150e45184a022', width: 468, height: 60 },
