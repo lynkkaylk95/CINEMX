@@ -1,4 +1,4 @@
-import { getMovieSlug, getMovies } from './_seo-utils.js';
+import { SITE_ORIGIN, getMovieSlug, getMovies } from './_seo-utils.js';
 
 function xmlEscape(value) {
   return String(value ?? '').replace(/[<>&'"]/g, char => ({
@@ -11,13 +11,12 @@ function xmlEscape(value) {
 }
 
 export async function onRequest(context) {
-  const origin = new URL(context.request.url).origin;
   const movies = await getMovies(context);
   const years = [...new Set(movies.map(movie => Number(movie.year)).filter(Boolean))].sort((a, b) => b - a);
   const urls = [
-    { loc: `${origin}/`, priority: '1.0' },
-    ...years.map(year => ({ loc: `${origin}/ano/${year}`, priority: '0.8' })),
-    ...movies.map(movie => ({ loc: `${origin}/pelicula/${encodeURIComponent(getMovieSlug(movie))}`, priority: '0.9' }))
+    { loc: `${SITE_ORIGIN}/`, priority: '1.0' },
+    ...years.map(year => ({ loc: `${SITE_ORIGIN}/ano/${year}`, priority: '0.8' })),
+    ...movies.map(movie => ({ loc: `${SITE_ORIGIN}/pelicula/${encodeURIComponent(getMovieSlug(movie))}`, priority: '0.9' }))
   ];
 
   const body = `<?xml version="1.0" encoding="UTF-8"?>

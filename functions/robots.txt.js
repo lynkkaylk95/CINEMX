@@ -1,11 +1,12 @@
+import { SITE_ORIGIN } from './_seo-utils.js';
+
 export async function onRequest(context) {
-  const origin = new URL(context.request.url).origin;
   const body = `User-agent: *
 Allow: /
 Disallow: /admin.html
 Disallow: /admin
 
-Sitemap: ${origin}/sitemap.xml
+Sitemap: ${SITE_ORIGIN}/sitemap.xml
 `;
 
   return new Response(body, {

@@ -1,4 +1,4 @@
-import { cleanDescription, escapeHtml, getAssetHtml, getMovieSlug, getMovies, getYouTubeId, replaceMetaContent } from '../_seo-utils.js';
+import { SITE_ORIGIN, cleanDescription, escapeHtml, getAssetHtml, getMovieSlug, getMovies, getYouTubeId, replaceMetaContent } from '../_seo-utils.js';
 
 export async function onRequest(context) {
   const slug = decodeURIComponent(context.params.slug || '');
@@ -13,8 +13,7 @@ export async function onRequest(context) {
     });
   }
 
-  const origin = new URL(context.request.url).origin;
-  const canonicalUrl = `${origin}/pelicula/${encodeURIComponent(getMovieSlug(movie))}`;
+  const canonicalUrl = `${SITE_ORIGIN}/pelicula/${encodeURIComponent(getMovieSlug(movie))}`;
   const ytId = getYouTubeId(movie.yt);
   const poster = movie.thumb || (ytId ? `https://i3.ytimg.com/vi/${encodeURIComponent(ytId)}/hqdefault.jpg` : 'https://i3.ytimg.com/vi/Qb-2xKrPsP0/maxresdefault.jpg');
   const title = `${movie.title} — CineMax MX`;
@@ -31,6 +30,26 @@ export async function onRequest(context) {
   html = replaceMetaContent(html, 'twitter-title', title);
   html = replaceMetaContent(html, 'twitter-desc', description);
   html = replaceMetaContent(html, 'twitter-image', poster);
+  html = html.replace(/<script type="application\/ld\+json" id="structured-data">[\s\S]*?<\/script>/, `<script type="application/ld+json" id="structured-data">${JSON.stringify({
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'Movie',
+        name: movie.title,
+        description,
+        image: poster,
+        url: canonicalUrl
+      },
+      {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          { '@type': 'ListItem', position: 1, name: 'Inicio', item: `${SITE_ORIGIN}/` },
+          { '@type': 'ListItem', position: 2, name: 'Películas', item: `${SITE_ORIGIN}/` },
+          { '@type': 'ListItem', position: 3, name: movie.title, item: canonicalUrl }
+        ]
+      }
+    ]
+  }).replace(/</g, '\\u003c')}</script>`);
 
   return new Response(html, {
     headers: { 'content-type': 'text/html; charset=UTF-8' },

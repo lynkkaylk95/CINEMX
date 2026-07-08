@@ -7,12 +7,12 @@
   <meta name="description" id="meta-desc" content="Una madre soltera busca empleo como niñera y termina casándose en una cita a ciegas apresurada. Junto a dos infantes y un cónyuge aparentemente humilde,...">
   <meta name="robots" content="index, follow">
   <meta name="theme-color" content="#0a0a0f">
-  <link rel="canonical" id="canonical-link" href="https://cinemx.moviemx.workers.dev/pelicula/oops-me-case-con-un-multimillonario">
+  <link rel="canonical" id="canonical-link" href="https://cinemaxmx.com/pelicula/oops-me-case-con-un-multimillonario">
   <meta property="og:type" content="video.movie">
   <meta property="og:site_name" content="CineMax MX">
   <meta property="og:title" id="og-title" content="Oops, Me Casé con un Multimillonario - CineMax MX">
   <meta property="og:description" id="og-desc" content="Una madre soltera busca empleo como niñera y termina casándose en una cita a ciegas apresurada. Junto a dos infantes y un cónyuge aparentemente humilde,...">
-  <meta property="og:url" id="og-url" content="https://cinemx.moviemx.workers.dev/pelicula/oops-me-case-con-un-multimillonario">
+  <meta property="og:url" id="og-url" content="https://cinemaxmx.com/pelicula/oops-me-case-con-un-multimillonario">
   <meta property="og:image" id="og-image" content="https://i3.ytimg.com/vi/JBVn1HhTxbA/maxresdefault.jpg">
   <meta property="og:image:width" content="1280">
   <meta property="og:image:height" content="720">
@@ -543,9 +543,8 @@
     }
 
     function updateMovieSeo(movie, posterUrl) {
-      const origin = window.location.origin && window.location.origin !== 'null' ? window.location.origin : '';
       const canonicalPath = getMovieUrl(movie);
-      const canonicalUrl = origin ? `${origin}${canonicalPath}` : canonicalPath;
+      const canonicalUrl = `https://cinemaxmx.com${canonicalPath}`;
       const description = cleanDescription(movie.desc || `Mira ${movie.title} en español latino en CineMax MX.`);
       const title = `${movie.title} — CineMax MX`;
       document.getElementById('page-title').textContent = title;

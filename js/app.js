@@ -25,7 +25,7 @@ const GENRE_ALIASES = {
   'C\u1ED5 trang': 'De época',
   'Cung \u0111\u1EA5u': 'Intrigas palaciegas'
 };
-const SITE_ORIGIN = 'https://cinemx.moviemx.workers.dev';
+const SITE_ORIGIN = 'https://cinemaxmx.com';
 const DEFAULT_SHARE_IMAGE = 'https://i3.ytimg.com/vi/Qb-2xKrPsP0/maxresdefault.jpg';
 let currentGenre = 'Todos';
 let currentSearch = '';
@@ -228,8 +228,7 @@ async function loadCardViewCounters() {
 
 function getAbsoluteUrl(path = '/') {
   const cleanPath = String(path || '/');
-  const origin = window.location.origin && window.location.origin !== 'null' ? window.location.origin : SITE_ORIGIN;
-  return `${origin}${cleanPath.startsWith('/') ? cleanPath : `/${cleanPath}`}`;
+  return `${SITE_ORIGIN}${cleanPath.startsWith('/') ? cleanPath : `/${cleanPath}`}`;
 }
 
 function getGenreUrl(genre) {

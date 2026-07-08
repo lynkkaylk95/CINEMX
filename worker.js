@@ -13,6 +13,15 @@ function getMovieSlug(movie) {
   return movie && (movie.slug || slugify(movie.title) || `pelicula-${movie.id || ""}`);
 }
 
+const OLD_HOST = "cinemx.moviemx.workers.dev";
+const SITE_ORIGIN = "https://cinemaxmx.com";
+
+function redirectOldDomain(url) {
+  if (url.hostname !== OLD_HOST) return null;
+  const target = new URL(`${url.pathname}${url.search}`, SITE_ORIGIN);
+  return Response.redirect(target.toString(), 301);
+}
+
 function getYouTubeId(value) {
   const raw = String(value || "").trim();
   const patterns = [
@@ -182,12 +191,31 @@ async function loadMovies(request, env) {
 function injectMovieMeta(html, movie, request) {
   if (!movie) return html;
 
-  const url = new URL(request.url);
   const slug = getMovieSlug(movie);
-  const canonicalUrl = `${url.origin}/pelicula/${encodeURIComponent(slug)}`;
+  const canonicalUrl = `${SITE_ORIGIN}/pelicula/${encodeURIComponent(slug)}`;
   const title = `${movie.title || "Película"} - CineMax MX`;
   const description = truncate(movie.desc || "Mira películas completas y series en español latino en CineMax MX.");
   const image = getThumbnailUrl(movie) || "https://i3.ytimg.com/vi/Qb-2xKrPsP0/maxresdefault.jpg";
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Movie",
+        name: movie.title || "Película",
+        description,
+        image,
+        url: canonicalUrl
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: "Inicio", item: `${SITE_ORIGIN}/` },
+          { "@type": "ListItem", position: 2, name: "Películas", item: `${SITE_ORIGIN}/` },
+          { "@type": "ListItem", position: 3, name: movie.title || "Película", item: canonicalUrl }
+        ]
+      }
+    ]
+  };
 
   return html
     .replace(/<meta name="description" id="meta-desc" content="[^"]*">/, `<meta name="description" id="meta-desc" content="${escapeHtml(description)}">`)
@@ -199,7 +227,8 @@ function injectMovieMeta(html, movie, request) {
     .replace(/<meta name="twitter:title" id="twitter-title" content="[^"]*">/, `<meta name="twitter:title" id="twitter-title" content="${escapeHtml(title)}">`)
     .replace(/<meta name="twitter:description" id="twitter-desc" content="[^"]*">/, `<meta name="twitter:description" id="twitter-desc" content="${escapeHtml(description)}">`)
     .replace(/<meta name="twitter:image" id="twitter-image" content="[^"]*">/, `<meta name="twitter:image" id="twitter-image" content="${escapeHtml(image)}">`)
-    .replace(/<title id="page-title">[\s\S]*?<\/title>/, `<title id="page-title">${escapeHtml(title)}</title>`);
+    .replace(/<title id="page-title">[\s\S]*?<\/title>/, `<title id="page-title">${escapeHtml(title)}</title>`)
+    .replace(/<script type="application\/ld\+json" id="structured-data">[\s\S]*?<\/script>/, `<script type="application/ld+json" id="structured-data">${JSON.stringify(structuredData).replace(/</g, "\\u003c")}</script>`);
 }
 
 async function serveMovieShell(request, env, movie) {
@@ -227,14 +256,13 @@ function xmlEscape(value) {
 }
 
 function buildSitemap(request, movies) {
-  const origin = new URL(request.url).origin;
   const years = [...new Set(movies.map((movie) => Number(movie.year)).filter(Boolean))].sort((a, b) => b - a);
   const legalPages = ["about.html", "privacy.html", "terms.html", "dmca.html", "contact.html"];
   const urls = [
-    { loc: `${origin}/`, priority: "1.0" },
-    ...legalPages.map((page) => ({ loc: `${origin}/${page}`, priority: "0.6" })),
-    ...years.map((year) => ({ loc: `${origin}/ano/${year}`, priority: "0.8" })),
-    ...movies.map((movie) => ({ loc: `${origin}/pelicula/${encodeURIComponent(getMovieSlug(movie))}`, priority: "0.9" }))
+    { loc: `${SITE_ORIGIN}/`, priority: "1.0" },
+    ...legalPages.map((page) => ({ loc: `${SITE_ORIGIN}/${page}`, priority: "0.6" })),
+    ...years.map((year) => ({ loc: `${SITE_ORIGIN}/ano/${year}`, priority: "0.8" })),
+    ...movies.map((movie) => ({ loc: `${SITE_ORIGIN}/pelicula/${encodeURIComponent(getMovieSlug(movie))}`, priority: "0.9" }))
   ];
 
   const body = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((item) => `  <url>\n    <loc>${xmlEscape(item.loc)}</loc>\n    <changefreq>weekly</changefreq>\n    <priority>${item.priority}</priority>\n  </url>`).join("\n")}\n</urlset>\n`;
@@ -256,6 +284,8 @@ async function serveIndexShell(request, env) {
 export default {
   async fetch(request, env) {
     const url = new URL(request.url);
+    const oldDomainRedirect = redirectOldDomain(url);
+    if (oldDomainRedirect) return oldDomainRedirect;
 
     if ((url.pathname === "/api/views" || url.pathname === "/api/view-counts") && request.method === "GET") {
       return handleMovieViewsBatch(request, env);
@@ -277,7 +307,7 @@ export default {
         const movie = movies.find((item) => Number(item.id) === Number(id));
         const slug = getMovieSlug(movie);
         if (slug) {
-          return Response.redirect(`${url.origin}/pelicula/${encodeURIComponent(slug)}`, 301);
+          return Response.redirect(`${SITE_ORIGIN}/pelicula/${encodeURIComponent(slug)}`, 301);
         }
       }
     }

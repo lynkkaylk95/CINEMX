@@ -13,6 +13,8 @@ export function getMovieSlug(movie) {
   return movie?.slug || slugify(movie?.title) || `pelicula-${movie?.id || ''}`;
 }
 
+export const SITE_ORIGIN = 'https://cinemaxmx.com';
+
 export function cleanDescription(value, maxLength = 155) {
   const compact = String(value || '').replace(/\s+/g, ' ').trim();
   if (compact.length <= maxLength) return compact;
