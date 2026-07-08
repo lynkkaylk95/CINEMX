@@ -3,6 +3,7 @@ const CINEMAX_SMARTLINK_URL = 'https://www.effectivecpmnetwork.com/mdgtfx72cr?ke
 const CINEMAX_NATIVE_SRC = 'https://pl30226244.effectivecpmnetwork.com/00e298bf7ba92d81b94f4dff373a728f/invoke.js';
 const CINEMAX_NATIVE_CONTAINER_ID = 'container-00e298bf7ba92d81b94f4dff373a728f';
 const CINEMAX_SOCIAL_BAR_SRC = 'https://pl30226245.effectivecpmnetwork.com/40/4b/00/404b00bb58a19ba41d2858f90d60c5da.js';
+const CINEMAX_ENABLE_EXTERNAL_AD_SCRIPTS = false;
 const CINEMAX_FORMAT_BANNERS = {
   '468x60': { key: '8389824bba4d8e870d5150e45184a022', width: 468, height: 60 },
   '300x250': { key: 'a89c0e35563be5eed3604c499079b6e7', width: 300, height: 250 },
@@ -71,6 +72,22 @@ function mountFormatBanner(element, size) {
   element.style.setProperty('--ad-h', `${banner.height}px`);
   element.innerHTML = '';
 
+  if (!CINEMAX_ENABLE_EXTERNAL_AD_SCRIPTS) {
+    const anchor = document.createElement('a');
+    anchor.className = 'cinemax-ad-banner ad-clickable';
+    anchor.href = CINEMAX_SMARTLINK_URL;
+    anchor.target = '_blank';
+    anchor.rel = 'noopener noreferrer';
+    anchor.innerHTML = `
+      <span class="ad-kicker">CineMax MX</span>
+      <strong>Ver oferta exclusiva</strong>
+      <small>Publicidad</small>
+    `;
+    element.appendChild(anchor);
+    wireSmartlinkAnchor(anchor);
+    return;
+  }
+
   const iframe = document.createElement('iframe');
   iframe.className = 'format-ad-frame';
   iframe.title = `Publicidad ${size}`;
@@ -120,6 +137,7 @@ function mountAllFormatBanners() {
 }
 
 function loadNativeBanner() {
+  if (!CINEMAX_ENABLE_EXTERNAL_AD_SCRIPTS) return;
   if (document.getElementById(CINEMAX_NATIVE_CONTAINER_ID)) return;
 
   const targetSelectors = [
@@ -149,6 +167,7 @@ function loadNativeBanner() {
 }
 
 function loadSocialBar() {
+  if (!CINEMAX_ENABLE_EXTERNAL_AD_SCRIPTS) return;
   if (document.querySelector(`script[src="${CINEMAX_SOCIAL_BAR_SRC}"]`)) return;
 
   const script = document.createElement('script');
