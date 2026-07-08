@@ -7,6 +7,9 @@
   const CINEMAX_NATIVE_SRC = 'https://pl30226244.effectivecpmnetwork.com/00e298bf7ba92d81b94f4dff373a728f/invoke.js';
   const CINEMAX_NATIVE_CONTAINER_ID = 'container-00e298bf7ba92d81b94f4dff373a728f';
   const CINEMAX_SOCIAL_BAR_SRC = 'https://pl30226245.effectivecpmnetwork.com/40/4b/00/404b00bb58a19ba41d2858f90d60c5da.js';
+  const CINEMAX_EXOCLICK_INTERSTITIAL_SRC = 'https://a.pemsrv.com/ad-provider.js';
+  const CINEMAX_EXOCLICK_INTERSTITIAL_CLASS = 'eas6a97888e33';
+  const CINEMAX_EXOCLICK_INTERSTITIAL_ZONE = '5969602';
   const CINEMAX_ENABLE_SOCIAL_BAR = document.body?.dataset.enableSocialBar === 'true';
   const CINEMAX_FORMAT_BANNERS = {
     '468x60': { key: '8389824bba4d8e870d5150e45184a022', width: 468, height: 60 },
@@ -210,6 +213,29 @@
     document.body.appendChild(script);
   }
 
+  function loadExoclickMobileInterstitial() {
+    if (!window.matchMedia('(max-width: 768px)').matches) return;
+    if (window.__cinemaxExoclickInterstitialMounted) return;
+    window.__cinemaxExoclickInterstitialMounted = true;
+
+    if (!document.querySelector(`script[src="${CINEMAX_EXOCLICK_INTERSTITIAL_SRC}"]`)) {
+      const providerScript = document.createElement('script');
+      providerScript.async = true;
+      providerScript.type = 'application/javascript';
+      providerScript.src = CINEMAX_EXOCLICK_INTERSTITIAL_SRC;
+      providerScript.onerror = () => console.warn('CineMax ExoClick interstitial failed to load.');
+      document.body.appendChild(providerScript);
+    }
+
+    const slot = document.createElement('ins');
+    slot.className = CINEMAX_EXOCLICK_INTERSTITIAL_CLASS;
+    slot.dataset.zoneid = CINEMAX_EXOCLICK_INTERSTITIAL_ZONE;
+    document.body.appendChild(slot);
+
+    window.AdProvider = window.AdProvider || [];
+    window.AdProvider.push({ serve: {} });
+  }
+
   function wireSmartlinks() {
     document.querySelectorAll('#ad-top-bar a').forEach(wireSmartlinkAnchor);
 
@@ -228,6 +254,7 @@
 
     safely('native banner', loadNativeBanner);
     safely('format banners', mountAllFormatBanners);
+    window.setTimeout(() => safely('ExoClick mobile interstitial', loadExoclickMobileInterstitial), 600);
     window.setTimeout(() => safely('social bar', loadSocialBar), 1200);
   });
 })();
