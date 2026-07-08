@@ -7,9 +7,6 @@
   const CINEMAX_NATIVE_SRC = 'https://pl30226244.effectivecpmnetwork.com/00e298bf7ba92d81b94f4dff373a728f/invoke.js';
   const CINEMAX_NATIVE_CONTAINER_ID = 'container-00e298bf7ba92d81b94f4dff373a728f';
   const CINEMAX_SOCIAL_BAR_SRC = 'https://pl30226245.effectivecpmnetwork.com/40/4b/00/404b00bb58a19ba41d2858f90d60c5da.js';
-  const CINEMAX_EXOCLICK_INTERSTITIAL_SRC = 'https://a.pemsrv.com/ad-provider.js';
-  const CINEMAX_EXOCLICK_INTERSTITIAL_CLASS = 'eas6a97888e33';
-  const CINEMAX_EXOCLICK_INTERSTITIAL_ZONE = '5969616';
   const CINEMAX_ENABLE_SOCIAL_BAR = document.body?.dataset.enableSocialBar === 'true';
   const CINEMAX_FORMAT_BANNERS = {
     '468x60': { key: '8389824bba4d8e870d5150e45184a022', width: 468, height: 60 },
@@ -113,36 +110,24 @@
     element.style.setProperty('--ad-h', `${banner.height}px`);
     element.innerHTML = '';
 
-    const iframe = document.createElement('iframe');
-    iframe.className = 'format-ad-frame';
-    iframe.title = `Publicidad ${size}`;
-    iframe.width = String(banner.width);
-    iframe.height = String(banner.height);
-    iframe.loading = 'lazy';
-    iframe.referrerPolicy = 'no-referrer-when-downgrade';
-    iframe.setAttribute('scrolling', 'no');
-    iframe.srcdoc = `<!doctype html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=${banner.width},initial-scale=1">
-  <style>html,body{margin:0;padding:0;width:${banner.width}px;height:${banner.height}px;overflow:hidden;background:transparent;}</style>
-</head>
-<body>
-  <script>
-    atOptions = {
-      'key': '${banner.key}',
-      'format': 'iframe',
-      'height': ${banner.height},
-      'width': ${banner.width},
-      'params': {}
-    };
-  <\/script>
-  <script src="https://www.highperformanceformat.com/${banner.key}/invoke.js"><\/script>
-</body>
-</html>`;
+    const optionsScript = document.createElement('script');
+    optionsScript.type = 'text/javascript';
+    optionsScript.text = `atOptions = {
+  'key': '${banner.key}',
+  'format': 'iframe',
+  'height': ${banner.height},
+  'width': ${banner.width},
+  'params': {}
+};`;
 
-    element.appendChild(iframe);
+    const invokeScript = document.createElement('script');
+    invokeScript.type = 'text/javascript';
+    invokeScript.async = false;
+    invokeScript.src = `https://www.highperformanceformat.com/${banner.key}/invoke.js`;
+    invokeScript.onerror = () => console.warn(`CineMax ${size} ad failed to load.`);
+
+    element.appendChild(optionsScript);
+    element.appendChild(invokeScript);
   }
 
   function isHiddenAdSlot(element) {
@@ -179,27 +164,16 @@
     target.removeAttribute('aria-label');
     target.innerHTML = '';
 
-    const iframe = document.createElement('iframe');
-    iframe.className = 'format-ad-frame native-ad-frame';
-    iframe.title = 'Publicidad nativa';
-    iframe.loading = 'lazy';
-    iframe.referrerPolicy = 'no-referrer-when-downgrade';
-    iframe.setAttribute('scrolling', 'no');
-    iframe.setAttribute('sandbox', 'allow-scripts allow-popups allow-popups-to-escape-sandbox');
-    iframe.srcdoc = `<!doctype html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <style>html,body{margin:0;padding:0;min-height:250px;overflow:hidden;background:transparent;}</style>
-</head>
-<body>
-  <div id="${CINEMAX_NATIVE_CONTAINER_ID}"></div>
-  <script async data-cfasync="false" src="${CINEMAX_NATIVE_SRC}"><\/script>
-</body>
-</html>`;
+    const container = document.createElement('div');
+    container.id = CINEMAX_NATIVE_CONTAINER_ID;
+    target.appendChild(container);
 
-    target.appendChild(iframe);
+    const script = document.createElement('script');
+    script.async = true;
+    script.dataset.cfasync = 'false';
+    script.src = CINEMAX_NATIVE_SRC;
+    script.onerror = () => console.warn('CineMax native ad failed to load.');
+    target.appendChild(script);
   }
 
   function loadSocialBar() {
@@ -211,29 +185,6 @@
     script.src = CINEMAX_SOCIAL_BAR_SRC;
     script.onerror = () => console.warn('CineMax social ad failed to load.');
     document.body.appendChild(script);
-  }
-
-  function loadExoclickMobileInterstitial() {
-    if (!window.matchMedia('(max-width: 768px)').matches) return;
-    if (window.__cinemaxExoclickInterstitialMounted) return;
-    window.__cinemaxExoclickInterstitialMounted = true;
-
-    if (!document.querySelector(`script[src="${CINEMAX_EXOCLICK_INTERSTITIAL_SRC}"]`)) {
-      const providerScript = document.createElement('script');
-      providerScript.async = true;
-      providerScript.type = 'application/javascript';
-      providerScript.src = CINEMAX_EXOCLICK_INTERSTITIAL_SRC;
-      providerScript.onerror = () => console.warn('CineMax ExoClick interstitial failed to load.');
-      document.body.appendChild(providerScript);
-    }
-
-    const slot = document.createElement('ins');
-    slot.className = CINEMAX_EXOCLICK_INTERSTITIAL_CLASS;
-    slot.dataset.zoneid = CINEMAX_EXOCLICK_INTERSTITIAL_ZONE;
-    document.body.appendChild(slot);
-
-    window.AdProvider = window.AdProvider || [];
-    window.AdProvider.push({ serve: {} });
   }
 
   function wireSmartlinks() {
@@ -254,7 +205,6 @@
 
     safely('native banner', loadNativeBanner);
     safely('format banners', mountAllFormatBanners);
-    window.setTimeout(() => safely('ExoClick mobile interstitial', loadExoclickMobileInterstitial), 600);
     window.setTimeout(() => safely('social bar', loadSocialBar), 1200);
   });
 })();
