@@ -188,42 +188,36 @@ function formatViewNumber(value) {
   return `${String(rounded).replace(/\.0$/, '')}${unit.suffix}`;
 }
 
-function getDisplayedViews(realViews) {
-  return `${formatViewNumber((Number(realViews) || 0) * 100)} views`;
+function getRandomViewCount(seed) {
+  const text = String(seed || 'cinemax');
+  let hash = 0;
+  for (let i = 0; i < text.length; i += 1) {
+    hash = ((hash << 5) - hash) + text.charCodeAt(i);
+    hash |= 0;
+  }
+  return 10000 + (Math.abs(hash) % 90001);
 }
 
-function updateCardViewCounters(viewMap = {}) {
+function getDisplayedViews(seed) {
+  return `${formatViewNumber(getRandomViewCount(seed))} views`;
+}
+
+function updateCardViewCounters() {
   document.querySelectorAll('[data-view-slug]').forEach(card => {
     const slug = card.getAttribute('data-view-slug') || '';
     const count = card.querySelector('[data-card-view-count]');
     if (!count) return;
-    count.textContent = getDisplayedViews(viewMap[slug] || 0);
+    count.textContent = getDisplayedViews(slug);
     card.classList.add('views-loaded');
   });
 }
 
 let cardViewsRequestId = 0;
-async function loadCardViewCounters() {
-  const cards = [...document.querySelectorAll('[data-view-slug]')];
-  const slugs = [...new Set(cards.map(card => card.getAttribute('data-view-slug')).filter(Boolean))].slice(0, 80);
+function loadCardViewCounters() {
   const requestId = ++cardViewsRequestId;
-  if (!slugs.length || !window.location.protocol.startsWith('http')) {
-    updateCardViewCounters({});
-    return;
-  }
-
-  try {
-    const response = await fetch(`/api/view-counts?slugs=${encodeURIComponent(slugs.join(','))}`, {
-      method: 'GET',
-      credentials: 'same-origin'
-    });
-    if (!response.ok) throw new Error('views_batch_failed');
-    const data = await response.json();
-    if (requestId !== cardViewsRequestId) return;
-    updateCardViewCounters(data.views || {});
-  } catch (err) {
-    if (requestId === cardViewsRequestId) updateCardViewCounters({});
-  }
+  requestAnimationFrame(() => {
+    if (requestId === cardViewsRequestId) updateCardViewCounters();
+  });
 }
 
 function getAbsoluteUrl(path = '/') {

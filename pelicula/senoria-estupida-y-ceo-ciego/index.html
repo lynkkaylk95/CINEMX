@@ -41,7 +41,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=views-label-20260708">
+  <link rel="stylesheet" href="css/style.css?v=randomviews-20260708">
 </head>
 <body>
 
@@ -455,75 +455,46 @@
       return `${String(rounded).replace(/\.0$/, '')}${unit.suffix}`;
     }
 
-    function getDisplayedViews(realViews) {
-      return `${formatViewNumber((Number(realViews) || 0) * 100)} views`;
+    function getRandomViewCount(seed) {
+      const text = String(seed || 'cinemax');
+      let hash = 0;
+      for (let i = 0; i < text.length; i += 1) {
+        hash = ((hash << 5) - hash) + text.charCodeAt(i);
+        hash |= 0;
+      }
+      return 10000 + (Math.abs(hash) % 90001);
     }
 
-    function updateViewCounter(realViews) {
+    function getDisplayedViews(seed) {
+      return `${formatViewNumber(getRandomViewCount(seed))} views`;
+    }
+
+    function updateViewCounter(seed) {
       const count = document.getElementById('movie-views-count');
       const wrap = document.getElementById('movie-views');
       if (!count || !wrap) return;
-      count.textContent = getDisplayedViews(realViews);
+      count.textContent = getDisplayedViews(seed);
       wrap.classList.add('is-loaded');
     }
 
-    function updateCardViewCounters(viewMap = {}, root = document) {
+    function updateCardViewCounters(root = document) {
       root.querySelectorAll('[data-view-slug]').forEach(card => {
         const slug = card.getAttribute('data-view-slug') || '';
         const count = card.querySelector('[data-card-view-count]');
         if (!count) return;
-        count.textContent = getDisplayedViews(viewMap[slug] || 0);
+        count.textContent = getDisplayedViews(slug);
         card.classList.add('views-loaded');
       });
     }
 
-    async function loadRecommendedViewCounters(movies = []) {
-      const slugs = [...new Set(movies.map(getMovieSlug).filter(Boolean))];
+    function loadRecommendedViewCounters() {
       const recGrid = document.getElementById('rec-grid-container');
-      if (!slugs.length || !recGrid || !window.location.protocol.startsWith('http')) {
-        updateCardViewCounters({}, recGrid || document);
-        return;
-      }
-
-      try {
-        const response = await fetch(`/api/view-counts?slugs=${encodeURIComponent(slugs.join(','))}`, {
-          method: 'GET',
-          credentials: 'same-origin'
-        });
-        if (!response.ok) throw new Error('views_batch_failed');
-        const data = await response.json();
-        updateCardViewCounters(data.views || {}, recGrid);
-      } catch (err) {
-        updateCardViewCounters({}, recGrid);
-      }
+      if (recGrid) updateCardViewCounters(recGrid);
     }
 
-    async function loadMovieViews(movie) {
+    function loadMovieViews(movie) {
       const slug = getMovieSlug(movie);
-      if (!slug || !window.location.protocol.startsWith('http')) {
-        updateViewCounter(0);
-        return;
-      }
-
-      const seenKey = `cinemax_view_seen_${slug}`;
-      const lastSeen = Number(localStorage.getItem(seenKey) || 0);
-      const shouldCount = Date.now() - lastSeen > 30 * 60 * 1000;
-
-      try {
-        const response = await fetch(`/api/views/${encodeURIComponent(slug)}`, {
-          method: shouldCount ? 'POST' : 'GET',
-          credentials: 'same-origin',
-          headers: shouldCount ? { 'Content-Type': 'application/json' } : undefined
-        });
-        if (!response.ok) throw new Error('views_request_failed');
-        const data = await response.json();
-        updateViewCounter(data.views || 0);
-        if (shouldCount && data.counted) {
-          localStorage.setItem(seenKey, String(Date.now()));
-        }
-      } catch (err) {
-        updateViewCounter(0);
-      }
+      updateViewCounter(slug);
     }
 
     function getCurrentMovieSlug() {
@@ -789,7 +760,7 @@
               </div>
             </a>`;
         }).join('');
-        loadRecommendedViewCounters(recommended);
+        loadRecommendedViewCounters();
       } else {
         recGrid.innerHTML = '<p style="font-size: 13px; color: var(--text3)">No hay recomendaciones de este género todavía.</p>';
       }
