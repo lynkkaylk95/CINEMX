@@ -1,16 +1,12 @@
 /* CineMax MX - Ads */
 const CINEMAX_SMARTLINK_URL = 'https://www.effectivecpmnetwork.com/mdgtfx72cr?key=ddb2f05c770276460358480543facd5a';
-const CINEMAX_NATIVE_SRC = 'https://pl30226244.effectivecpmnetwork.com/00e298bf7ba92d81b94f4dff373a728f/invoke.js';
-const CINEMAX_NATIVE_CONTAINER_ID = 'container-00e298bf7ba92d81b94f4dff373a728f';
-const CINEMAX_SOCIAL_BAR_SRC = 'https://pl30226245.effectivecpmnetwork.com/40/4b/00/404b00bb58a19ba41d2858f90d60c5da.js';
-const CINEMAX_ENABLE_EXTERNAL_AD_SCRIPTS = false;
 const CINEMAX_FORMAT_BANNERS = {
-  '468x60': { key: '8389824bba4d8e870d5150e45184a022', width: 468, height: 60 },
-  '300x250': { key: 'a89c0e35563be5eed3604c499079b6e7', width: 300, height: 250 },
-  '160x300': { key: 'f982f1dc80b8113923c57774f16cfb02', width: 160, height: 300 },
-  '160x600': { key: 'b185da811b83e9f983183de21da98529', width: 160, height: 600 },
-  '320x50': { key: '624058fb77a2a18d0518dff8bf9ca113', width: 320, height: 50 },
-  '728x90': { key: 'a802d74f30e7b4a87e3a81c55a3b2377', width: 728, height: 90 }
+  '468x60': { width: 468, height: 60 },
+  '300x250': { width: 300, height: 250 },
+  '160x300': { width: 160, height: 300 },
+  '160x600': { width: 160, height: 600 },
+  '320x50': { width: 320, height: 50 },
+  '728x90': { width: 728, height: 90 }
 };
 
 function openSmartlinkAd() {
@@ -58,7 +54,7 @@ function getFormatBannerSize(element) {
 
 function mountFormatBanner(element, size) {
   const banner = CINEMAX_FORMAT_BANNERS[size];
-  if (!element || !banner || element.dataset.nativeAd === 'true' || element.dataset.formatBannerMounted === 'true') return;
+  if (!element || !banner || element.dataset.formatBannerMounted === 'true') return;
   if (isHiddenAdSlot(element)) return;
 
   element.dataset.formatBannerMounted = 'true';
@@ -72,52 +68,18 @@ function mountFormatBanner(element, size) {
   element.style.setProperty('--ad-h', `${banner.height}px`);
   element.innerHTML = '';
 
-  if (!CINEMAX_ENABLE_EXTERNAL_AD_SCRIPTS) {
-    const anchor = document.createElement('a');
-    anchor.className = 'cinemax-ad-banner ad-clickable';
-    anchor.href = CINEMAX_SMARTLINK_URL;
-    anchor.target = '_blank';
-    anchor.rel = 'noopener noreferrer';
-    anchor.innerHTML = `
-      <span class="ad-kicker">CineMax MX</span>
-      <strong>Ver oferta exclusiva</strong>
-      <small>Publicidad</small>
-    `;
-    element.appendChild(anchor);
-    wireSmartlinkAnchor(anchor);
-    return;
-  }
-
-  const iframe = document.createElement('iframe');
-  iframe.className = 'format-ad-frame';
-  iframe.title = `Publicidad ${size}`;
-  iframe.width = String(banner.width);
-  iframe.height = String(banner.height);
-  iframe.loading = 'lazy';
-  iframe.referrerPolicy = 'no-referrer-when-downgrade';
-  iframe.setAttribute('scrolling', 'no');
-  iframe.srcdoc = `<!doctype html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=${banner.width},initial-scale=1">
-  <style>html,body{margin:0;padding:0;width:${banner.width}px;height:${banner.height}px;overflow:hidden;background:transparent;}</style>
-</head>
-<body>
-  <script>
-    atOptions = {
-      'key': '${banner.key}',
-      'format': 'iframe',
-      'height': ${banner.height},
-      'width': ${banner.width},
-      'params': {}
-    };
-  <\/script>
-  <script src="https://www.highperformanceformat.com/${banner.key}/invoke.js"><\/script>
-</body>
-</html>`;
-
-  element.appendChild(iframe);
+  const anchor = document.createElement('a');
+  anchor.className = 'cinemax-ad-banner ad-clickable';
+  anchor.href = CINEMAX_SMARTLINK_URL;
+  anchor.target = '_blank';
+  anchor.rel = 'noopener noreferrer';
+  anchor.innerHTML = `
+    <span class="ad-kicker">CineMax MX</span>
+    <strong>Ver oferta exclusiva</strong>
+    <small>Publicidad</small>
+  `;
+  element.appendChild(anchor);
+  wireSmartlinkAnchor(anchor);
 }
 
 function isHiddenAdSlot(element) {
@@ -136,49 +98,8 @@ function mountAllFormatBanners() {
   });
 }
 
-function loadNativeBanner() {
-  if (!CINEMAX_ENABLE_EXTERNAL_AD_SCRIPTS) return;
-  if (document.getElementById(CINEMAX_NATIVE_CONTAINER_ID)) return;
-
-  const targetSelectors = [
-    '.ad-below-player',
-    '.ad-zone-home-mid',
-    '.movie-mobile-ad-top'
-  ];
-  const target = targetSelectors.map(selector => document.querySelector(selector)).find(Boolean);
-  if (!target) return;
-
-  target.dataset.nativeAd = 'true';
-  target.classList.remove('ad-clickable');
-  target.removeAttribute('role');
-  target.removeAttribute('tabindex');
-  target.removeAttribute('aria-label');
-  target.innerHTML = '';
-
-  const script = document.createElement('script');
-  script.async = true;
-  script.dataset.cfasync = 'false';
-  script.src = CINEMAX_NATIVE_SRC;
-
-  const container = document.createElement('div');
-  container.id = CINEMAX_NATIVE_CONTAINER_ID;
-
-  target.append(script, container);
-}
-
-function loadSocialBar() {
-  if (!CINEMAX_ENABLE_EXTERNAL_AD_SCRIPTS) return;
-  if (document.querySelector(`script[src="${CINEMAX_SOCIAL_BAR_SRC}"]`)) return;
-
-  const script = document.createElement('script');
-  script.src = CINEMAX_SOCIAL_BAR_SRC;
-  document.body.appendChild(script);
-}
-
 document.addEventListener('DOMContentLoaded', () => {
-  loadNativeBanner();
   mountAllFormatBanners();
-  loadSocialBar();
 
   document.querySelectorAll('#ad-top-bar a').forEach(wireSmartlinkAnchor);
 
