@@ -199,7 +199,7 @@ function getRandomViewCount(seed) {
 }
 
 function getDisplayedViews(seed) {
-  return `${formatViewNumber(getRandomViewCount(seed))} views`;
+  return formatViewNumber(getRandomViewCount(seed));
 }
 
 function updateCardViewCounters() {
@@ -352,7 +352,7 @@ function createCard(m) {
     <a class="card" href="${escapeAttr(getMovieUrl(m))}" data-view-slug="${escapeAttr(slug)}">
       <div class="card-thumb" style="${bgStyle}">
         ${hasThumb ? `<img class="card-thumb-img" src="${escapeAttr(thumbUrl)}" alt="Poster de ${escapeAttr(m.title)}" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='https://i3.ytimg.com/vi/${escapeAttr(getYouTubeId(m.yt))}/hqdefault.jpg';">` : `<div class="card-thumb-emoji">${escapeHTML(m.emoji || '\uD83C\uDFAC')}</div>`}
-        <div class="card-view-count" aria-label="Views"><span aria-hidden="true">&#128065;</span><span data-card-view-count>- views</span></div>
+        <div class="card-view-count" aria-label="Views"><span aria-hidden="true">&#128065;</span><span data-card-view-count>-</span></div>
         ${createThumbBadges(m)}
         <div class="card-rating">&#9733; ${escapeHTML(m.rating)}</div>
         <div class="card-overlay"><div class="card-play">&#9654;</div></div>
@@ -373,7 +373,7 @@ function createFeatCard(m) {
     <a class="feat-card" href="${escapeAttr(getMovieUrl(m))}" data-view-slug="${escapeAttr(slug)}">
       <div class="feat-thumb" style="${bgStyle}">
         ${hasThumb ? `<img class="card-thumb-img" src="${escapeAttr(thumbUrl)}" alt="Poster de ${escapeAttr(m.title)}" loading="lazy" decoding="async" onerror="this.onerror=null; this.src='https://i3.ytimg.com/vi/${escapeAttr(getYouTubeId(m.yt))}/hqdefault.jpg';">` : `<div class="feat-thumb-emoji">${escapeHTML(m.emoji || '\uD83C\uDFAC')}</div>`}
-        <div class="card-view-count" aria-label="Views"><span aria-hidden="true">&#128065;</span><span data-card-view-count>- views</span></div>
+        <div class="card-view-count" aria-label="Views"><span aria-hidden="true">&#128065;</span><span data-card-view-count>-</span></div>
         <div class="feat-play-wrap"><div class="feat-play-btn">&#9654;</div></div>
         ${createThumbBadges(m)}
         <div class="card-rating">&#9733; ${escapeHTML(m.rating)}</div>

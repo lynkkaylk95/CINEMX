@@ -319,7 +319,7 @@ ul { list-style: none; }
   top: 7px;
   left: 7px;
   z-index: 3;
-  min-width: 74px;
+  min-width: 48px;
   max-width: calc(100% - 48px);
   min-height: 20px;
   display: inline-flex;

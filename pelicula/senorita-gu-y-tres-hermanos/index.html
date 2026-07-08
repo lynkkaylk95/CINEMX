@@ -41,7 +41,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=randomviews-20260708">
+  <link rel="stylesheet" href="css/style.css?v=randomviews-compact-20260708">
 </head>
 <body>
 
@@ -122,7 +122,7 @@
         </div>
         <div class="movie-views" id="movie-views" aria-live="polite">
           <span class="movie-views-icon" aria-hidden="true">&#128065;</span>
-          <span id="movie-views-count">- views</span>
+          <span id="movie-views-count">-</span>
         </div>
       </div>
 
@@ -466,7 +466,7 @@
     }
 
     function getDisplayedViews(seed) {
-      return `${formatViewNumber(getRandomViewCount(seed))} views`;
+      return formatViewNumber(getRandomViewCount(seed));
     }
 
     function updateViewCounter(seed) {
@@ -752,7 +752,7 @@
                   ? `<img class="card-thumb-img" src="${escapeAttr(recThumb)}" alt="Poster de ${escapeAttr(m.title)}" loading="lazy" decoding="async">`
                   : `<div class="card-thumb-emoji" style="font-size:38px;">${escapeHTML(m.emoji || '\uD83C\uDFAC')}</div>`
                 }
-                <div class="card-view-count" aria-label="Views"><span aria-hidden="true">&#128065;</span><span data-card-view-count>- views</span></div>
+                <div class="card-view-count" aria-label="Views"><span aria-hidden="true">&#128065;</span><span data-card-view-count>-</span></div>
                 <div class="card-rating">&#9733; ${escapeHTML(m.rating)}</div>
               </div>
               <div class="card-info" style="padding: 8px;">
