@@ -1,6 +1,226 @@
 // Base de datos de películas y series de CineMax MX
 const MOVIES = [
   {
+    "title": "Juego de Parejas",
+    "slug": "juego-de-parejas",
+    "genre": "Comedia",
+    "genres": [
+      "Comedia",
+      "Romance"
+    ],
+    "type": "Película",
+    "year": 2026,
+    "rating": 8.4,
+    "duration": "2h 21min",
+    "emoji": "🎬",
+    "yt": "g-4H3TAvSCc",
+    "thumb": "https://i3.ytimg.com/vi/g-4H3TAvSCc/hqdefault.jpg",
+    "desc": "Género: películas románticas, películas chinas, Multimillonario se hace pasar por pobre, dramas coreanos en español, doramas en español latino completas, kdrama español completos, identidad misteriosa y matrimonio relámpago, cenicienta se casa con un tio guapo, chica se casa con chico pobre pero es rico, peliculas completas en español latino, presidente disfrazado de pobre para poner a prueba",
+    "episodes": [],
+    "id": 49,
+    "addedAt": "2026-07-11T03:03:05.691Z"
+  },
+  {
+    "title": "El Jefe Regresa",
+    "slug": "el-jefe-regresa",
+    "genre": "Acción",
+    "genres": [
+      "Acción",
+      "Thriller"
+    ],
+    "type": "Película",
+    "year": 2026,
+    "rating": 9.3,
+    "duration": "2h 25min",
+    "emoji": "🎬",
+    "yt": "fxPjw5Nm5QY",
+    "thumb": "https://i3.ytimg.com/vi/fxPjw5Nm5QY/hqdefault.jpg",
+    "desc": "El Jefe Anónimo salva a su esposa e hija, pero es despreciado por la gente arrogante, ¡y ellos lo pagan!\n\nGénero: películas románticas, películas chinas, película en español, mi esposo multimillonario pelicula completa en español",
+    "episodes": [],
+    "id": 48,
+    "addedAt": "2026-07-11T03:01:21.788Z"
+  },
+  {
+    "title": "Renació para Triunfar, No para Amar",
+    "slug": "renacio-para-triunfar-no-para-amar",
+    "genre": "Drama",
+    "genres": [
+      "Drama",
+      "Thriller"
+    ],
+    "type": "Película",
+    "year": 2026,
+    "rating": 8.7,
+    "duration": "2h 15min",
+    "emoji": "🎬",
+    "yt": "GFn68AdhQeE",
+    "thumb": "https://i3.ytimg.com/vi/GFn68AdhQeE/hqdefault.jpg",
+    "desc": "Luchuan aprovecha su conocimiento del futuro para invertir en el mercado de valores y fundar una empresa de entrega de comida. Con la ayuda de contactos estratégicos, busca asegurar su éxito financiero y personal mientras se aleja de relaciones pasadas.\nGénero: películas románticas, películas chinas, Multimillonario se hace pasar por pobre, dramas coreanos en español, doramas en español latino completas, kdrama español completos, peliculas de viajes en el tiempo, Series de Reencarnación, presidente disfrazado de pobre, chica se casa con chico pobre pero es rico,",
+    "episodes": [],
+    "id": 47,
+    "addedAt": "2026-07-11T02:59:46.612Z"
+  },
+  {
+    "title": "Mensajero del Future",
+    "slug": "mensajero-del-future",
+    "genre": "Drama",
+    "genres": [
+      "Drama",
+      "Ciencia Ficción"
+    ],
+    "type": "Película",
+    "year": 2026,
+    "rating": 9.2,
+    "duration": "2h 35min",
+    "emoji": "🎬",
+    "yt": "EHUIO3Mk0jE",
+    "thumb": "https://i3.ytimg.com/vi/EHUIO3Mk0jE/hqdefault.jpg",
+    "desc": "Tras ser traicionado por una pareja y perder todo, una persona utiliza una habilidad única para predecir el futuro en una convención de antigüedades. El objetivo es recuperar la fortuna familiar y salvar a sus padres de la prisión, enfrentándose a quienes arruinaron su vida.\nGénero: películas románticas, películas chinas, Multimillonario se hace pasar por pobre, dramas coreanos en español, doramas en español latino completas, kdrama español completos, soy un millonario oculto, cenicienta se casa con un tio guapo, el joven con el sistema mágico, peliculas completas en español latino, presidente disfrazado de pobre para poner a prueba",
+    "episodes": [],
+    "id": 46,
+    "addedAt": "2026-07-11T02:57:58.668Z"
+  },
+  {
+    "title": "El Tío de Mi Exesposo es Mi Destino",
+    "slug": "el-tio-de-mi-exesposo-es-mi-destino",
+    "genre": "Emotivo",
+    "genres": [
+      "Emotivo",
+      "Thriller"
+    ],
+    "type": "Película",
+    "year": 2026,
+    "rating": 8.9,
+    "duration": "2h 20min",
+    "emoji": "🎬",
+    "yt": "5s2QLZ4BPRE",
+    "thumb": "https://i3.ytimg.com/vi/5s2QLZ4BPRE/hqdefault.jpg",
+    "desc": "Todos maltratan a la pasante, sin saber que su esposo es el presidente de la empresa\n \nActrices: Yu Yin\nGénero: drama chino, películas románticas, películas chinas, dramas coreanos en español, doramas en español latino completas, kdrama español completos, Identidad Misteriosa y Matrimonio Relámpago, Casarse primero amar después, Amor a través del tiempo y espacio",
+    "episodes": [],
+    "id": 45,
+    "addedAt": "2026-07-11T02:55:40.780Z"
+  },
+  {
+    "title": "La Pobre Esposa del Jefe Lu",
+    "slug": "la-pobre-esposa-del-jefe-lu",
+    "genre": "Drama",
+    "genres": [
+      "Drama",
+      "Thriller"
+    ],
+    "type": "Película",
+    "year": 2025,
+    "rating": 8.1,
+    "duration": "2h 14min",
+    "emoji": "🎬",
+    "yt": "qYIx7RFhWz8",
+    "thumb": "https://i3.ytimg.com/vi/qYIx7RFhWz8/hqdefault.jpg",
+    "desc": "CEO escucha a amante y maltrata a esposa sin piedad; cuando conoce la verdad, ya es demasiado tarde\nActrices: Yu Yin, Shu Tong\nGénero: películas románticas, películas chinas, Multimillonario se hace pasar por pobre, dramas coreanos en español, peliculas completas en español latino, kdrama español completos, Recuperando su corazón",
+    "episodes": [],
+    "id": 44,
+    "addedAt": "2026-07-11T02:53:42.252Z"
+  },
+  {
+    "title": "Primer Amor Lleno de Enredos",
+    "slug": "primer-amor-lleno-de-enredos",
+    "genre": "Romance",
+    "genres": [
+      "Romance",
+      "Thriller"
+    ],
+    "type": "Película",
+    "year": 2026,
+    "rating": 8.8,
+    "duration": "1h 39min",
+    "emoji": "🎬",
+    "yt": "a1NRdm9-r-A",
+    "thumb": "https://i3.ytimg.com/vi/a1NRdm9-r-A/hqdefault.jpg",
+    "desc": "Un CEO se disfraza de pasante para evaluar a su equipo, pero se encuentra con un antiguo amor que enfrenta acoso laboral. Tienda de Peliculas narra cómo ambos trabajan juntos para asegurar un contrato millonario y enfrentar a quienes intentan perjudicarlos.\nActrices: Bai Xin Yi, Zhu Yi Wei\nGénero: películas románticas, películas chinas, Multimillonario se hace pasar por pobre, dramas coreanos en español, doramas en español latino completas, kdrama español completos, identidad misteriosa y matrimonio relámpago, chica se casa con chico pobre pero es rico, presidente disfrazado de pobre para poner a prueba, novelas coreanas en español",
+    "episodes": [],
+    "id": 43,
+    "addedAt": "2026-07-11T02:41:52.116Z"
+  },
+  {
+    "title": "Transformación de Chica Sexy",
+    "slug": "transformacion-de-chica-sexy",
+    "genre": "Comedia",
+    "genres": [
+      "Comedia",
+      "Thriller"
+    ],
+    "type": "Película",
+    "year": 2025,
+    "rating": 9.6,
+    "duration": "1h 50min",
+    "emoji": "🎬",
+    "yt": "nyFah8IX_Rg",
+    "thumb": "https://i3.ytimg.com/vi/nyFah8IX_Rg/hqdefault.jpg",
+    "desc": "Pesa 300 libras y él la deja; un mes después, se convierte en una chica sexy para hacerlo arrepentir\nGénero: películas románticas, películas chinas, Multimillonario se hace pasar por pobre, dramas coreanos en español, doramas en español latino completas, La Amada Esposa del CEO, kdrama español completos, el multimillonario oculta su identidad, Arrepentimiento después del divorcio, Multimillonaria se venga",
+    "episodes": [],
+    "id": 42,
+    "addedAt": "2026-07-11T02:39:52.644Z"
+  },
+  {
+    "title": "La Doncella del Mariscal",
+    "slug": "la-doncella-del-mariscal",
+    "genre": "Drama",
+    "genres": [
+      "Drama",
+      "De época"
+    ],
+    "type": "Película",
+    "year": 2026,
+    "rating": 9,
+    "duration": "3h 01min",
+    "emoji": "🎬",
+    "yt": "w0Q8scvIfcI",
+    "thumb": "https://i3.ytimg.com/vi/w0Q8scvIfcI/hqdefault.jpg",
+    "desc": "Joven mariscal detesta a chicas falsas, pero inesperadamente se enamora locamente de la criada terca\n\nActrices: Bai Fang Wen, Zhang Ya Meng\nGénero: películas románticas, películas chinas, Multimillonario se hace pasar por pobre, dramas coreanos en español, doramas en español latino completas, kdrama español completos, Arrepentimiento después del divorcio, presidente disfrazado de pobre, Identidad Misteriosa y Matrimonio Relámpago, Hija de hombre más rico, tener hijo con CEO",
+    "episodes": [],
+    "id": 41,
+    "addedAt": "2026-07-11T02:38:03.828Z"
+  },
+  {
+    "title": "CEO Drogado",
+    "slug": "ceo-drogado",
+    "genre": "Familia",
+    "genres": [
+      "Familia",
+      "Romance"
+    ],
+    "type": "Película",
+    "year": 2025,
+    "rating": 8.2,
+    "duration": "2h 40min",
+    "emoji": "🎬",
+    "yt": "9IScGWOC-6g",
+    "thumb": "https://i3.ytimg.com/vi/9IScGWOC-6g/hqdefault.jpg",
+    "desc": "El CEO se enamora de una hermosa enfermera, sin saber que es su esposa a la que no ha conocido en 2 años y que él quiere divorciarse\n\nActrices: Zhang Jijun\nGénero: películas románticas, películas chinas, Multimillonario se hace pasar por pobre, dramas coreanos en español, doramas en español latino completas, kdrama español completos, el multimillonario oculta su identidad, Arrepentimiento después del divorcio, Recuperando su corazón",
+    "episodes": [],
+    "id": 40,
+    "addedAt": "2026-07-11T02:36:23.836Z"
+  },
+  {
+    "title": "Solo Quiero Hacerte Oficialmente Mía",
+    "slug": "solo-quiero-hacerte-oficialmente-mia",
+    "genre": "Emotivo",
+    "genres": [
+      "Emotivo",
+      "Romance"
+    ],
+    "type": "Película",
+    "year": 2026,
+    "rating": 8.7,
+    "duration": "3h 17min",
+    "emoji": "🎬",
+    "yt": "MT_j4Ip6uC0",
+    "thumb": "https://i3.ytimg.com/vi/MT_j4Ip6uC0/hqdefault.jpg",
+    "desc": "Él es un famoso playboy, y un matrimonio de negocios los unió. Pensaron que se trataban como huéspedes, pero inesperadamente, él había estado secretamente enamorado de ella durante tantos años…\nActrices:  白方文（Bai Fangwen), 觅七 (MiQi)\nGénero: películas románticas, películas chinas, Multimillonario se hace pasar por pobre, dramas coreanos en español, peliculas completas en español latino, La Amada Esposa del CEO, Matrimonio de Conveniencia, kdrama español completos",
+    "episodes": [],
+    "id": 39,
+    "addedAt": "2026-07-11T02:33:16.272Z"
+  },
+  {
     "title": "El Dios de la Guerra Regresa",
     "slug": "el-dios-de-la-guerra-regresa",
     "genre": "Acción",
