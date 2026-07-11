@@ -10,6 +10,7 @@
   const CINEMAX_ENABLE_SOCIAL_BAR = document.body?.dataset.disableSocialBar !== 'true';
   const CINEMAX_EXO_POPUNDER_SRC = 'https://a.pemsrv.com/popunder1000.js';
   const CINEMAX_EXO_POPUNDER_ID = 'popmagicldr';
+  const CINEMAX_EXO_PROVIDER_SRC = 'https://a.magsrv.com/ad-provider.js';
   const CINEMAX_FORMAT_BANNERS = {
     '468x60': { key: '8389824bba4d8e870d5150e45184a022', width: 468, height: 60 },
     '300x250': { key: 'a89c0e35563be5eed3604c499079b6e7', width: 300, height: 250 },
@@ -82,7 +83,6 @@
     const isMobile = window.matchMedia('(max-width: 768px)').matches;
 
     if (element.classList.contains('movie-ad-code')) {
-      if (element.closest('.movie-ad-right')) return '160x300';
       return '160x600';
     }
 
@@ -131,6 +131,39 @@
     element.appendChild(invokeScript);
   }
 
+  function mountExoClickRightRail(element) {
+    if (!element || element.dataset.exoRightRailMounted === 'true') return;
+    if (isHiddenAdSlot(element)) return;
+
+    element.dataset.exoRightRailMounted = 'true';
+    element.dataset.adSize = '160x600';
+    element.classList.remove('ad-clickable');
+    element.removeAttribute('role');
+    element.removeAttribute('tabindex');
+    element.removeAttribute('aria-label');
+    element.classList.add('ad-fixed-slot', 'ad-fixed-slot--160x600');
+    element.style.setProperty('--ad-w', '160px');
+    element.style.setProperty('--ad-h', '600px');
+    element.innerHTML = '';
+
+    if (!document.querySelector(`script[src="${CINEMAX_EXO_PROVIDER_SRC}"]`)) {
+      const providerScript = document.createElement('script');
+      providerScript.async = true;
+      providerScript.type = 'application/javascript';
+      providerScript.src = CINEMAX_EXO_PROVIDER_SRC;
+      element.appendChild(providerScript);
+    }
+
+    const slot = document.createElement('ins');
+    slot.className = 'eas6a97888e2';
+    slot.dataset.zoneid = '5971764';
+    element.appendChild(slot);
+
+    const serveScript = document.createElement('script');
+    serveScript.text = '(AdProvider = window.AdProvider || []).push({"serve": {}});';
+    element.appendChild(serveScript);
+  }
+
   function isHiddenAdSlot(element) {
     const style = window.getComputedStyle(element);
     if (style.display === 'none' || style.visibility === 'hidden') return true;
@@ -143,6 +176,10 @@
 
   function mountAllFormatBanners() {
     document.querySelectorAll('.ad-zone, .ad-below-player, .movie-ad-code').forEach(element => {
+      if (element.closest('.movie-ad-right')) {
+        mountExoClickRightRail(element);
+        return;
+      }
       mountFormatBanner(element, getFormatBannerSize(element));
     });
   }
