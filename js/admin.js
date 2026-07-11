@@ -93,6 +93,16 @@ function syncThumbnailFromYouTube() {
   thumbInput.value = `https://i3.ytimg.com/vi/${ytId}/hqdefault.jpg`;
 }
 
+function findDuplicateMovieByVideo(ytId, ignoredId = null) {
+  const normalizedYtId = String(ytId || '').trim();
+  if (!normalizedYtId) return null;
+
+  return currentMovies.find(movie => {
+    if (ignoredId !== null && Number(movie.id) === Number(ignoredId)) return false;
+    return extractYouTubeId(movie?.yt) === normalizedYtId;
+  }) || null;
+}
+
 function getMovieGenres(movie) {
   const values = Array.isArray(movie?.genres) ? movie.genres : [];
   const legacy = movie?.genre ? [movie.genre] : [];
@@ -275,6 +285,13 @@ function saveMovie() {
 
   if (!title || !duration || !yt || !desc || genres.length === 0) {
     showToast("Vui lòng điền đầy đủ các trường bắt buộc.");
+    return;
+  }
+
+  const duplicateMovie = findDuplicateMovieByVideo(yt, idVal ? parseInt(idVal) : null);
+  if (duplicateMovie) {
+    showToast(`Link video \u0111\u00e3 tr\u00f9ng v\u1edbi phim "${duplicateMovie.title}". Kh\u00f4ng th\u1ec3 l\u01b0u.`);
+    document.getElementById('yt').focus();
     return;
   }
 
