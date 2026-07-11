@@ -7,7 +7,9 @@
   const CINEMAX_NATIVE_SRC = 'https://pl30226244.effectivecpmnetwork.com/00e298bf7ba92d81b94f4dff373a728f/invoke.js';
   const CINEMAX_NATIVE_CONTAINER_ID = 'container-00e298bf7ba92d81b94f4dff373a728f';
   const CINEMAX_SOCIAL_BAR_SRC = 'https://pl30226245.effectivecpmnetwork.com/40/4b/00/404b00bb58a19ba41d2858f90d60c5da.js';
-  const CINEMAX_ENABLE_SOCIAL_BAR = document.body?.dataset.enableSocialBar === 'true';
+  const CINEMAX_ENABLE_SOCIAL_BAR = document.body?.dataset.disableSocialBar !== 'true';
+  const CINEMAX_EXO_POPUNDER_SRC = 'https://a.pemsrv.com/popunder1000.js';
+  const CINEMAX_EXO_POPUNDER_ID = 'cinemax-exo-play-popunder';
   const CINEMAX_FORMAT_BANNERS = {
     '468x60': { key: '8389824bba4d8e870d5150e45184a022', width: 468, height: 60 },
     '300x250': { key: 'a89c0e35563be5eed3604c499079b6e7', width: 300, height: 250 },
@@ -185,6 +187,32 @@
     document.body.appendChild(script);
   }
 
+  function loadExoPlayPopunder() {
+    if (!document.querySelector('.video-play-button')) return;
+    if (document.getElementById(CINEMAX_EXO_POPUNDER_ID)) return;
+
+    const script = document.createElement('script');
+    script.id = CINEMAX_EXO_POPUNDER_ID;
+    script.async = true;
+    script.type = 'application/javascript';
+    script.src = CINEMAX_EXO_POPUNDER_SRC;
+    script.setAttribute('data-exo-idzone', '5971718');
+    script.setAttribute('data-exo-popup_fallback', 'false');
+    script.setAttribute('data-exo-popup_force', 'false');
+    script.setAttribute('data-exo-chrome_enabled', 'true');
+    script.setAttribute('data-exo-new_tab', 'false');
+    script.setAttribute('data-exo-frequency_period', '60');
+    script.setAttribute('data-exo-frequency_count', '1');
+    script.setAttribute('data-exo-trigger_method', '2');
+    script.setAttribute('data-exo-trigger_class', 'video-play-button');
+    script.setAttribute('data-exo-trigger_delay', '0');
+    script.setAttribute('data-exo-capping_enabled', 'true');
+    script.setAttribute('data-exo-tcf_enabled', 'true');
+    script.setAttribute('data-exo-only_inline', 'false');
+    script.onerror = () => console.warn('CineMax ExoClick play popunder failed to load.');
+    document.body.appendChild(script);
+  }
+
   function wireSmartlinks() {
     document.querySelectorAll('#ad-top-bar a').forEach(wireSmartlinkAnchor);
 
@@ -196,6 +224,7 @@
   }
 
   onDomReady(() => safely('smartlink wiring', wireSmartlinks));
+  onDomReady(() => safely('ExoClick play popunder', loadExoPlayPopunder));
 
   afterPageLoad(() => {
     if (window.__cinemaxAdsMounted) return;
