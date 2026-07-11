@@ -9,7 +9,7 @@
   const CINEMAX_SOCIAL_BAR_SRC = 'https://pl30226245.effectivecpmnetwork.com/40/4b/00/404b00bb58a19ba41d2858f90d60c5da.js';
   const CINEMAX_ENABLE_SOCIAL_BAR = document.body?.dataset.disableSocialBar !== 'true';
   const CINEMAX_EXO_POPUNDER_SRC = 'https://a.pemsrv.com/popunder1000.js';
-  const CINEMAX_EXO_POPUNDER_ID = 'cinemax-exo-play-popunder';
+  const CINEMAX_EXO_POPUNDER_ID = 'popmagicldr';
   const CINEMAX_FORMAT_BANNERS = {
     '468x60': { key: '8389824bba4d8e870d5150e45184a022', width: 468, height: 60 },
     '300x250': { key: 'a89c0e35563be5eed3604c499079b6e7', width: 300, height: 250 },
