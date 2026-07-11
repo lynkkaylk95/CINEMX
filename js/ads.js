@@ -84,8 +84,6 @@
     }
 
     if (element.classList.contains('movie-mobile-ad')) return '320x50';
-    if (element.classList.contains('movie-affiliate')) return '300x250';
-    if (element.id === 'affiliate-section') return isMobile ? '320x50' : '468x60';
     if (element.classList.contains('ad-zone-home-bottom')) return isMobile ? '320x50' : '728x90';
     if (element.classList.contains('ad-zone-home-feed')) return '300x250';
     if (element.classList.contains('ad-zone-category-break')) return isMobile ? '320x50' : '468x60';
@@ -141,7 +139,7 @@
   }
 
   function mountAllFormatBanners() {
-    document.querySelectorAll('.ad-zone, .ad-below-player, .movie-ad-code, #affiliate-section, .movie-affiliate').forEach(element => {
+    document.querySelectorAll('.ad-zone, .ad-below-player, .movie-ad-code').forEach(element => {
       mountFormatBanner(element, getFormatBannerSize(element));
     });
   }
