@@ -82,7 +82,8 @@
     const isMobile = window.matchMedia('(max-width: 768px)').matches;
 
     if (element.classList.contains('movie-ad-code')) {
-      return window.matchMedia('(max-width: 1400px)').matches ? '160x300' : '160x600';
+      if (element.closest('.movie-ad-right')) return '160x300';
+      return '160x600';
     }
 
     if (element.classList.contains('movie-mobile-ad')) return '320x50';
