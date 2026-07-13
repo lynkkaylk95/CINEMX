@@ -96,7 +96,7 @@ function createVisitorId() {
   return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
 }
 
-function getWeeklyCounterKey(slug, date = new Date()) {
+function getWeeklyPeriod(date = new Date()) {
   const parts = new Intl.DateTimeFormat("en-CA", {
     timeZone: "America/Mexico_City",
     year: "numeric",
@@ -110,7 +110,142 @@ function getWeeklyCounterKey(slug, date = new Date()) {
   const weekYear = localDate.getUTCFullYear();
   const yearStart = new Date(Date.UTC(weekYear, 0, 1));
   const week = Math.ceil((((localDate - yearStart) / 86400000) + 1) / 7);
-  return `movie-week:${weekYear}-W${String(week).padStart(2, "0")}:${slug}`;
+  return `${weekYear}-W${String(week).padStart(2, "0")}`;
+}
+
+export class MovieViewCounter {
+  constructor(state) {
+    this.state = state;
+    this.sql = state.storage.sql;
+    this.sql.exec(`
+      CREATE TABLE IF NOT EXISTS movie_views (
+        slug TEXT PRIMARY KEY,
+        total_views INTEGER NOT NULL DEFAULT 0,
+        week_key TEXT NOT NULL,
+        weekly_views INTEGER NOT NULL DEFAULT 0
+      );
+      CREATE TABLE IF NOT EXISTS visitor_locks (
+        slug TEXT NOT NULL,
+        visitor_hash TEXT NOT NULL,
+        expires_at INTEGER NOT NULL,
+        PRIMARY KEY (slug, visitor_hash)
+      );
+    `);
+  }
+
+  getViews(slug, weekKey) {
+    const row = this.sql.exec(
+      "SELECT total_views, week_key, weekly_views FROM movie_views WHERE slug = ?",
+      slug
+    ).toArray()[0];
+
+    return {
+      views: Number(row?.total_views || 0),
+      weeklyViews: row?.week_key === weekKey ? Number(row.weekly_views || 0) : 0
+    };
+  }
+
+  increment(slug, weekKey, visitorHash) {
+    const now = Date.now();
+    const expiresAt = now + 30 * 60 * 1000;
+
+    return this.state.storage.transactionSync(() => {
+      this.sql.exec("DELETE FROM visitor_locks WHERE slug = ? AND expires_at <= ?", slug, now);
+      const lock = this.sql.exec(
+        "SELECT 1 AS locked FROM visitor_locks WHERE slug = ? AND visitor_hash = ?",
+        slug,
+        visitorHash
+      ).toArray()[0];
+
+      if (lock) {
+        return { ...this.getViews(slug, weekKey), counted: false };
+      }
+
+      this.sql.exec(
+        `INSERT INTO visitor_locks (slug, visitor_hash, expires_at) VALUES (?, ?, ?)
+         ON CONFLICT (slug, visitor_hash) DO UPDATE SET expires_at = excluded.expires_at`,
+        slug,
+        visitorHash,
+        expiresAt
+      );
+
+      const row = this.sql.exec(
+        `INSERT INTO movie_views (slug, total_views, week_key, weekly_views)
+         VALUES (?, 1, ?, 1)
+         ON CONFLICT (slug) DO UPDATE SET
+           total_views = movie_views.total_views + 1,
+           week_key = excluded.week_key,
+           weekly_views = CASE
+             WHEN movie_views.week_key = excluded.week_key THEN movie_views.weekly_views + 1
+             ELSE 1
+           END
+         RETURNING total_views, weekly_views`,
+        slug,
+        weekKey
+      ).one();
+
+      return {
+        views: Number(row.total_views),
+        weeklyViews: Number(row.weekly_views),
+        counted: true
+      };
+    });
+  }
+
+  getBatch(slugs, weekKey) {
+    const views = Object.fromEntries(slugs.map((slug) => [slug, 0]));
+    const weeklyViews = Object.fromEntries(slugs.map((slug) => [slug, 0]));
+    if (!slugs.length) return { views, weeklyViews };
+
+    const placeholders = slugs.map(() => "?").join(",");
+    const rows = this.sql.exec(
+      `SELECT slug, total_views, week_key, weekly_views
+       FROM movie_views WHERE slug IN (${placeholders})`,
+      ...slugs
+    ).toArray();
+
+    for (const row of rows) {
+      views[row.slug] = Number(row.total_views || 0);
+      weeklyViews[row.slug] = row.week_key === weekKey ? Number(row.weekly_views || 0) : 0;
+    }
+
+    return { views, weeklyViews };
+  }
+
+  async fetch(request) {
+    const url = new URL(request.url);
+    const weekKey = request.headers.get("X-Week-Key") || getWeeklyPeriod();
+
+    if (url.pathname === "/batch" && request.method === "GET") {
+      const slugs = (url.searchParams.get("slugs") || "").split(",").filter(isValidSlug).slice(0, 80);
+      return jsonResponse({ ok: true, ...this.getBatch(slugs, weekKey) });
+    }
+
+    const match = url.pathname.match(/^\/view\/([^/]+)$/);
+    const slug = match ? decodeURIComponent(match[1]) : "";
+    if (!isValidSlug(slug) || (request.method !== "GET" && request.method !== "POST")) {
+      return jsonResponse({ ok: false, error: "invalid_request" }, { status: 400 });
+    }
+
+    if (request.method === "POST") {
+      const visitorHash = request.headers.get("X-Visitor-Hash") || "";
+      if (!visitorHash) return jsonResponse({ ok: false, error: "missing_visitor" }, { status: 400 });
+      return jsonResponse({ ok: true, configured: true, ...this.increment(slug, weekKey, visitorHash) });
+    }
+
+    return jsonResponse({
+      ok: true,
+      configured: true,
+      ...this.getViews(slug, weekKey),
+      counted: false
+    });
+  }
+}
+
+function getViewCounterStub(env) {
+  if (!env.CINEMAX_VIEW_COUNTER) return null;
+  const id = env.CINEMAX_VIEW_COUNTER.idFromName("movie-views");
+  return env.CINEMAX_VIEW_COUNTER.get(id);
 }
 
 async function handleMovieViews(request, env, slug) {
@@ -118,51 +253,33 @@ async function handleMovieViews(request, env, slug) {
     return jsonResponse({ ok: false, error: "invalid_movie", views: 0 }, { status: 400 });
   }
 
-  const viewsStore = env.CINEMAX_VIEWS;
-  if (!viewsStore) {
+  const counter = getViewCounterStub(env);
+  if (!counter) {
     return jsonResponse({ ok: true, configured: false, views: 0, weeklyViews: 0, counted: false });
   }
 
-  const counterKey = `movie:${slug}`;
-  const weeklyCounterKey = getWeeklyCounterKey(slug);
   const cookies = parseCookies(request);
   const visitorId = cookies.cmx_vid || createVisitorId();
   const userAgent = request.headers.get("User-Agent") || "";
   const visitorHash = await sha256(`${slug}|${visitorId}|${getClientIp(request)}|${userAgent}`);
-  const throttleKey = `movie-view-lock:${slug}:${visitorHash}`;
   const headers = new Headers({
     "Set-Cookie": `cmx_vid=${encodeURIComponent(visitorId)}; Max-Age=31536000; Path=/; SameSite=Lax; Secure; HttpOnly`
   });
 
-  let realViews = Number(await viewsStore.get(counterKey) || 0);
-  let weeklyViews = Number(await viewsStore.get(weeklyCounterKey) || 0);
-  let counted = false;
-
-  if (request.method === "POST") {
-    const isLocked = await viewsStore.get(throttleKey);
-    if (!isLocked) {
-      realViews += 1;
-      weeklyViews += 1;
-      counted = true;
-      await Promise.all([
-        viewsStore.put(counterKey, String(realViews)),
-        viewsStore.put(weeklyCounterKey, String(weeklyViews), { expirationTtl: 21 * 24 * 60 * 60 }),
-        viewsStore.put(throttleKey, "1", { expirationTtl: 30 * 60 })
-      ]);
+  const durableRequest = new Request(`https://view-counter/view/${encodeURIComponent(slug)}`, {
+    method: request.method,
+    headers: {
+      "X-Visitor-Hash": visitorHash,
+      "X-Week-Key": getWeeklyPeriod()
     }
-  }
-
-  return jsonResponse({
-    ok: true,
-    configured: true,
-    views: realViews,
-    weeklyViews,
-    counted
-  }, { headers });
+  });
+  const response = await counter.fetch(durableRequest);
+  const data = await response.json();
+  return jsonResponse(data, { status: response.status, headers });
 }
 
 async function handleMovieViewsBatch(request, env) {
-  const viewsStore = env.CINEMAX_VIEWS;
+  const counter = getViewCounterStub(env);
   const url = new URL(request.url);
   const slugs = (url.searchParams.get("slugs") || "")
     .split(",")
@@ -170,29 +287,22 @@ async function handleMovieViewsBatch(request, env) {
     .filter((slug, index, list) => isValidSlug(slug) && list.indexOf(slug) === index)
     .slice(0, 80);
 
-  if (!viewsStore || !slugs.length) {
+  if (!counter || !slugs.length) {
     return jsonResponse({
       ok: true,
-      configured: Boolean(viewsStore),
+      configured: Boolean(counter),
       views: Object.fromEntries(slugs.map((slug) => [slug, 0])),
       weeklyViews: Object.fromEntries(slugs.map((slug) => [slug, 0]))
     });
   }
 
-  const entries = await Promise.all(slugs.map(async (slug) => {
-    const [views, weeklyViews] = await Promise.all([
-      viewsStore.get(`movie:${slug}`),
-      viewsStore.get(getWeeklyCounterKey(slug))
-    ]);
-    return [slug, Number(views || 0), Number(weeklyViews || 0)];
-  }));
-
-  return jsonResponse({
-    ok: true,
-    configured: true,
-    views: Object.fromEntries(entries.map(([slug, views]) => [slug, views])),
-    weeklyViews: Object.fromEntries(entries.map(([slug, , weeklyViews]) => [slug, weeklyViews]))
-  }, {
+  const durableRequest = new Request(`https://view-counter/batch?slugs=${encodeURIComponent(slugs.join(","))}`, {
+    headers: { "X-Week-Key": getWeeklyPeriod() }
+  });
+  const response = await counter.fetch(durableRequest);
+  const data = await response.json();
+  return jsonResponse({ ...data, configured: true }, {
+    status: response.status,
     headers: {
       "cache-control": "public, max-age=60"
     }

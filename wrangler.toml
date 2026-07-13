@@ -7,5 +7,10 @@ directory = "."
 binding = "ASSETS"
 not_found_handling = "404-page"
 
-[[kv_namespaces]]
-binding = "CINEMAX_VIEWS"
+[[durable_objects.bindings]]
+name = "CINEMAX_VIEW_COUNTER"
+class_name = "MovieViewCounter"
+
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["MovieViewCounter"]
