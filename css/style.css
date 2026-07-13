@@ -480,9 +480,11 @@ ul { list-style: none; }
 .ad-fixed-slot--728x90 { --ad-w: 728px; --ad-h: 90px; }
 .ad-fixed-slot--468x60 { --ad-w: 468px; --ad-h: 60px; }
 .ad-fixed-slot--320x50 { --ad-w: 320px; --ad-h: 50px; }
+.ad-fixed-slot--300x50 { --ad-w: 300px; --ad-h: 50px; }
 .ad-fixed-slot--300x250 { --ad-w: 300px; --ad-h: 250px; }
 .ad-fixed-slot--160x300 { --ad-w: 160px; --ad-h: 300px; }
 .ad-fixed-slot--160x600 { --ad-w: 160px; --ad-h: 600px; }
+.ad-slot-disabled { display: none !important; }
 .ad-zone-category-break {
   margin: 30px auto;
 }
@@ -815,6 +817,10 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
 
 /* ---- RESPONSIVE ---- */
 @media (max-width: 900px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 1100px) {
+  .nav-links { display: none; }
+  #hamburger { display: flex; }
+}
 @media (max-width: 768px) {
   .nav-links { display: none; }
   #hamburger { display: flex; }
@@ -956,7 +962,8 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
   margin: 0 auto;
   padding: 28px 1.5vw 80px;
   display: grid;
-  grid-template-columns: minmax(150px, 1fr) minmax(0, 960px) minmax(150px, 1fr);
+  grid-template-columns: 184px minmax(0, 960px);
+  justify-content: center;
   gap: 18px;
   align-items: start;
 }
@@ -973,6 +980,7 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
   display: flex;
   justify-content: center;
 }
+.movie-ad-right { display: none; }
 .movie-ad-slot {
   width: max-content;
   max-width: 184px;
@@ -1163,10 +1171,17 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
 }
 
 .ad-below-player[data-native-ad="true"] {
-  width: min(100%, 300px);
-  min-height: 250px;
+  width: 100%;
+  min-height: 100px;
   margin-left: auto;
   margin-right: auto;
+  overflow: hidden;
+  contain: layout paint;
+}
+.ad-below-player[data-native-ad="true"] > ins {
+  display: block;
+  width: 100%;
+  max-width: 100%;
 }
 
 /* Episode list */
@@ -1282,19 +1297,12 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
 
 @media (max-width: 1400px) {
   .movie-shell {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 960px) minmax(0, 1fr);
+    grid-template-columns: 184px minmax(0, 960px);
     gap: 14px;
   }
   .movie-ad-slot {
     max-width: 180px;
     min-height: 0;
-  }
-  .movie-ad-code.ad-fixed-slot--160x600 {
-    --ad-w: 160px;
-    --ad-h: 300px;
-  }
-  .movie-ad-code .cinemax-ad-banner::after {
-    content: '160×300';
   }
 }
 
@@ -1304,6 +1312,13 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
   }
   .movie-ad-rail {
     display: none;
+  }
+  .movie-mobile-ad {
+    display: flex;
+  }
+  .movie-mobile-ad.ad-fixed-slot {
+    --ad-w: 300px;
+    --ad-h: 50px;
   }
 }
 
@@ -1318,7 +1333,7 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
     display: flex;
   }
   .movie-mobile-ad.ad-fixed-slot {
-    --ad-w: 320px;
+    --ad-w: 300px;
     --ad-h: 50px;
   }
 }
