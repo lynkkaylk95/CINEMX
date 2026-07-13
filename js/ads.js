@@ -12,6 +12,7 @@
   const CINEMAX_EXO_POPUNDER_ID = 'popmagicldr';
   const CINEMAX_EXO_PROVIDER_SRC = 'https://a.magsrv.com/ad-provider.js';
   const CINEMAX_EXO_ZONES = {
+    fullpageInterstitial: { zoneId: '5969616', className: 'eas6a97888e33' },
     movieNative: { zoneId: '5973194', className: 'eas6a97888e20' },
     homeRectangle: { zoneId: '5973184', className: 'eas6a97888e10', size: '300x250' },
     movieMobile: { zoneId: '5973186', className: 'eas6a97888e10', size: '300x50' },
@@ -243,6 +244,29 @@
     document.body.appendChild(script);
   }
 
+  function loadFullpageInterstitial() {
+    const zone = CINEMAX_EXO_ZONES.fullpageInterstitial;
+    if (document.querySelector(`ins[data-zoneid="${zone.zoneId}"]`)) return;
+
+    if (!document.querySelector(`script[src="${CINEMAX_EXO_PROVIDER_SRC}"]`)) {
+      const providerScript = document.createElement('script');
+      providerScript.async = true;
+      providerScript.type = 'application/javascript';
+      providerScript.src = CINEMAX_EXO_PROVIDER_SRC;
+      providerScript.onerror = () => console.warn('CineMax fullpage provider failed to load.');
+      document.body.appendChild(providerScript);
+    }
+
+    const slot = document.createElement('ins');
+    slot.className = zone.className;
+    slot.dataset.zoneid = zone.zoneId;
+    document.body.appendChild(slot);
+
+    const serveScript = document.createElement('script');
+    serveScript.text = '(AdProvider = window.AdProvider || []).push({"serve": {}});';
+    document.body.appendChild(serveScript);
+  }
+
   function loadExoPlayPopunder() {
     if (!document.querySelector('.video-play-button')) return;
     if (document.getElementById(CINEMAX_EXO_POPUNDER_ID)) return;
@@ -288,6 +312,7 @@
 
     safely('native banner', loadNativeBanner);
     safely('format banners', mountAllFormatBanners);
+    safely('fullpage interstitial', loadFullpageInterstitial);
     window.setTimeout(() => safely('social bar', loadSocialBar), 1200);
   });
 })();
