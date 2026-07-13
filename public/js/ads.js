@@ -18,7 +18,8 @@
     movieNative: { zoneId: '5973194', className: 'eas6a97888e20' },
     homeRectangle: { zoneId: '5973184', className: 'eas6a97888e10', size: '300x250' },
     movieMobile: { zoneId: '5973186', className: 'eas6a97888e10', size: '300x50' },
-    movieLeftRail: { zoneId: '5973188', className: 'eas6a97888e2', size: '160x600' }
+    movieLeftRail: { zoneId: '5973188', className: 'eas6a97888e2', size: '160x600' },
+    movieRightRail: { zoneId: '5971764', className: 'eas6a97888e2', size: '160x600' }
   };
   const CINEMAX_FORMAT_BANNERS = {
     '468x60': { key: 'dfc49ebd2407ec09e0689da4f8a0c34c', width: 468, height: 60 },
@@ -201,8 +202,8 @@
 
     const movieLeftRail = document.querySelector('.movie-ad-left .movie-ad-code');
     if (movieLeftRail) mountExoClickZone(movieLeftRail, CINEMAX_EXO_ZONES.movieLeftRail);
-    const movieRightRail = document.querySelector('.movie-ad-right');
-    if (movieRightRail) movieRightRail.classList.add('ad-slot-disabled');
+    const movieRightRail = document.querySelector('.movie-ad-right .movie-ad-code');
+    if (movieRightRail) mountExoClickZone(movieRightRail, CINEMAX_EXO_ZONES.movieRightRail);
   }
 
   function loadNativeBanner() {
