@@ -6,3 +6,6 @@ main = "worker.js"
 directory = "."
 binding = "ASSETS"
 not_found_handling = "404-page"
+
+[[kv_namespaces]]
+binding = "CINEMAX_VIEWS"
