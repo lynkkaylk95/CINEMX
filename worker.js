@@ -96,6 +96,23 @@ function createVisitorId() {
   return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
 }
 
+function getWeeklyCounterKey(slug, date = new Date()) {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/Mexico_City",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).formatToParts(date);
+  const values = Object.fromEntries(parts.map(({ type, value }) => [type, value]));
+  const localDate = new Date(Date.UTC(Number(values.year), Number(values.month) - 1, Number(values.day)));
+  const day = localDate.getUTCDay() || 7;
+  localDate.setUTCDate(localDate.getUTCDate() + 4 - day);
+  const weekYear = localDate.getUTCFullYear();
+  const yearStart = new Date(Date.UTC(weekYear, 0, 1));
+  const week = Math.ceil((((localDate - yearStart) / 86400000) + 1) / 7);
+  return `movie-week:${weekYear}-W${String(week).padStart(2, "0")}:${slug}`;
+}
+
 async function handleMovieViews(request, env, slug) {
   if (!isValidSlug(slug)) {
     return jsonResponse({ ok: false, error: "invalid_movie", views: 0 }, { status: 400 });
@@ -103,10 +120,11 @@ async function handleMovieViews(request, env, slug) {
 
   const viewsStore = env.CINEMAX_VIEWS;
   if (!viewsStore) {
-    return jsonResponse({ ok: true, configured: false, views: 0, counted: false });
+    return jsonResponse({ ok: true, configured: false, views: 0, weeklyViews: 0, counted: false });
   }
 
   const counterKey = `movie:${slug}`;
+  const weeklyCounterKey = getWeeklyCounterKey(slug);
   const cookies = parseCookies(request);
   const visitorId = cookies.cmx_vid || createVisitorId();
   const userAgent = request.headers.get("User-Agent") || "";
@@ -117,15 +135,18 @@ async function handleMovieViews(request, env, slug) {
   });
 
   let realViews = Number(await viewsStore.get(counterKey) || 0);
+  let weeklyViews = Number(await viewsStore.get(weeklyCounterKey) || 0);
   let counted = false;
 
   if (request.method === "POST") {
     const isLocked = await viewsStore.get(throttleKey);
     if (!isLocked) {
       realViews += 1;
+      weeklyViews += 1;
       counted = true;
       await Promise.all([
         viewsStore.put(counterKey, String(realViews)),
+        viewsStore.put(weeklyCounterKey, String(weeklyViews), { expirationTtl: 21 * 24 * 60 * 60 }),
         viewsStore.put(throttleKey, "1", { expirationTtl: 30 * 60 })
       ]);
     }
@@ -135,6 +156,7 @@ async function handleMovieViews(request, env, slug) {
     ok: true,
     configured: true,
     views: realViews,
+    weeklyViews,
     counted
   }, { headers });
 }
@@ -152,19 +174,24 @@ async function handleMovieViewsBatch(request, env) {
     return jsonResponse({
       ok: true,
       configured: Boolean(viewsStore),
-      views: Object.fromEntries(slugs.map((slug) => [slug, 0]))
+      views: Object.fromEntries(slugs.map((slug) => [slug, 0])),
+      weeklyViews: Object.fromEntries(slugs.map((slug) => [slug, 0]))
     });
   }
 
-  const entries = await Promise.all(slugs.map(async (slug) => [
-    slug,
-    Number(await viewsStore.get(`movie:${slug}`) || 0)
-  ]));
+  const entries = await Promise.all(slugs.map(async (slug) => {
+    const [views, weeklyViews] = await Promise.all([
+      viewsStore.get(`movie:${slug}`),
+      viewsStore.get(getWeeklyCounterKey(slug))
+    ]);
+    return [slug, Number(views || 0), Number(weeklyViews || 0)];
+  }));
 
   return jsonResponse({
     ok: true,
     configured: true,
-    views: Object.fromEntries(entries)
+    views: Object.fromEntries(entries.map(([slug, views]) => [slug, views])),
+    weeklyViews: Object.fromEntries(entries.map(([slug, , weeklyViews]) => [slug, weeklyViews]))
   }, {
     headers: {
       "cache-control": "public, max-age=60"

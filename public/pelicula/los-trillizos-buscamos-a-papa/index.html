@@ -455,25 +455,11 @@
       return `${String(rounded).replace(/\.0$/, '')}${unit.suffix}`;
     }
 
-    function getRandomViewCount(seed) {
-      const text = String(seed || 'cinemax');
-      let hash = 0;
-      for (let i = 0; i < text.length; i += 1) {
-        hash = ((hash << 5) - hash) + text.charCodeAt(i);
-        hash |= 0;
-      }
-      return 10000 + (Math.abs(hash) % 90001);
-    }
-
-    function getDisplayedViews(seed) {
-      return formatViewNumber(getRandomViewCount(seed));
-    }
-
-    function updateViewCounter(seed) {
+    function updateViewCounter(views) {
       const count = document.getElementById('movie-views-count');
       const wrap = document.getElementById('movie-views');
       if (!count || !wrap) return;
-      count.textContent = getDisplayedViews(seed);
+      count.textContent = formatViewNumber(views);
       wrap.classList.add('is-loaded');
     }
 
@@ -482,19 +468,48 @@
         const slug = card.getAttribute('data-view-slug') || '';
         const count = card.querySelector('[data-card-view-count]');
         if (!count) return;
-        count.textContent = getDisplayedViews(slug);
+        count.textContent = '0';
         card.classList.add('views-loaded');
       });
     }
 
-    function loadRecommendedViewCounters() {
+    async function loadRecommendedViewCounters() {
       const recGrid = document.getElementById('rec-grid-container');
-      if (recGrid) updateCardViewCounters(recGrid);
+      if (!recGrid) return;
+      const cards = [...recGrid.querySelectorAll('[data-view-slug]')];
+      const slugs = cards.map(card => card.getAttribute('data-view-slug')).filter(Boolean);
+      if (!slugs.length) return;
+      try {
+        const response = await fetch(`/api/views?slugs=${encodeURIComponent(slugs.join(','))}`);
+        if (!response.ok) throw new Error(`Views API: ${response.status}`);
+        const data = await response.json();
+        cards.forEach(card => {
+          const count = card.querySelector('[data-card-view-count]');
+          if (count) count.textContent = formatViewNumber(data.views?.[card.dataset.viewSlug] || 0);
+          card.classList.add('views-loaded');
+        });
+      } catch (error) {
+        console.warn('No se pudieron cargar las vistas recomendadas.', error);
+        updateCardViewCounters(recGrid);
+      }
     }
 
-    function loadMovieViews(movie) {
+    async function loadMovieViews(movie) {
       const slug = getMovieSlug(movie);
-      updateViewCounter(slug);
+      try {
+        const response = await fetch(`/api/views/${encodeURIComponent(slug)}`, {
+          method: 'POST',
+          headers: { Accept: 'application/json' },
+          credentials: 'same-origin',
+          keepalive: true
+        });
+        if (!response.ok) throw new Error(`Views API: ${response.status}`);
+        const data = await response.json();
+        updateViewCounter(data.views || 0);
+      } catch (error) {
+        console.warn('No se pudo registrar la vista.', error);
+        updateViewCounter(0);
+      }
     }
 
     function getCurrentMovieSlug() {

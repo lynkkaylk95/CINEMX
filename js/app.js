@@ -188,36 +188,50 @@ function formatViewNumber(value) {
   return `${String(rounded).replace(/\.0$/, '')}${unit.suffix}`;
 }
 
-function getRandomViewCount(seed) {
-  const text = String(seed || 'cinemax');
-  let hash = 0;
-  for (let i = 0; i < text.length; i += 1) {
-    hash = ((hash << 5) - hash) + text.charCodeAt(i);
-    hash |= 0;
-  }
-  return 10000 + (Math.abs(hash) % 90001);
-}
-
-function getDisplayedViews(seed) {
-  return formatViewNumber(getRandomViewCount(seed));
-}
+let movieViewCounts = {};
+let weeklyMovieViewCounts = {};
 
 function updateCardViewCounters() {
   document.querySelectorAll('[data-view-slug]').forEach(card => {
     const slug = card.getAttribute('data-view-slug') || '';
     const count = card.querySelector('[data-card-view-count]');
     if (!count) return;
-    count.textContent = getDisplayedViews(slug);
+    count.textContent = formatViewNumber(movieViewCounts[slug] || 0);
     card.classList.add('views-loaded');
   });
 }
 
 let cardViewsRequestId = 0;
-function loadCardViewCounters() {
-  const requestId = ++cardViewsRequestId;
-  requestAnimationFrame(() => {
-    if (requestId === cardViewsRequestId) updateCardViewCounters();
+async function fetchMovieViewCounts(movies = moviesList) {
+  const slugs = [...new Set(movies.map(getMovieSlug).filter(Boolean))];
+  if (!slugs.length) return;
+  const response = await fetch(`/api/views?slugs=${encodeURIComponent(slugs.join(','))}`, {
+    headers: { Accept: 'application/json' }
   });
+  if (!response.ok) throw new Error(`Views API: ${response.status}`);
+  const data = await response.json();
+  movieViewCounts = { ...movieViewCounts, ...(data.views || {}) };
+  weeklyMovieViewCounts = { ...weeklyMovieViewCounts, ...(data.weeklyViews || {}) };
+}
+
+async function loadCardViewCounters() {
+  const requestId = ++cardViewsRequestId;
+  try {
+    await fetchMovieViewCounts();
+    if (requestId !== cardViewsRequestId) return;
+    if (currentGenre === 'Todos' && !currentSearch && !currentYear) {
+      const weeklyCandidates = moviesList.filter(movie => movie.type === 'PelÃ­cula');
+      const ranked = [...(weeklyCandidates.length ? weeklyCandidates : moviesList)].sort((a, b) => {
+        const viewDifference = (weeklyMovieViewCounts[getMovieSlug(b)] || 0) - (weeklyMovieViewCounts[getMovieSlug(a)] || 0);
+        return viewDifference || getMovieSortValue(b) - getMovieSortValue(a);
+      }).slice(0, 8);
+      renderGrid('grid-trending', ranked);
+    }
+    updateCardViewCounters();
+  } catch (error) {
+    console.warn('No se pudieron cargar las vistas reales.', error);
+    updateCardViewCounters();
+  }
 }
 
 function getAbsoluteUrl(path = '/') {
