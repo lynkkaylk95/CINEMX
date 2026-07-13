@@ -11,8 +11,10 @@
   const CINEMAX_EXO_POPUNDER_SRC = 'https://a.pemsrv.com/popunder1000.js';
   const CINEMAX_EXO_POPUNDER_ID = 'popmagicldr';
   const CINEMAX_EXO_PROVIDER_SRC = 'https://a.magsrv.com/ad-provider.js';
+  const CINEMAX_EXO_FULLPAGE_PROVIDER_SRC = 'https://a.pemsrv.com/ad-provider.js';
   const CINEMAX_EXO_ZONES = {
     fullpageInterstitial: { zoneId: '5969616', className: 'eas6a97888e33' },
+    messagePopup: { zoneId: '5971714', className: 'eas6a97888e14' },
     movieNative: { zoneId: '5973194', className: 'eas6a97888e20' },
     homeRectangle: { zoneId: '5973184', className: 'eas6a97888e10', size: '300x250' },
     movieMobile: { zoneId: '5973186', className: 'eas6a97888e10', size: '300x50' },
@@ -245,7 +247,34 @@
   }
 
   function loadFullpageInterstitial() {
+    // The movie Play button is reserved for the dedicated Popunder unit.
+    // Loading Fullpage here would make both formats compete for the same click.
+    if (document.querySelector('.video-play-button')) return;
+
     const zone = CINEMAX_EXO_ZONES.fullpageInterstitial;
+    if (document.querySelector(`ins[data-zoneid="${zone.zoneId}"]`)) return;
+
+    if (!document.querySelector(`script[src="${CINEMAX_EXO_FULLPAGE_PROVIDER_SRC}"]`)) {
+      const providerScript = document.createElement('script');
+      providerScript.async = true;
+      providerScript.type = 'application/javascript';
+      providerScript.src = CINEMAX_EXO_FULLPAGE_PROVIDER_SRC;
+      providerScript.onerror = () => console.warn('CineMax fullpage provider failed to load.');
+      document.body.appendChild(providerScript);
+    }
+
+    const slot = document.createElement('ins');
+    slot.className = zone.className;
+    slot.dataset.zoneid = zone.zoneId;
+    document.body.appendChild(slot);
+
+    const serveScript = document.createElement('script');
+    serveScript.text = '(AdProvider = window.AdProvider || []).push({"serve": {}});';
+    document.body.appendChild(serveScript);
+  }
+
+  function loadMessagePopup() {
+    const zone = CINEMAX_EXO_ZONES.messagePopup;
     if (document.querySelector(`ins[data-zoneid="${zone.zoneId}"]`)) return;
 
     if (!document.querySelector(`script[src="${CINEMAX_EXO_PROVIDER_SRC}"]`)) {
@@ -253,7 +282,7 @@
       providerScript.async = true;
       providerScript.type = 'application/javascript';
       providerScript.src = CINEMAX_EXO_PROVIDER_SRC;
-      providerScript.onerror = () => console.warn('CineMax fullpage provider failed to load.');
+      providerScript.onerror = () => console.warn('CineMax message popup provider failed to load.');
       document.body.appendChild(providerScript);
     }
 
@@ -305,6 +334,8 @@
 
   onDomReady(() => safely('smartlink wiring', wireSmartlinks));
   onDomReady(() => safely('ExoClick play popunder', loadExoPlayPopunder));
+  onDomReady(() => safely('message popup', loadMessagePopup));
+  onDomReady(() => safely('social bar', loadSocialBar));
 
   afterPageLoad(() => {
     if (window.__cinemaxAdsMounted) return;
@@ -313,6 +344,5 @@
     safely('native banner', loadNativeBanner);
     safely('format banners', mountAllFormatBanners);
     safely('fullpage interstitial', loadFullpageInterstitial);
-    window.setTimeout(() => safely('social bar', loadSocialBar), 1200);
   });
 })();
