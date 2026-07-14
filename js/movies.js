@@ -1,6 +1,126 @@
 // Base de datos de películas y series de CineMax MX
 const MOVIES = [
   {
+    "title": "El Mundo Entero Espera mi Divorcio",
+    "slug": "el-mundo-entero-espera-mi-divorcio",
+    "genre": "Emotivo",
+    "genres": [
+      "Emotivo",
+      "Thriller"
+    ],
+    "type": "Película",
+    "year": 2025,
+    "rating": 8.7,
+    "duration": "1h 31min",
+    "emoji": "🎬",
+    "yt": "KytMnxDyvbc",
+    "thumb": "https://i3.ytimg.com/vi/KytMnxDyvbc/hqdefault.jpg",
+    "desc": "Casada durante 3 años, solo recibió su indiferencia y desdén, y fue forzada a arrodillarse para disculparse con su primer amor. En ese instante, lo entendió todo: entre arrodillarse y divorciarse, ¡no dudó en elegir el divorcio! ¿Por qué debería desperdiciar su buen tiempo en este bastardo? Regresó a casa para heredar una fortuna familiar de mil millones y disfrutar de su propio buen tiempo\n\nActrices: Meng Na\nGénero: películas románticas, películas chinas, Multimillonario se hace pasar por pobre, dramas coreanos en español, doramas en español latino completas, La Amada Esposa del CEO, kdrama español completos, mi esposo es poderoso en español, Presidenta disfrazada de limpiadora, el multimillonario oculta su identidad",
+    "episodes": [],
+    "id": 55,
+    "addedAt": "2026-07-14T09:23:26.916Z"
+  },
+  {
+    "title": "Casándose con el CEO Equivocado",
+    "slug": "casandose-con-el-ceo-equivocado",
+    "genre": "Drama",
+    "genres": [
+      "Drama",
+      "Thriller"
+    ],
+    "type": "Película",
+    "year": 2025,
+    "rating": 8.8,
+    "duration": "2h 24min",
+    "emoji": "🎬",
+    "yt": "81ojSdK-oww",
+    "thumb": "https://i3.ytimg.com/vi/81ojSdK-oww/hqdefault.jpg",
+    "desc": "Shen Shinue, ignorada por su familia adoptiva, busca venganza contra su ex prometido y su hermana. Al intentar seducir al tío de este, Fu Jinyan, descubre que él es un multimillonario con sus propios planes, llevando a ambos a un matrimonio contractual lleno de tensiones y secretos familiares.\nActrices: Zhang Jijun\nGénero: drama chino, películas románticas, películas chinas, dramas coreanos en español, doramas en español latino completas, kdrama español completos, Multimillonario se hace pasar por pobre, presidente disfrazado de pobre, Identidad Misteriosa y Matrimonio Relámpago, Casarse primero  amar después",
+    "episodes": [],
+    "id": 54,
+    "addedAt": "2026-07-14T09:21:00.652Z"
+  },
+  {
+    "title": "Hoy Es un Buen Dia Para el Amor",
+    "slug": "hoy-es-un-buen-dia-para-el-amor",
+    "genre": "Drama",
+    "genres": [
+      "Drama",
+      "Romance"
+    ],
+    "type": "Película",
+    "year": 2025,
+    "rating": 9.1,
+    "duration": "2h 53min",
+    "emoji": "🎬",
+    "yt": "NGB7b8xtaeo",
+    "thumb": "https://i3.ytimg.com/vi/NGB7b8xtaeo/hqdefault.jpg",
+    "desc": "Una asistente de diseño se ve envuelta en un complejo contrato prenupcial tras un error médico que resulta en un embarazo inesperado del director de su compañía. Tienda de Peliculas narra cómo ambos deben lidiar con las intrigas familiares y personales mientras mantienen su acuerdo estrictamente profesional.\n\nGénero: películas románticas, películas chinas, Multimillonario se hace pasar por pobre, dramas coreanos en español, doramas en español latino completas, kdrama español completos, presidente disfrazado de pobre, Identidad Misteriosa y Matrimonio Relámpago, tener hijo con CEO, Casarse primero amar después, tras una noche de pasion con el ceo, CEO se enamora de la empleada",
+    "episodes": [],
+    "id": 53,
+    "addedAt": "2026-07-14T09:19:23.902Z"
+  },
+  {
+    "title": "Escucha al Corazón",
+    "slug": "escucha-al-corazon",
+    "genre": "Familia",
+    "genres": [
+      "Familia",
+      "Emotivo"
+    ],
+    "type": "Película",
+    "year": 2025,
+    "rating": 8.6,
+    "duration": "2h 49min",
+    "emoji": "🎬",
+    "yt": "HYlT2sIXWWI",
+    "thumb": "https://i3.ytimg.com/vi/HYlT2sIXWWI/hqdefault.jpg",
+    "desc": "La familia del joven comienza a escuchar sus pensamientos íntimos y reveladores tras su regreso a casa. A medida que las sospechas y tensiones crecen, intentan entender la verdadera naturaleza de las habilidades que exhibe.\n\nGénero: películas románticas, películas chinas, Pelicula de Accion de Artes Marciales, dramas coreanos en español, doramas en español latino completas, kdrama español completos, el gobernante ascendente, Amor a Través del Tiempo y Espacio Drama Chino",
+    "episodes": [],
+    "id": 52,
+    "addedAt": "2026-07-14T09:17:53.453Z"
+  },
+  {
+    "title": "Emergiendo del Abismo",
+    "slug": "emergiendo-del-abismo",
+    "genre": "Acción",
+    "genres": [
+      "Acción",
+      "Thriller"
+    ],
+    "type": "Película",
+    "year": 2026,
+    "rating": 9.2,
+    "duration": "1h 46min",
+    "emoji": "🎬",
+    "yt": "JORLEb6L2H0",
+    "thumb": "https://i3.ytimg.com/vi/JORLEb6L2H0/hqdefault.jpg",
+    "desc": "Tras enfrentar el menosprecio por su humilde apariencia y una crisis familiar, una persona debe demostrar su verdadera identidad como el gran maestro de artes marciales. Ante altos mandos escépticos, lucha por validar su posición y proteger a sus seres queridos durante una ceremonia divina.\n\nGénero: películas románticas, películas chinas, Multimillonario se hace pasar por pobre, dramas coreanos en español, doramas en español latino completas, kdrama español completos, el gobernante ascendente, fortunas reveladas mi esposo es poderoso, CEO que oculta su identidad y es despreciado",
+    "episodes": [],
+    "id": 51,
+    "addedAt": "2026-07-14T09:16:29.820Z"
+  },
+  {
+    "title": "Amor con Chico Más Joven",
+    "slug": "amor-con-chico-mas-joven",
+    "genre": "Emotivo",
+    "genres": [
+      "Emotivo",
+      "Romance"
+    ],
+    "type": "Película",
+    "year": 2025,
+    "rating": 8.7,
+    "duration": "2h 05min",
+    "emoji": "🎬",
+    "yt": "NngWHhsMLrs",
+    "thumb": "https://i3.ytimg.com/vi/NngWHhsMLrs/hqdefault.jpg",
+    "desc": "Género: películas románticas, películas chinas, Multimillonario se hace pasar por pobre, dramas coreanos en español, doramas en español latino completas, kdrama español completos, identidad misteriosa y matrimonio relámpago, cenicienta se casa con un tio guapo, chica se casa con chico pobre pero es rico, peliculas completas en español latino, presidente disfrazado de pobre para poner a prueba",
+    "episodes": [],
+    "id": 50,
+    "addedAt": "2026-07-14T09:14:27.893Z"
+  },
+  {
     "title": "Juego de Parejas",
     "slug": "juego-de-parejas",
     "genre": "Comedia",
