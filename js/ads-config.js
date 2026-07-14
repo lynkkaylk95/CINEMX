@@ -9,7 +9,8 @@ window.CINEMAX_AD_CONFIG = Object.freeze({
   providers: {
     exoDisplay: 'https://a.magsrv.com/ad-provider.js',
     exoFullpage: 'https://a.pemsrv.com/ad-provider.js',
-    exoPopunder: 'https://a.pemsrv.com/popunder1000.js'
+    socialBar: 'https://pl30309365.effectivecpmnetwork.com/68/55/71/68557162785fb21a64b74f1737d7c4b8.js',
+    popunder: 'https://pl30309364.effectivecpmnetwork.com/1d/86/38/1d8638ca8e45a4479b2a0d59d09d9c0c.js'
   },
   smartlink: {
     enabled: true,
@@ -23,24 +24,8 @@ window.CINEMAX_AD_CONFIG = Object.freeze({
     movieMobile: { enabled: true, provider: 'exoDisplay', zoneId: '5973186', className: 'eas6a97888e10', size: '300x50' },
     movieLeftRail: { enabled: true, provider: 'exoDisplay', zoneId: '5973188', className: 'eas6a97888e2', size: '160x600', minWidth: 1181 },
     movieRightRail: { enabled: true, provider: 'exoDisplay', zoneId: '5971764', className: 'eas6a97888e2', size: '160x600', minWidth: 1181 },
-    playPopunder: {
-      enabled: true,
-      provider: 'exoPopunder',
-      zoneId: '5971718',
-      pages: ['movie'],
-      popupFallback: false,
-      popupForce: false,
-      chromeEnabled: true,
-      newTab: false,
-      frequencyPeriod: 60,
-      frequencyCount: 1,
-      triggerMethod: 3,
-      triggerClass: '',
-      triggerDelay: 0,
-      cappingEnabled: true,
-      tcfEnabled: true,
-      onlyInline: false
-    }
+    socialBar: { enabled: true, provider: 'socialBar', pages: ['home', 'movie'] },
+    playPopunder: { enabled: true, provider: 'popunder', pages: ['home', 'movie'] }
   },
   formatBanners: {
     '468x60': { enabled: true, key: 'dfc49ebd2407ec09e0689da4f8a0c34c', width: 468, height: 60 },

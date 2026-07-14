@@ -10,8 +10,10 @@
   }
 
   const CINEMAX_SMARTLINK_URL = config.smartlink.url;
-  const CINEMAX_EXO_POPUNDER_SRC = config.providers.exoPopunder;
-  const CINEMAX_EXO_POPUNDER_ID = 'popmagicldr';
+  const CINEMAX_POPUNDER_SRC = config.providers.popunder;
+  const CINEMAX_POPUNDER_ID = 'cinemax-popunder';
+  const CINEMAX_SOCIAL_BAR_SRC = config.providers.socialBar;
+  const CINEMAX_SOCIAL_BAR_ID = 'cinemax-social-bar';
   const CINEMAX_EXO_PROVIDER_SRC = config.providers.exoDisplay;
   const CINEMAX_EXO_FULLPAGE_PROVIDER_SRC = config.providers.exoFullpage;
   const CINEMAX_EXO_ZONES = config.placements;
@@ -315,35 +317,42 @@
     report('messagePopup', 'armed', { zoneId: zone.zoneId });
   }
 
-  function loadExoPlayPopunder() {
+  function loadPopunder() {
     const popunder = CINEMAX_EXO_ZONES.playPopunder;
     if (!popunder?.enabled || !isEnabledOnCurrentPage(popunder)) {
       report('playPopunder', 'skipped', { reason: `disabled-on-${getPageType()}-page` });
       return;
     }
-    if (document.getElementById(CINEMAX_EXO_POPUNDER_ID)) return;
+    if (document.getElementById(CINEMAX_POPUNDER_ID)) return;
 
     const script = document.createElement('script');
-    script.id = CINEMAX_EXO_POPUNDER_ID;
+    script.id = CINEMAX_POPUNDER_ID;
     script.async = true;
     script.type = 'application/javascript';
-    script.src = CINEMAX_EXO_POPUNDER_SRC;
-    script.setAttribute('data-exo-idzone', popunder.zoneId);
-    script.setAttribute('data-exo-popup_fallback', String(popunder.popupFallback));
-    script.setAttribute('data-exo-popup_force', String(popunder.popupForce));
-    script.setAttribute('data-exo-chrome_enabled', String(popunder.chromeEnabled));
-    script.setAttribute('data-exo-new_tab', String(popunder.newTab));
-    script.setAttribute('data-exo-frequency_period', String(popunder.frequencyPeriod));
-    script.setAttribute('data-exo-frequency_count', String(popunder.frequencyCount));
-    script.setAttribute('data-exo-trigger_method', String(popunder.triggerMethod));
-    script.setAttribute('data-exo-trigger_class', popunder.triggerClass);
-    script.setAttribute('data-exo-trigger_delay', String(popunder.triggerDelay));
-    script.setAttribute('data-exo-capping_enabled', String(popunder.cappingEnabled));
-    script.setAttribute('data-exo-tcf_enabled', String(popunder.tcfEnabled));
-    script.setAttribute('data-exo-only_inline', String(popunder.onlyInline));
-    script.onerror = () => console.warn('CineMax ExoClick play popunder failed to load.');
+    script.src = CINEMAX_POPUNDER_SRC;
+    script.onload = () => report('playPopunder', 'script-loaded', { provider: 'effectivecpmnetwork' });
+    script.onerror = () => report('playPopunder', 'script-error', { provider: 'effectivecpmnetwork' });
     document.body.appendChild(script);
-    report('playPopunder', 'armed', { zoneId: popunder.zoneId, triggerMethod: popunder.triggerMethod });
+    report('playPopunder', 'armed', { provider: 'effectivecpmnetwork' });
+  }
+
+  function loadSocialBar() {
+    const socialBar = CINEMAX_EXO_ZONES.socialBar;
+    if (!socialBar?.enabled || !isEnabledOnCurrentPage(socialBar)) {
+      report('socialBar', 'skipped', { reason: `disabled-on-${getPageType()}-page` });
+      return;
+    }
+    if (document.getElementById(CINEMAX_SOCIAL_BAR_ID)) return;
+
+    const script = document.createElement('script');
+    script.id = CINEMAX_SOCIAL_BAR_ID;
+    script.async = true;
+    script.type = 'application/javascript';
+    script.src = CINEMAX_SOCIAL_BAR_SRC;
+    script.onload = () => report('socialBar', 'script-loaded', { provider: 'effectivecpmnetwork' });
+    script.onerror = () => report('socialBar', 'script-error', { provider: 'effectivecpmnetwork' });
+    document.body.appendChild(script);
+    report('socialBar', 'armed', { provider: 'effectivecpmnetwork' });
   }
 
   function wireSmartlinks() {
@@ -357,7 +366,8 @@
   }
 
   onDomReady(() => safely('smartlink wiring', wireSmartlinks));
-  onDomReady(() => safely('ExoClick play popunder', loadExoPlayPopunder));
+  onDomReady(() => safely('popunder', loadPopunder));
+  onDomReady(() => safely('social bar', loadSocialBar));
   onDomReady(() => safely('message popup', loadMessagePopup));
   onDomReady(() => {
     const breakpoint = window.matchMedia(`(max-width: ${config.breakpoints.movieRails}px)`);
