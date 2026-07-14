@@ -4,10 +4,6 @@
   window.__cinemaxAdsBootstrapped = true;
 
   const CINEMAX_SMARTLINK_URL = 'https://www.effectivecpmnetwork.com/mdgtfx72cr?key=ddb2f05c770276460358480543facd5a';
-  const CINEMAX_HOME_NATIVE_SRC = 'https://pl30342251.effectivecpmnetwork.com/d0d0a44841736d86ead326116f2d0134/invoke.js';
-  const CINEMAX_HOME_NATIVE_CONTAINER_ID = 'container-d0d0a44841736d86ead326116f2d0134';
-  const CINEMAX_SOCIAL_BAR_SRC = 'https://pl30309365.effectivecpmnetwork.com/68/55/71/68557162785fb21a64b74f1737d7c4b8.js';
-  const CINEMAX_ENABLE_SOCIAL_BAR = document.body?.dataset.disableSocialBar !== 'true';
   const CINEMAX_EXO_POPUNDER_SRC = 'https://a.pemsrv.com/popunder1000.js';
   const CINEMAX_EXO_POPUNDER_ID = 'popmagicldr';
   const CINEMAX_EXO_PROVIDER_SRC = 'https://a.magsrv.com/ad-provider.js';
@@ -182,6 +178,7 @@
     const isMobile = window.matchMedia('(max-width: 768px)').matches;
     categorySlots.forEach((element, index) => {
       if (index === 0 && !isMobile) {
+        element.classList.remove('ad-slot-disabled');
         mountFormatBanner(element, '468x60');
       } else {
         element.classList.add('ad-slot-disabled');
@@ -206,6 +203,13 @@
     if (movieRightRail) mountExoClickZone(movieRightRail, CINEMAX_EXO_ZONES.movieRightRail);
   }
 
+  function remountResponsiveAds() {
+    // Slots hidden at the first page load are deliberately skipped. Try again
+    // after a breakpoint change so rotating a phone or resizing the window does
+    // not leave the newly visible placement empty.
+    window.requestAnimationFrame(() => safely('responsive ad remount', mountAllFormatBanners));
+  }
+
   function loadNativeBanner() {
     const movieTarget = document.querySelector('.ad-below-player');
     if (movieTarget) {
@@ -213,38 +217,11 @@
       return;
     }
 
-    if (document.getElementById(CINEMAX_HOME_NATIVE_CONTAINER_ID)) return;
     const target = document.querySelector('.ad-zone-home-mid');
     if (!target) return;
-
-    target.dataset.nativeAd = 'true';
-    target.classList.remove('ad-clickable');
-    target.removeAttribute('role');
-    target.removeAttribute('tabindex');
-    target.removeAttribute('aria-label');
-    target.innerHTML = '';
-
-    const container = document.createElement('div');
-    container.id = CINEMAX_HOME_NATIVE_CONTAINER_ID;
-    target.appendChild(container);
-
-    const script = document.createElement('script');
-    script.async = true;
-    script.dataset.cfasync = 'false';
-    script.src = CINEMAX_HOME_NATIVE_SRC;
-    script.onerror = () => console.warn('CineMax native ad failed to load.');
-    target.appendChild(script);
-  }
-
-  function loadSocialBar() {
-    if (!CINEMAX_ENABLE_SOCIAL_BAR) return;
-    if (document.querySelector(`script[src="${CINEMAX_SOCIAL_BAR_SRC}"]`)) return;
-
-    const script = document.createElement('script');
-    script.async = true;
-    script.src = CINEMAX_SOCIAL_BAR_SRC;
-    script.onerror = () => console.warn('CineMax social ad failed to load.');
-    document.body.appendChild(script);
+    // The former Adsterra native hostname no longer resolves. Reuse the active
+    // native provider instead of leaving a permanent placeholder on the page.
+    mountExoClickZone(target, CINEMAX_EXO_ZONES.movieNative);
   }
 
   function loadFullpageInterstitial() {
@@ -336,7 +313,17 @@
   onDomReady(() => safely('smartlink wiring', wireSmartlinks));
   onDomReady(() => safely('ExoClick play popunder', loadExoPlayPopunder));
   onDomReady(() => safely('message popup', loadMessagePopup));
-  onDomReady(() => safely('social bar', loadSocialBar));
+  onDomReady(() => {
+    const breakpoint = window.matchMedia('(max-width: 1320px)');
+    const mobileBreakpoint = window.matchMedia('(max-width: 768px)');
+    if (typeof breakpoint.addEventListener === 'function') {
+      breakpoint.addEventListener('change', remountResponsiveAds);
+      mobileBreakpoint.addEventListener('change', remountResponsiveAds);
+    } else if (typeof breakpoint.addListener === 'function') {
+      breakpoint.addListener(remountResponsiveAds);
+      mobileBreakpoint.addListener(remountResponsiveAds);
+    }
+  });
 
   afterPageLoad(() => {
     if (window.__cinemaxAdsMounted) return;
