@@ -830,7 +830,7 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
     z-index: 3;
   }
   #search-box.open {
-    width: min(220px, calc(100vw - 8vw - 100px));
+    width: min(220px, calc(100vw - 8vw - 177px));
   }
   #search-input {
     min-width: 0;
