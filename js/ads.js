@@ -195,6 +195,43 @@
     report(placement, 'mounted', { zoneId: zone.zoneId, size: zone.size || 'native' });
   }
 
+  function mountHomeNative(element) {
+    const placement = 'homeFeedNative';
+    const native = CINEMAX_EXO_ZONES.homeFeedNative;
+    if (!element || !native?.enabled || element.dataset.homeNativeMounted === 'true') return;
+    if (isHiddenAdSlot(element)) {
+      report(placement, 'skipped', { reason: 'hidden-by-breakpoint' });
+      return;
+    }
+
+    element.dataset.homeNativeMounted = 'true';
+    element.dataset.nativeAd = 'true';
+    element.classList.remove('ad-clickable', 'ad-fixed-slot', 'ad-fixed-slot--300x250');
+    element.removeAttribute('role');
+    element.removeAttribute('tabindex');
+    element.removeAttribute('aria-label');
+    element.style.removeProperty('--ad-w');
+    element.style.removeProperty('--ad-h');
+    element.innerHTML = '';
+
+    const script = document.createElement('script');
+    script.async = true;
+    script.dataset.cfasync = 'false';
+    script.src = config.providers.homeNative;
+    script.onload = () => report(placement, 'script-loaded');
+    script.onerror = () => report(placement, 'script-error');
+
+    const container = document.createElement('div');
+    container.id = native.containerId;
+    element.append(script, container);
+    report(placement, 'mounted');
+
+    window.setTimeout(() => {
+      const rendered = container.children.length > 0 || container.querySelector('iframe, img, a');
+      report(placement, rendered ? 'rendered' : 'empty', rendered ? {} : { reason: 'provider-returned-no-content' });
+    }, config.emptyTimeoutMs);
+  }
+
   function isHiddenAdSlot(element) {
     const style = window.getComputedStyle(element);
     if (style.display === 'none' || style.visibility === 'hidden') return true;
@@ -220,7 +257,7 @@
     });
 
     const homeRectangle = document.querySelector('.ad-zone-home-feed');
-    if (homeRectangle) mountExoClickZone(homeRectangle, CINEMAX_EXO_ZONES.homeRectangle, 'homeRectangle');
+    if (homeRectangle) mountHomeNative(homeRectangle);
 
     const homeBottom = document.querySelector('.ad-zone-home-bottom');
     if (homeBottom) {
@@ -272,9 +309,8 @@
 
     const target = document.querySelector('.ad-zone-home-mid');
     if (!target) return;
-    // The former Adsterra native hostname no longer resolves. Reuse the active
-    // native provider instead of leaving a permanent placeholder on the page.
-    mountExoClickZone(target, CINEMAX_EXO_ZONES.movieNative, 'homeNative');
+    target.dataset.adPlacement = 'homeBeforeEstrenos';
+    mountFormatBanner(target, '320x50');
   }
 
   function loadFullpageInterstitial() {
