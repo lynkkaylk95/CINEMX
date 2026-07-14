@@ -231,7 +231,19 @@
     const movieMobileTop = document.querySelector('.movie-mobile-ad-top');
     if (movieMobileTop) movieMobileTop.classList.add('ad-slot-disabled');
     const movieMobileBottom = document.querySelector('.movie-mobile-ad-bottom');
-    if (movieMobileBottom) mountExoClickZone(movieMobileBottom, CINEMAX_EXO_ZONES.movieMobile, 'movieMobile');
+    if (movieMobileBottom) {
+      const description = document.querySelector('.movie-desc');
+      if (description && movieMobileBottom.previousElementSibling !== description) {
+        description.insertAdjacentElement('afterend', movieMobileBottom);
+      }
+      movieMobileBottom.dataset.adPlacement = 'movieAfterDescription';
+      if (isMobile) {
+        movieMobileBottom.classList.remove('ad-slot-disabled');
+        mountFormatBanner(movieMobileBottom, '320x50');
+      } else {
+        movieMobileBottom.classList.add('ad-slot-disabled');
+      }
+    }
 
     const movieLeftRail = document.querySelector('.movie-ad-left .movie-ad-code');
     if (movieLeftRail) mountExoClickZone(movieLeftRail, CINEMAX_EXO_ZONES.movieLeftRail, 'movieLeftRail');
@@ -249,7 +261,12 @@
   function loadNativeBanner() {
     const movieTarget = document.querySelector('.ad-below-player');
     if (movieTarget) {
-      mountExoClickZone(movieTarget, CINEMAX_EXO_ZONES.movieNative, 'movieNative');
+      if (window.matchMedia(`(max-width: ${config.breakpoints.mobile}px)`).matches) {
+        movieTarget.dataset.adPlacement = 'movieBelowPlayer';
+        mountFormatBanner(movieTarget, '300x250');
+      } else {
+        mountExoClickZone(movieTarget, CINEMAX_EXO_ZONES.movieNative, 'movieNative');
+      }
       return;
     }
 

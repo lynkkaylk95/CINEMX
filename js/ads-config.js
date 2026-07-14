@@ -28,6 +28,7 @@ window.CINEMAX_AD_CONFIG = Object.freeze({
     playPopunder: { enabled: true, provider: 'popunder', pages: ['home', 'movie'] }
   },
   formatBanners: {
+    '300x250': { enabled: true, key: 'defd11363035ea0ee41c73133839e9db', width: 300, height: 250 },
     '468x60': { enabled: true, key: 'dfc49ebd2407ec09e0689da4f8a0c34c', width: 468, height: 60 },
     '320x50': { enabled: true, key: '4e485ec0b81fcdb2c2549f73a60b345a', width: 320, height: 50 },
     '728x90': { enabled: true, key: '184e6b9972a56e72cc0c8aca28deb91f', width: 728, height: 90 }
