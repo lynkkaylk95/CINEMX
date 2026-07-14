@@ -16,8 +16,6 @@
   const CINEMAX_EXO_FULLPAGE_PROVIDER_SRC = config.providers.exoFullpage;
   const CINEMAX_EXO_ZONES = config.placements;
   const CINEMAX_FORMAT_BANNERS = config.formatBanners;
-  let formatBannerQueue = Promise.resolve();
-
   function report(placement, status, extra = {}) {
     window.dispatchEvent(new CustomEvent('cinemax:ad-status', { detail: { placement, status, ...extra } }));
   }
@@ -33,11 +31,18 @@
   function checkForEmptyCreative(element, placement) {
     window.setTimeout(() => {
       const frame = element.querySelector('iframe');
-      if (!frame) return;
-      let empty = frame.src === 'about:blank';
+      if (!frame) {
+        report(placement, 'empty', { reason: 'iframe-missing' });
+        return;
+      }
+      let empty = false;
       try {
-        empty = empty && !frame.contentDocument?.body?.innerHTML.trim();
+        const body = frame.contentDocument?.body;
+        const creativeNodes = body ? [...body.children].filter(node => !['SCRIPT', 'STYLE'].includes(node.tagName)) : [];
+        empty = !body || creativeNodes.length === 0;
       } catch (_) {
+        // A cross-origin frame means the provider navigated away from srcdoc,
+        // which is a positive render signal.
         empty = false;
       }
       report(placement, empty ? 'empty' : 'rendered', empty ? { reason: 'blank-iframe' } : {});
@@ -124,29 +129,22 @@
     element.style.setProperty('--ad-h', `${banner.height}px`);
     element.innerHTML = '';
 
-    formatBannerQueue = formatBannerQueue.then(() => new Promise(resolve => {
-      window.atOptions = {
-        key: banner.key,
-        format: 'iframe',
-        height: banner.height,
-        width: banner.width,
-        params: {}
-      };
-
-      const invokeScript = document.createElement('script');
-      invokeScript.type = 'text/javascript';
-      invokeScript.async = false;
-      invokeScript.src = `https://www.highperformanceformat.com/${banner.key}/invoke.js`;
-      invokeScript.onload = resolve;
-      invokeScript.onerror = () => {
-        console.warn(`CineMax ${size} ad failed to load.`);
-        report(placement, 'script-error', { size });
-        resolve();
-      };
-      element.appendChild(invokeScript);
-      report(placement, 'mounted', { size });
-      checkForEmptyCreative(element, placement);
-    }));
+    // HighPerformanceFormat relies on document.write and a page-global
+    // `atOptions`. Each placement gets a same-origin parse-time document so
+    // options cannot collide and the provider still receives the site URL.
+    const frame = document.createElement('iframe');
+    frame.className = 'format-ad-frame';
+    frame.width = String(banner.width);
+    frame.height = String(banner.height);
+    frame.scrolling = 'no';
+    frame.frameBorder = '0';
+    frame.title = 'Publicidad';
+    frame.setAttribute('aria-label', `Publicidad ${size}`);
+    frame.src = `/ad-frame.html?size=${encodeURIComponent(size)}&v=ads-manager-20260714`;
+    frame.addEventListener('load', () => report(placement, 'iframe-loaded', { size }), { once: true });
+    element.appendChild(frame);
+    report(placement, 'mounted', { size });
+    checkForEmptyCreative(element, placement);
   }
 
   function mountExoClickZone(element, zone, placement = 'exo-zone') {
