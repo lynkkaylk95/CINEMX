@@ -129,9 +129,8 @@
     element.style.setProperty('--ad-h', `${banner.height}px`);
     element.innerHTML = '';
 
-    // HighPerformanceFormat relies on document.write and a page-global
-    // `atOptions`. Each placement gets a same-origin parse-time document so
-    // options cannot collide and the provider still receives the site URL.
+    // Each format uses a static same-origin document containing the provider's
+    // parse-time snippet verbatim. This keeps atOptions isolated per banner.
     const frame = document.createElement('iframe');
     frame.className = 'format-ad-frame';
     frame.width = String(banner.width);
@@ -140,7 +139,7 @@
     frame.frameBorder = '0';
     frame.title = 'Publicidad';
     frame.setAttribute('aria-label', `Publicidad ${size}`);
-    frame.src = `/ad-frame.html?size=${encodeURIComponent(size)}&v=ads-manager-20260714`;
+    frame.src = `/ad-${encodeURIComponent(size)}.html?v=ads-static-20260714`;
     frame.addEventListener('load', () => report(placement, 'iframe-loaded', { size }), { once: true });
     element.appendChild(frame);
     report(placement, 'mounted', { size });
@@ -361,7 +360,7 @@
   onDomReady(() => safely('ExoClick play popunder', loadExoPlayPopunder));
   onDomReady(() => safely('message popup', loadMessagePopup));
   onDomReady(() => {
-    const breakpoint = window.matchMedia('(max-width: 1320px)');
+    const breakpoint = window.matchMedia(`(max-width: ${config.breakpoints.movieRails}px)`);
     const mobileBreakpoint = window.matchMedia('(max-width: 768px)');
     if (typeof breakpoint.addEventListener === 'function') {
       breakpoint.addEventListener('change', remountResponsiveAds);

@@ -4,7 +4,7 @@ window.CINEMAX_AD_CONFIG = Object.freeze({
   emptyTimeoutMs: 8000,
   breakpoints: {
     mobile: 768,
-    movieRails: 1320
+    movieRails: 1180
   },
   providers: {
     exoDisplay: 'https://a.magsrv.com/ad-provider.js',
@@ -21,8 +21,8 @@ window.CINEMAX_AD_CONFIG = Object.freeze({
     movieNative: { enabled: true, provider: 'exoDisplay', zoneId: '5973194', className: 'eas6a97888e20' },
     homeRectangle: { enabled: true, provider: 'exoDisplay', zoneId: '5973184', className: 'eas6a97888e10', size: '300x250' },
     movieMobile: { enabled: true, provider: 'exoDisplay', zoneId: '5973186', className: 'eas6a97888e10', size: '300x50' },
-    movieLeftRail: { enabled: true, provider: 'exoDisplay', zoneId: '5973188', className: 'eas6a97888e2', size: '160x600', minWidth: 1321 },
-    movieRightRail: { enabled: true, provider: 'exoDisplay', zoneId: '5971764', className: 'eas6a97888e2', size: '160x600', minWidth: 1321 },
+    movieLeftRail: { enabled: true, provider: 'exoDisplay', zoneId: '5973188', className: 'eas6a97888e2', size: '160x600', minWidth: 1181 },
+    movieRightRail: { enabled: true, provider: 'exoDisplay', zoneId: '5971764', className: 'eas6a97888e2', size: '160x600', minWidth: 1181 },
     playPopunder: {
       enabled: true,
       provider: 'exoPopunder',

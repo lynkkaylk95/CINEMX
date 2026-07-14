@@ -1,4 +1,4 @@
-/* ============================================================
+﻿/* ============================================================
    CineMax MX — style.css
    Netflix 2026 Dark Theme — Responsive Mobile-First
 ============================================================ */
@@ -1302,22 +1302,6 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
   .movie-ad-slot {
     max-width: 180px;
     min-height: 0;
-  }
-}
-
-@media (max-width: 1320px) {
-  .movie-shell {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .movie-ad-rail {
-    display: none;
-  }
-  .movie-mobile-ad {
-    display: flex;
-  }
-  .movie-mobile-ad.ad-fixed-slot {
-    --ad-w: 300px;
-    --ad-h: 50px;
   }
 }
 

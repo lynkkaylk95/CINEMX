@@ -1305,22 +1305,6 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
   }
 }
 
-@media (max-width: 1320px) {
-  .movie-shell {
-    grid-template-columns: minmax(0, 1fr);
-  }
-  .movie-ad-rail {
-    display: none;
-  }
-  .movie-mobile-ad {
-    display: flex;
-  }
-  .movie-mobile-ad.ad-fixed-slot {
-    --ad-w: 300px;
-    --ad-h: 50px;
-  }
-}
-
 @media (max-width: 1180px) {
   .movie-shell {
     grid-template-columns: minmax(0, 1fr);
