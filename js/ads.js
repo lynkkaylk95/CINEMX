@@ -22,6 +22,14 @@
     window.dispatchEvent(new CustomEvent('cinemax:ad-status', { detail: { placement, status, ...extra } }));
   }
 
+  function getPageType() {
+    return document.querySelector('.video-play-button') ? 'movie' : 'home';
+  }
+
+  function isEnabledOnCurrentPage(placement) {
+    return !placement.pages || placement.pages.includes(getPageType());
+  }
+
   function checkForEmptyCreative(element, placement) {
     window.setTimeout(() => {
       const frame = element.querySelector('iframe');
@@ -254,14 +262,12 @@
   }
 
   function loadFullpageInterstitial() {
-    // The movie Play button is reserved for the dedicated Popunder unit.
-    // Loading Fullpage here would make both formats compete for the same click.
-    if (document.querySelector('.video-play-button')) {
-      report('fullpageInterstitial', 'skipped', { reason: 'disabled-on-movie-page' });
+    const zone = CINEMAX_EXO_ZONES.fullpageInterstitial;
+    if (!zone.enabled || !isEnabledOnCurrentPage(zone)) {
+      report('fullpageInterstitial', 'skipped', { reason: `disabled-on-${getPageType()}-page` });
       return;
     }
 
-    const zone = CINEMAX_EXO_ZONES.fullpageInterstitial;
     if (document.querySelector(`ins[data-zoneid="${zone.zoneId}"]`)) return;
 
     if (!document.querySelector(`script[src="${CINEMAX_EXO_FULLPAGE_PROVIDER_SRC}"]`)) {
@@ -286,6 +292,10 @@
 
   function loadMessagePopup() {
     const zone = CINEMAX_EXO_ZONES.messagePopup;
+    if (!zone.enabled || !isEnabledOnCurrentPage(zone)) {
+      report('messagePopup', 'skipped', { reason: `disabled-on-${getPageType()}-page` });
+      return;
+    }
     if (document.querySelector(`ins[data-zoneid="${zone.zoneId}"]`)) return;
 
     if (!document.querySelector(`script[src="${CINEMAX_EXO_PROVIDER_SRC}"]`)) {
@@ -309,7 +319,11 @@
   }
 
   function loadExoPlayPopunder() {
-    if (!document.querySelector('.video-play-button')) return;
+    const popunder = CINEMAX_EXO_ZONES.playPopunder;
+    if (!popunder?.enabled || !isEnabledOnCurrentPage(popunder)) {
+      report('playPopunder', 'skipped', { reason: `disabled-on-${getPageType()}-page` });
+      return;
+    }
     if (document.getElementById(CINEMAX_EXO_POPUNDER_ID)) return;
 
     const script = document.createElement('script');
@@ -317,22 +331,22 @@
     script.async = true;
     script.type = 'application/javascript';
     script.src = CINEMAX_EXO_POPUNDER_SRC;
-    script.setAttribute('data-exo-idzone', CINEMAX_EXO_ZONES.playPopunder.zoneId);
-    script.setAttribute('data-exo-popup_fallback', 'false');
-    script.setAttribute('data-exo-popup_force', 'false');
-    script.setAttribute('data-exo-chrome_enabled', 'true');
-    script.setAttribute('data-exo-new_tab', 'false');
-    script.setAttribute('data-exo-frequency_period', '60');
-    script.setAttribute('data-exo-frequency_count', '1');
-    script.setAttribute('data-exo-trigger_method', '2');
-    script.setAttribute('data-exo-trigger_class', 'video-play-button');
-    script.setAttribute('data-exo-trigger_delay', '0');
-    script.setAttribute('data-exo-capping_enabled', 'true');
-    script.setAttribute('data-exo-tcf_enabled', 'true');
-    script.setAttribute('data-exo-only_inline', 'false');
+    script.setAttribute('data-exo-idzone', popunder.zoneId);
+    script.setAttribute('data-exo-popup_fallback', String(popunder.popupFallback));
+    script.setAttribute('data-exo-popup_force', String(popunder.popupForce));
+    script.setAttribute('data-exo-chrome_enabled', String(popunder.chromeEnabled));
+    script.setAttribute('data-exo-new_tab', String(popunder.newTab));
+    script.setAttribute('data-exo-frequency_period', String(popunder.frequencyPeriod));
+    script.setAttribute('data-exo-frequency_count', String(popunder.frequencyCount));
+    script.setAttribute('data-exo-trigger_method', String(popunder.triggerMethod));
+    script.setAttribute('data-exo-trigger_class', popunder.triggerClass);
+    script.setAttribute('data-exo-trigger_delay', String(popunder.triggerDelay));
+    script.setAttribute('data-exo-capping_enabled', String(popunder.cappingEnabled));
+    script.setAttribute('data-exo-tcf_enabled', String(popunder.tcfEnabled));
+    script.setAttribute('data-exo-only_inline', String(popunder.onlyInline));
     script.onerror = () => console.warn('CineMax ExoClick play popunder failed to load.');
     document.body.appendChild(script);
-    report('playPopunder', 'armed', { zoneId: CINEMAX_EXO_ZONES.playPopunder.zoneId });
+    report('playPopunder', 'armed', { zoneId: popunder.zoneId, triggerMethod: popunder.triggerMethod });
   }
 
   function wireSmartlinks() {

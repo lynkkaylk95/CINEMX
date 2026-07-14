@@ -23,7 +23,24 @@ window.CINEMAX_AD_CONFIG = Object.freeze({
     movieMobile: { enabled: true, provider: 'exoDisplay', zoneId: '5973186', className: 'eas6a97888e10', size: '300x50' },
     movieLeftRail: { enabled: true, provider: 'exoDisplay', zoneId: '5973188', className: 'eas6a97888e2', size: '160x600', minWidth: 1321 },
     movieRightRail: { enabled: true, provider: 'exoDisplay', zoneId: '5971764', className: 'eas6a97888e2', size: '160x600', minWidth: 1321 },
-    playPopunder: { enabled: true, provider: 'exoPopunder', zoneId: '5971718', triggerSelector: '.video-play-button' }
+    playPopunder: {
+      enabled: true,
+      provider: 'exoPopunder',
+      zoneId: '5971718',
+      pages: ['movie'],
+      popupFallback: false,
+      popupForce: false,
+      chromeEnabled: true,
+      newTab: false,
+      frequencyPeriod: 60,
+      frequencyCount: 1,
+      triggerMethod: 3,
+      triggerClass: '',
+      triggerDelay: 0,
+      cappingEnabled: true,
+      tcfEnabled: true,
+      onlyInline: false
+    }
   },
   formatBanners: {
     '468x60': { enabled: true, key: 'dfc49ebd2407ec09e0689da4f8a0c34c', width: 468, height: 60 },
