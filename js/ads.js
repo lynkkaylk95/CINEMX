@@ -3,26 +3,39 @@
   if (window.__cinemaxAdsBootstrapped) return;
   window.__cinemaxAdsBootstrapped = true;
 
-  const CINEMAX_SMARTLINK_URL = 'https://www.effectivecpmnetwork.com/mdgtfx72cr?key=ddb2f05c770276460358480543facd5a';
-  const CINEMAX_EXO_POPUNDER_SRC = 'https://a.pemsrv.com/popunder1000.js';
+  const config = window.CINEMAX_AD_CONFIG;
+  if (!config) {
+    console.error('CineMax ads config is missing. Load ads-config.js before ads.js.');
+    return;
+  }
+
+  const CINEMAX_SMARTLINK_URL = config.smartlink.url;
+  const CINEMAX_EXO_POPUNDER_SRC = config.providers.exoPopunder;
   const CINEMAX_EXO_POPUNDER_ID = 'popmagicldr';
-  const CINEMAX_EXO_PROVIDER_SRC = 'https://a.magsrv.com/ad-provider.js';
-  const CINEMAX_EXO_FULLPAGE_PROVIDER_SRC = 'https://a.pemsrv.com/ad-provider.js';
-  const CINEMAX_EXO_ZONES = {
-    fullpageInterstitial: { zoneId: '5969616', className: 'eas6a97888e33' },
-    messagePopup: { zoneId: '5971714', className: 'eas6a97888e14' },
-    movieNative: { zoneId: '5973194', className: 'eas6a97888e20' },
-    homeRectangle: { zoneId: '5973184', className: 'eas6a97888e10', size: '300x250' },
-    movieMobile: { zoneId: '5973186', className: 'eas6a97888e10', size: '300x50' },
-    movieLeftRail: { zoneId: '5973188', className: 'eas6a97888e2', size: '160x600' },
-    movieRightRail: { zoneId: '5971764', className: 'eas6a97888e2', size: '160x600' }
-  };
-  const CINEMAX_FORMAT_BANNERS = {
-    '468x60': { key: 'dfc49ebd2407ec09e0689da4f8a0c34c', width: 468, height: 60 },
-    '320x50': { key: '4e485ec0b81fcdb2c2549f73a60b345a', width: 320, height: 50 },
-    '728x90': { key: '184e6b9972a56e72cc0c8aca28deb91f', width: 728, height: 90 }
-  };
+  const CINEMAX_EXO_PROVIDER_SRC = config.providers.exoDisplay;
+  const CINEMAX_EXO_FULLPAGE_PROVIDER_SRC = config.providers.exoFullpage;
+  const CINEMAX_EXO_ZONES = config.placements;
+  const CINEMAX_FORMAT_BANNERS = config.formatBanners;
   let formatBannerQueue = Promise.resolve();
+
+  function report(placement, status, extra = {}) {
+    window.dispatchEvent(new CustomEvent('cinemax:ad-status', { detail: { placement, status, ...extra } }));
+  }
+
+  function checkForEmptyCreative(element, placement) {
+    window.setTimeout(() => {
+      const frame = element.querySelector('iframe');
+      if (!frame) return;
+      let empty = frame.src === 'about:blank';
+      try {
+        empty = empty && !frame.contentDocument?.body?.innerHTML.trim();
+      } catch (_) {
+        empty = false;
+      }
+      report(placement, empty ? 'empty' : 'rendered', empty ? { reason: 'blank-iframe' } : {});
+      if (empty) element.dataset.adEmpty = 'true';
+    }, config.emptyTimeoutMs);
+  }
 
   function safely(label, task) {
     try {
@@ -85,8 +98,12 @@
 
   function mountFormatBanner(element, size) {
     const banner = CINEMAX_FORMAT_BANNERS[size];
-    if (!element || !banner || element.dataset.nativeAd === 'true' || element.dataset.formatBannerMounted === 'true') return;
-    if (isHiddenAdSlot(element)) return;
+    const placement = element?.dataset.adPlacement || `format-${size}`;
+    if (!element || !banner || banner.enabled === false || element.dataset.nativeAd === 'true' || element.dataset.formatBannerMounted === 'true') return;
+    if (isHiddenAdSlot(element)) {
+      report(placement, 'skipped', { reason: 'hidden-by-breakpoint' });
+      return;
+    }
 
     element.dataset.formatBannerMounted = 'true';
     element.dataset.adSize = size;
@@ -115,15 +132,21 @@
       invokeScript.onload = resolve;
       invokeScript.onerror = () => {
         console.warn(`CineMax ${size} ad failed to load.`);
+        report(placement, 'script-error', { size });
         resolve();
       };
       element.appendChild(invokeScript);
+      report(placement, 'mounted', { size });
+      checkForEmptyCreative(element, placement);
     }));
   }
 
-  function mountExoClickZone(element, zone) {
-    if (!element || !zone || element.dataset.exoZoneMounted === 'true') return;
-    if (isHiddenAdSlot(element)) return;
+  function mountExoClickZone(element, zone, placement = 'exo-zone') {
+    if (!element || !zone || zone.enabled === false || element.dataset.exoZoneMounted === 'true') return;
+    if (isHiddenAdSlot(element)) {
+      report(placement, 'skipped', { reason: 'hidden-by-breakpoint', zoneId: zone.zoneId });
+      return;
+    }
 
     element.dataset.exoZoneMounted = 'true';
     element.dataset.exoZoneId = zone.zoneId;
@@ -147,6 +170,7 @@
       providerScript.async = true;
       providerScript.type = 'application/javascript';
       providerScript.src = CINEMAX_EXO_PROVIDER_SRC;
+      providerScript.onerror = () => report(placement, 'script-error', { zoneId: zone.zoneId });
       element.appendChild(providerScript);
     }
 
@@ -161,6 +185,7 @@
     const serveScript = document.createElement('script');
     serveScript.text = '(AdProvider = window.AdProvider || []).push({"serve": {}});';
     element.appendChild(serveScript);
+    report(placement, 'mounted', { zoneId: zone.zoneId, size: zone.size || 'native' });
   }
 
   function isHiddenAdSlot(element) {
@@ -178,6 +203,7 @@
     const isMobile = window.matchMedia('(max-width: 768px)').matches;
     categorySlots.forEach((element, index) => {
       if (index === 0 && !isMobile) {
+        element.dataset.adPlacement = 'homeCategoryBanner';
         element.classList.remove('ad-slot-disabled');
         mountFormatBanner(element, '468x60');
       } else {
@@ -187,20 +213,23 @@
     });
 
     const homeRectangle = document.querySelector('.ad-zone-home-feed');
-    if (homeRectangle) mountExoClickZone(homeRectangle, CINEMAX_EXO_ZONES.homeRectangle);
+    if (homeRectangle) mountExoClickZone(homeRectangle, CINEMAX_EXO_ZONES.homeRectangle, 'homeRectangle');
 
     const homeBottom = document.querySelector('.ad-zone-home-bottom');
-    if (homeBottom) mountFormatBanner(homeBottom, window.matchMedia('(max-width: 768px)').matches ? '320x50' : '728x90');
+    if (homeBottom) {
+      homeBottom.dataset.adPlacement = 'homeBottomBanner';
+      mountFormatBanner(homeBottom, window.matchMedia('(max-width: 768px)').matches ? '320x50' : '728x90');
+    }
 
     const movieMobileTop = document.querySelector('.movie-mobile-ad-top');
     if (movieMobileTop) movieMobileTop.classList.add('ad-slot-disabled');
     const movieMobileBottom = document.querySelector('.movie-mobile-ad-bottom');
-    if (movieMobileBottom) mountExoClickZone(movieMobileBottom, CINEMAX_EXO_ZONES.movieMobile);
+    if (movieMobileBottom) mountExoClickZone(movieMobileBottom, CINEMAX_EXO_ZONES.movieMobile, 'movieMobile');
 
     const movieLeftRail = document.querySelector('.movie-ad-left .movie-ad-code');
-    if (movieLeftRail) mountExoClickZone(movieLeftRail, CINEMAX_EXO_ZONES.movieLeftRail);
+    if (movieLeftRail) mountExoClickZone(movieLeftRail, CINEMAX_EXO_ZONES.movieLeftRail, 'movieLeftRail');
     const movieRightRail = document.querySelector('.movie-ad-right .movie-ad-code');
-    if (movieRightRail) mountExoClickZone(movieRightRail, CINEMAX_EXO_ZONES.movieRightRail);
+    if (movieRightRail) mountExoClickZone(movieRightRail, CINEMAX_EXO_ZONES.movieRightRail, 'movieRightRail');
   }
 
   function remountResponsiveAds() {
@@ -213,7 +242,7 @@
   function loadNativeBanner() {
     const movieTarget = document.querySelector('.ad-below-player');
     if (movieTarget) {
-      mountExoClickZone(movieTarget, CINEMAX_EXO_ZONES.movieNative);
+      mountExoClickZone(movieTarget, CINEMAX_EXO_ZONES.movieNative, 'movieNative');
       return;
     }
 
@@ -221,13 +250,16 @@
     if (!target) return;
     // The former Adsterra native hostname no longer resolves. Reuse the active
     // native provider instead of leaving a permanent placeholder on the page.
-    mountExoClickZone(target, CINEMAX_EXO_ZONES.movieNative);
+    mountExoClickZone(target, CINEMAX_EXO_ZONES.movieNative, 'homeNative');
   }
 
   function loadFullpageInterstitial() {
     // The movie Play button is reserved for the dedicated Popunder unit.
     // Loading Fullpage here would make both formats compete for the same click.
-    if (document.querySelector('.video-play-button')) return;
+    if (document.querySelector('.video-play-button')) {
+      report('fullpageInterstitial', 'skipped', { reason: 'disabled-on-movie-page' });
+      return;
+    }
 
     const zone = CINEMAX_EXO_ZONES.fullpageInterstitial;
     if (document.querySelector(`ins[data-zoneid="${zone.zoneId}"]`)) return;
@@ -249,6 +281,7 @@
     const serveScript = document.createElement('script');
     serveScript.text = '(AdProvider = window.AdProvider || []).push({"serve": {}});';
     document.body.appendChild(serveScript);
+    report('fullpageInterstitial', 'armed', { zoneId: zone.zoneId });
   }
 
   function loadMessagePopup() {
@@ -272,6 +305,7 @@
     const serveScript = document.createElement('script');
     serveScript.text = '(AdProvider = window.AdProvider || []).push({"serve": {}});';
     document.body.appendChild(serveScript);
+    report('messagePopup', 'armed', { zoneId: zone.zoneId });
   }
 
   function loadExoPlayPopunder() {
@@ -283,7 +317,7 @@
     script.async = true;
     script.type = 'application/javascript';
     script.src = CINEMAX_EXO_POPUNDER_SRC;
-    script.setAttribute('data-exo-idzone', '5971718');
+    script.setAttribute('data-exo-idzone', CINEMAX_EXO_ZONES.playPopunder.zoneId);
     script.setAttribute('data-exo-popup_fallback', 'false');
     script.setAttribute('data-exo-popup_force', 'false');
     script.setAttribute('data-exo-chrome_enabled', 'true');
@@ -298,6 +332,7 @@
     script.setAttribute('data-exo-only_inline', 'false');
     script.onerror = () => console.warn('CineMax ExoClick play popunder failed to load.');
     document.body.appendChild(script);
+    report('playPopunder', 'armed', { zoneId: CINEMAX_EXO_ZONES.playPopunder.zoneId });
   }
 
   function wireSmartlinks() {
