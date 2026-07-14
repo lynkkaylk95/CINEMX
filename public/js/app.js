@@ -430,11 +430,22 @@ function showSection(id, display) {
 }
 
 function scrollToMovieResults(behavior = 'smooth') {
-  const target = document.getElementById('sect-trending') || document.getElementById('main');
+  const noResults = document.getElementById('no-results');
+  const target = noResults?.style.display === 'block'
+    ? noResults
+    : document.getElementById('sect-trending') || document.getElementById('main');
   if (!target) return;
   const navHeight = document.getElementById('navbar')?.offsetHeight || 0;
   const targetTop = target.getBoundingClientRect().top + window.scrollY - navHeight - 18;
   window.scrollTo({ top: Math.max(0, targetTop), behavior });
+}
+
+function finishSearch(input) {
+  if (!input?.value.trim()) return;
+  handleSearch(input.value);
+  input.blur();
+  closeMenu();
+  requestAnimationFrame(() => scrollToMovieResults());
 }
 
 function renderAll() {
@@ -746,10 +757,19 @@ window.addEventListener('scroll', () => {
 });
 
 document.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('search-input')?.addEventListener('input', e => handleSearch(e.target.value));
-  document.getElementById('mob-search-input')?.addEventListener('keydown', e => {
-    if (e.key === 'Enter') closeMenu();
+  const searchInputs = [
+    document.getElementById('search-input'),
+    document.getElementById('mob-search-input')
+  ].filter(Boolean);
+  searchInputs.forEach(input => {
+    input.setAttribute('enterkeyhint', 'search');
+    input.addEventListener('keydown', e => {
+      if (e.key !== 'Enter' || e.isComposing) return;
+      e.preventDefault();
+      finishSearch(e.currentTarget);
+    });
   });
+  document.getElementById('search-input')?.addEventListener('input', e => handleSearch(e.target.value));
   applyInitialQueryParams();
   initDailyHero();
   renderAll();
