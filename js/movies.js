@@ -1,6 +1,106 @@
 // Base de datos de películas y series de CineMax MX
 const MOVIES = [
   {
+    "title": "La Felicidad Nunca Llega Tarde",
+    "slug": "la-felicidad-nunca-llega-tarde",
+    "genre": "Familia",
+    "genres": [
+      "Familia",
+      "Emotivo"
+    ],
+    "type": "Película",
+    "year": 2024,
+    "rating": 8.3,
+    "duration": "1h 49min",
+    "emoji": "🎬",
+    "yt": "7DFWRVv117w",
+    "thumb": "https://i3.ytimg.com/vi/7DFWRVv117w/hqdefault.jpg",
+    "desc": "Tienda de Peliculas presenta una historia donde la gratitud de un CEO se complica por una red de engaños familiares. La mujer campesina enfrenta la traición tras años de dedicación, desencadenando una lucha por la verdad y la justicia en plena celebración de Año Nuevo.\n\nGénero: películas románticas, películas chinas, Pelicula de Accion de Artes Marciales, dramas coreanos en español, doramas en español latino completas, kdrama español completos,presidente disfrazado de pobre, Identidad Misteriosa y Matrimonio Relámpago,",
+    "episodes": [],
+    "id": 60,
+    "addedAt": "2026-07-14T09:33:01.716Z"
+  },
+  {
+    "title": "Gemelos, ¡encuentren una esposa para papá!",
+    "slug": "gemelos-encuentren-una-esposa-para-papa",
+    "genre": "Familia",
+    "genres": [
+      "Familia",
+      "Emotivo"
+    ],
+    "type": "Película",
+    "year": 2026,
+    "rating": 8.5,
+    "duration": "2h 08min",
+    "emoji": "🎬",
+    "yt": "pRKGvS_eRKE",
+    "thumb": "https://i3.ytimg.com/vi/pRKGvS_eRKE/hqdefault.jpg",
+    "desc": "Tras ser expulsada de su hogar, una doctora busca trabajo duro para salir adelante mientras sus hijos biológicos intentan unirla con su padre, un rico empresario que busca esposa. Juntos, enfrentan los prejuicios laborales y los intentos de sabotaje por parte de otros colegas, fortaleciendo sus lazos familiares sin revelar su verdadero parentesco.\n\nGénero: películas románticas, películas chinas, Multimillonario se hace pasar por pobre, peliculas completas en español latino, dramas coreanos en español, cenicienta se casa con un tio guapo, el multimillonario oculta su identidad, Identidad Misteriosa y Matrimonio Relámpago",
+    "episodes": [],
+    "id": 59,
+    "addedAt": "2026-07-14T09:31:40.820Z"
+  },
+  {
+    "title": "Traición y Venganza",
+    "slug": "traicion-y-venganza",
+    "genre": "Familia",
+    "genres": [
+      "Familia",
+      "Thriller"
+    ],
+    "type": "Película",
+    "year": 2026,
+    "rating": 8.5,
+    "duration": "2h 01min",
+    "emoji": "🎬",
+    "yt": "7E6LAdsRSds",
+    "thumb": "https://i3.ytimg.com/vi/7E6LAdsRSds/hqdefault.jpg",
+    "desc": "Tras sobrevivir a un intento de asesinato diseñado por su esposo y su mejor amiga, una empresaria regresa bajo una nueva identidad para recuperar su fortuna. El plan implica engañar a sus enemigos en una junta de accionistas crucial mientras busca justicia por la traición vivida.\n\nGénero: películas románticas, películas chinas, Multimillonario se hace pasar por pobre, dramas coreanos en español, doramas en español latino completas, kdrama español completos, Arrepentimiento después del divorcio, presidente disfrazado de pobre, Identidad Misteriosa y Matrimonio Relámpago, Series de Reencarnación, Multimillonaria se venga",
+    "episodes": [],
+    "id": 58,
+    "addedAt": "2026-07-14T09:30:18.948Z"
+  },
+  {
+    "title": "Su Encantador Secretario",
+    "slug": "su-encantador-secretario",
+    "genre": "Comedia",
+    "genres": [
+      "Comedia",
+      "Romance"
+    ],
+    "type": "Película",
+    "year": 2025,
+    "rating": 8.7,
+    "duration": "2h 02min",
+    "emoji": "🎬",
+    "yt": "r6v3-vyl_Jk",
+    "thumb": "https://i3.ytimg.com/vi/r6v3-vyl_Jk/hqdefault.jpg",
+    "desc": "Nan Zhizhi, la hija mayor de la familia Nan, se disfrazó de hombre para evitar ser forzada a casarse por su familia. Descubrió que su jefe era en realidad la persona con la que tuvo relaciones sexuales diez veces la noche anterior.\n\nGénero: películas románticas, películas chinas, Multimillonario se hace pasar por pobre, dramas coreanos en español, doramas en español latino completas, La Amada Esposa del CEO, Matrimonio de Conveniencia, kdrama español completos, mi esposo es poderoso en español, Matrimonio instantáneo con un multimillonario, Presidenta disfrazada de limpiadora",
+    "episodes": [],
+    "id": 57,
+    "addedAt": "2026-07-14T09:27:36.300Z"
+  },
+  {
+    "title": "La Feroz Espada del Norte",
+    "slug": "la-feroz-espada-del-norte",
+    "genre": "Acción",
+    "genres": [
+      "Acción",
+      "Ciencia Ficción"
+    ],
+    "type": "Película",
+    "year": 2026,
+    "rating": 9.4,
+    "duration": "1h 55min",
+    "emoji": "🎬",
+    "yt": "yqNYU0pAeeM",
+    "thumb": "https://i3.ytimg.com/vi/yqNYU0pAeeM/hqdefault.jpg",
+    "desc": "Tras sufrir la destrucción de su familia y perder la memoria, una persona trabaja como carnicero mientras busca respuestas sobre su pasado. En medio de un banquete de compromiso, se enfrenta a quienes destruyeron su hogar ancestral para reclamar su honor perdido.\n\nGénero: películas románticas, películas chinas, Película de acción de artes marciales y kungfu, dramas coreanos en español, doramas en español latino completas, kdrama español completos, el gobernante ascendente, Identidad Misteriosa y Matrimonio Relámpago, el señor dragon oculto, \npeliculas de accion en español,",
+    "episodes": [],
+    "id": 56,
+    "addedAt": "2026-07-14T09:25:47.996Z"
+  },
+  {
     "title": "El Mundo Entero Espera mi Divorcio",
     "slug": "el-mundo-entero-espera-mi-divorcio",
     "genre": "Emotivo",
