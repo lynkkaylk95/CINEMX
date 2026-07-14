@@ -77,7 +77,7 @@ ul { list-style: none; }
   color: var(--text2); transition: var(--tr); white-space: nowrap;
 }
 .nav-links a:hover, .nav-links a.active { color: var(--white); background: rgba(255,255,255,.07); }
-.nav-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+.nav-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; margin-left: auto; }
 .nav-search-wrap { position: relative; display: flex; align-items: center; }
 #search-toggle {
   background: transparent; padding: 7px; border-radius: 7px;
@@ -824,6 +824,21 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
 @media (max-width: 768px) {
   .nav-links { display: none; }
   #hamburger { display: flex; }
+  .nav-search-wrap { position: static; }
+  #search-box {
+    right: calc(4vw + 72px);
+    z-index: 3;
+  }
+  #search-box.open {
+    width: min(220px, calc(100vw - 8vw - 100px));
+  }
+  #search-input {
+    min-width: 0;
+    background: #1c1c24;
+    color: #e8e8f0;
+    -webkit-text-fill-color: #e8e8f0;
+    caret-color: var(--red);
+  }
   #hero {
     min-height: 430px;
     height: min(72svh, 560px);
