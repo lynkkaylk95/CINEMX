@@ -4,7 +4,6 @@
 ============================================================ */
 
 const MOVIES_STORAGE_KEY = 'cinemax_movies';
-const YOUTUBE_DURATION_API = 'https://cinemaxmx.com/api/youtube-duration';
 const GENRE_ALIASES = {
   'Học đường': 'Escolar',
   'Xuy\u00EAn kh\u00F4ng': 'Viajes en el tiempo',
@@ -28,8 +27,6 @@ const ADMIN_GENRE_LABELS = {
 };
 let currentMovies = loadSavedMovies().map(normalizeMovieGenres);
 let activeEpisodeTags = [];
-let durationRequestId = 0;
-let durationLookupTimer = null;
 
 function getMovieSortValue(movie) {
   const addedTime = Date.parse(movie?.addedAt || movie?.createdAt || '');
@@ -96,56 +93,6 @@ function syncThumbnailFromYouTube() {
   thumbInput.value = `https://i3.ytimg.com/vi/${ytId}/hqdefault.jpg`;
 }
 
-function setDurationStatus(message, isError = false) {
-  const status = document.getElementById('duration-status');
-  if (!status) return;
-  status.textContent = message;
-  status.style.color = isError ? '#ff8a8a' : '';
-}
-
-function formatVideoDuration(totalSeconds) {
-  const totalMinutes = Math.floor(Number(totalSeconds) / 60);
-  if (!Number.isFinite(totalMinutes) || totalMinutes <= 0) return '';
-  const hours = Math.floor(totalMinutes / 60);
-  const minutes = totalMinutes % 60;
-  return hours > 0 ? `${hours}h ${String(minutes).padStart(2, '0')}min` : `${minutes}min`;
-}
-
-async function syncDurationFromYouTube() {
-  const ytInput = document.getElementById('yt');
-  const durationInput = document.getElementById('duration');
-  if (!ytInput || !durationInput) return;
-
-  const videoId = extractYouTubeId(ytInput.value);
-  const requestId = ++durationRequestId;
-  if (!videoId) {
-    setDurationStatus('Dán link YouTube hợp lệ để tự động lấy thời lượng.');
-    return;
-  }
-  setDurationStatus('Đang lấy thời lượng từ YouTube...');
-
-  try {
-    const response = await fetch(`${YOUTUBE_DURATION_API}?id=${encodeURIComponent(videoId)}`);
-    const result = await response.json();
-    if (requestId !== durationRequestId) return;
-    const formatted = response.ok && result.ok ? formatVideoDuration(result.seconds) : '';
-    if (!formatted) throw new Error(result.error || 'duration_unavailable');
-    durationInput.value = formatted;
-    setDurationStatus(`Đã tự động lấy thời lượng: ${formatted}`);
-  } catch (error) {
-    if (requestId === durationRequestId) {
-      setDurationStatus('Không lấy được thời lượng video này. Hãy kiểm tra video có công khai hay không.', true);
-    }
-    console.warn(error);
-  }
-}
-
-function scheduleYouTubeMetadataSync() {
-  syncThumbnailFromYouTube();
-  clearTimeout(durationLookupTimer);
-  durationLookupTimer = setTimeout(syncDurationFromYouTube, 350);
-}
-
 function findDuplicateMovieByVideo(ytId, ignoredId = null) {
   const normalizedYtId = String(ytId || '').trim();
   if (!normalizedYtId) return null;
@@ -206,8 +153,8 @@ document.addEventListener('DOMContentLoaded', () => {
   setSelectedGenres(['Acción']);
   const ytInput = document.getElementById('yt');
   if (ytInput) {
-    ytInput.addEventListener('input', scheduleYouTubeMetadataSync);
-    ytInput.addEventListener('paste', () => setTimeout(scheduleYouTubeMetadataSync, 0));
+    ytInput.addEventListener('input', syncThumbnailFromYouTube);
+    ytInput.addEventListener('paste', () => setTimeout(syncThumbnailFromYouTube, 0));
   }
   renderAdminList();
 });
@@ -405,8 +352,6 @@ function resetMovieForm() {
   activeEpisodeTags = [];
   toggleEpisodesField();
   renderEpisodeTags();
-  durationRequestId++;
-  setDurationStatus('Dán link YouTube để tự động lấy thời lượng video.');
 }
 
 // Toast alerts

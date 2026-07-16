@@ -47,39 +47,6 @@ function getThumbnailUrl(movie) {
   return videoId ? `https://i3.ytimg.com/vi/${videoId}/maxresdefault.jpg` : thumb;
 }
 
-async function handleYouTubeDuration(url) {
-  const videoId = getYouTubeId(url.searchParams.get("id"));
-  if (!videoId) {
-    return jsonResponse({ ok: false, error: "invalid_video" }, { status: 400 });
-  }
-
-  try {
-    const response = await fetch(`https://www.youtube.com/watch?v=${encodeURIComponent(videoId)}&hl=en`, {
-      headers: {
-        "accept-language": "en-US,en;q=0.9",
-        "user-agent": "Mozilla/5.0 (compatible; CineMaxDurationBot/1.0)"
-      }
-    });
-    if (!response.ok) throw new Error(`YouTube returned ${response.status}`);
-
-    const html = await response.text();
-    const match = html.match(/"lengthSeconds"\s*:\s*"(\d+)"/);
-    const seconds = match ? Number(match[1]) : 0;
-    if (!Number.isFinite(seconds) || seconds <= 0) {
-      return jsonResponse({ ok: false, error: "duration_unavailable" }, { status: 404 });
-    }
-    return jsonResponse({ ok: true, seconds }, {
-      headers: {
-        "cache-control": "public, max-age=86400",
-        "access-control-allow-origin": "*"
-      }
-    });
-  } catch (error) {
-    console.warn("YouTube duration lookup failed", error);
-    return jsonResponse({ ok: false, error: "youtube_unavailable" }, { status: 502 });
-  }
-}
-
 function escapeHtml(value) {
   return String(value || "")
     .replace(/&/g, "&amp;")
@@ -459,10 +426,6 @@ export default {
 
     if ((url.pathname === "/api/views" || url.pathname === "/api/view-counts") && request.method === "GET") {
       return handleMovieViewsBatch(request, env);
-    }
-
-    if (url.pathname === "/api/youtube-duration" && request.method === "GET") {
-      return handleYouTubeDuration(url);
     }
 
     const viewsMatch = url.pathname.match(/^\/api\/views\/([^/]+)$/);
