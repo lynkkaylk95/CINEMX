@@ -1438,6 +1438,18 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
 .admin-success { background: rgba(46,204,113,.1); border: 1px solid rgba(46,204,113,.3); color: #2ecc71; padding: 10px 14px; border-radius: 8px; font-size: 13px; font-weight: 600; margin-top: 12px; display: none; }
 .admin-success.show { display: block; }
 
+/* Keep the metadata-only YouTube player active without showing it in the admin UI. */
+.youtube-duration-player,
+#youtube-duration-player {
+  position: fixed !important;
+  left: -9999px !important;
+  top: -9999px !important;
+  width: 1px !important;
+  height: 1px !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
 .admin-ep-wrap { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
 .admin-ep-tag { background: var(--bg4); color: var(--text2); font-size: 11px; padding: 3px 9px; border-radius: 6px; display: flex; align-items: center; gap: 4px; }
 .admin-ep-remove { background: none; color: var(--text3); font-size: 13px; line-height: 1; padding: 0 2px; }

@@ -31,6 +31,7 @@ let youtubeDurationPlayer = null;
 let youtubeApiPromise = null;
 let durationRequestId = 0;
 let durationLookupTimer = null;
+let durationPollTimer = null;
 
 function getMovieSortValue(movie) {
   const addedTime = Date.parse(movie?.addedAt || movie?.createdAt || '');
@@ -140,10 +141,32 @@ function resetYouTubePlayerHost() {
   if (!host) {
     host = document.createElement('div');
     host.id = 'youtube-duration-player';
-    host.hidden = true;
+    host.className = 'youtube-duration-player';
     host.setAttribute('aria-hidden', 'true');
     document.body.appendChild(host);
   }
+}
+
+function pollYouTubeDuration(player, requestId) {
+  clearInterval(durationPollTimer);
+  let attempts = 0;
+  durationPollTimer = setInterval(() => {
+    if (requestId !== durationRequestId) {
+      clearInterval(durationPollTimer);
+      return;
+    }
+
+    attempts++;
+    const formatted = formatVideoDuration(player.getDuration());
+    if (formatted) {
+      clearInterval(durationPollTimer);
+      document.getElementById('duration').value = formatted;
+      setDurationStatus(`Đã tự động lấy thời lượng: ${formatted}`);
+    } else if (attempts >= 40) {
+      clearInterval(durationPollTimer);
+      setDurationStatus('Không đọc được thời lượng. Bạn có thể nhập tay.', true);
+    }
+  }, 250);
 }
 
 async function syncDurationFromYouTube() {
@@ -168,17 +191,10 @@ async function syncDurationFromYouTube() {
       playerVars: { controls: 0, disablekb: 1, playsinline: 1 },
       events: {
         onReady(event) {
-          if (requestId === durationRequestId) event.target.cueVideoById(videoId);
-        },
-        onStateChange(event) {
-          if (requestId !== durationRequestId || event.data !== YT.PlayerState.CUED) return;
-          const formatted = formatVideoDuration(event.target.getDuration());
-          if (!formatted) {
-            setDurationStatus('Không đọc được thời lượng. Bạn có thể nhập tay.', true);
-            return;
+          if (requestId === durationRequestId) {
+            event.target.cueVideoById(videoId);
+            pollYouTubeDuration(event.target, requestId);
           }
-          durationInput.value = formatted;
-          setDurationStatus(`Đã tự động lấy thời lượng: ${formatted}`);
         },
         onError() {
           if (requestId === durationRequestId) {
@@ -461,6 +477,7 @@ function resetMovieForm() {
   toggleEpisodesField();
   renderEpisodeTags();
   durationRequestId++;
+  clearInterval(durationPollTimer);
   setDurationStatus('Dán link YouTube để tự động lấy thời lượng video.');
 }
 
