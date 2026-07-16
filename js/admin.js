@@ -27,6 +27,10 @@ const ADMIN_GENRE_LABELS = {
 };
 let currentMovies = loadSavedMovies().map(normalizeMovieGenres);
 let activeEpisodeTags = [];
+let youtubeDurationPlayer = null;
+let youtubeApiPromise = null;
+let durationRequestId = 0;
+let durationLookupTimer = null;
 
 function getMovieSortValue(movie) {
   const addedTime = Date.parse(movie?.addedAt || movie?.createdAt || '');
@@ -93,6 +97,110 @@ function syncThumbnailFromYouTube() {
   thumbInput.value = `https://i3.ytimg.com/vi/${ytId}/hqdefault.jpg`;
 }
 
+function setDurationStatus(message, isError = false) {
+  const status = document.getElementById('duration-status');
+  if (!status) return;
+  status.textContent = message;
+  status.style.color = isError ? '#ff8a8a' : '';
+}
+
+function formatVideoDuration(totalSeconds) {
+  const totalMinutes = Math.floor(Number(totalSeconds) / 60);
+  if (!Number.isFinite(totalMinutes) || totalMinutes < 0) return '';
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  return hours > 0 ? `${hours}h ${String(minutes).padStart(2, '0')}min` : `${minutes}min`;
+}
+
+function loadYouTubeIframeApi() {
+  if (window.YT?.Player) return Promise.resolve(window.YT);
+  if (youtubeApiPromise) return youtubeApiPromise;
+
+  youtubeApiPromise = new Promise((resolve, reject) => {
+    const previousReady = window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady = () => {
+      if (typeof previousReady === 'function') previousReady();
+      resolve(window.YT);
+    };
+    const script = document.createElement('script');
+    script.src = 'https://www.youtube.com/iframe_api';
+    script.async = true;
+    script.onerror = () => reject(new Error('Không tải được YouTube Player API.'));
+    document.head.appendChild(script);
+  });
+  return youtubeApiPromise;
+}
+
+function resetYouTubePlayerHost() {
+  if (youtubeDurationPlayer) {
+    youtubeDurationPlayer.destroy();
+    youtubeDurationPlayer = null;
+  }
+  let host = document.getElementById('youtube-duration-player');
+  if (!host) {
+    host = document.createElement('div');
+    host.id = 'youtube-duration-player';
+    host.hidden = true;
+    host.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(host);
+  }
+}
+
+async function syncDurationFromYouTube() {
+  const ytInput = document.getElementById('yt');
+  const durationInput = document.getElementById('duration');
+  if (!ytInput || !durationInput) return;
+
+  const videoId = extractYouTubeId(ytInput.value);
+  const requestId = ++durationRequestId;
+  if (!videoId) {
+    setDurationStatus('Dán link YouTube hợp lệ để tự động lấy thời lượng.');
+    return;
+  }
+  setDurationStatus('Đang lấy thời lượng từ YouTube...');
+
+  try {
+    const YT = await loadYouTubeIframeApi();
+    if (requestId !== durationRequestId) return;
+    resetYouTubePlayerHost();
+    youtubeDurationPlayer = new YT.Player('youtube-duration-player', {
+      width: '1', height: '1', videoId,
+      playerVars: { controls: 0, disablekb: 1, playsinline: 1 },
+      events: {
+        onReady(event) {
+          if (requestId === durationRequestId) event.target.cueVideoById(videoId);
+        },
+        onStateChange(event) {
+          if (requestId !== durationRequestId || event.data !== YT.PlayerState.CUED) return;
+          const formatted = formatVideoDuration(event.target.getDuration());
+          if (!formatted) {
+            setDurationStatus('Không đọc được thời lượng. Bạn có thể nhập tay.', true);
+            return;
+          }
+          durationInput.value = formatted;
+          setDurationStatus(`Đã tự động lấy thời lượng: ${formatted}`);
+        },
+        onError() {
+          if (requestId === durationRequestId) {
+            setDurationStatus('YouTube không cho phép đọc video này. Bạn có thể nhập thời lượng thủ công.', true);
+          }
+        }
+      }
+    });
+  } catch (error) {
+    if (requestId === durationRequestId) {
+      setDurationStatus('Không thể kết nối YouTube. Bạn có thể nhập thời lượng thủ công.', true);
+    }
+    console.warn(error);
+  }
+}
+
+function scheduleYouTubeMetadataSync() {
+  syncThumbnailFromYouTube();
+  clearTimeout(durationLookupTimer);
+  durationLookupTimer = setTimeout(syncDurationFromYouTube, 350);
+}
+
 function findDuplicateMovieByVideo(ytId, ignoredId = null) {
   const normalizedYtId = String(ytId || '').trim();
   if (!normalizedYtId) return null;
@@ -153,8 +261,8 @@ document.addEventListener('DOMContentLoaded', () => {
   setSelectedGenres(['Acción']);
   const ytInput = document.getElementById('yt');
   if (ytInput) {
-    ytInput.addEventListener('input', syncThumbnailFromYouTube);
-    ytInput.addEventListener('paste', () => setTimeout(syncThumbnailFromYouTube, 0));
+    ytInput.addEventListener('input', scheduleYouTubeMetadataSync);
+    ytInput.addEventListener('paste', () => setTimeout(scheduleYouTubeMetadataSync, 0));
   }
   renderAdminList();
 });
@@ -352,6 +460,8 @@ function resetMovieForm() {
   activeEpisodeTags = [];
   toggleEpisodesField();
   renderEpisodeTags();
+  durationRequestId++;
+  setDurationStatus('Dán link YouTube để tự động lấy thời lượng video.');
 }
 
 // Toast alerts

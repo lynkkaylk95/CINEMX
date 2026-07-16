@@ -92,7 +92,8 @@
           <div class="form-row">
             <div class="form-group">
               <label for="duration">Thời lượng / Số tập:</label>
-              <input type="text" id="duration" placeholder="VD: 2h 15phút hoặc 8 tập" required>
+              <input type="text" id="duration" placeholder="VD: 2h 15min hoặc 8 tập" required>
+              <div class="form-hint" id="duration-status" aria-live="polite">Dán link YouTube để tự động lấy thời lượng video.</div>
             </div>
           </div>
 
@@ -153,9 +154,10 @@
   </div>
 
   <div id="toast"></div>
+  <div id="youtube-duration-player" hidden aria-hidden="true"></div>
 
   <!-- Scripts -->
   <script src="js/movies.js?v=seo-20260702"></script>
-  <script src="js/admin.js?v=duplicate-link-20260711"></script>
+  <script src="js/admin.js?v=auto-duration-20260716"></script>
 </body>
 </html>
