@@ -1,6 +1,85 @@
 // Base de datos de películas y series de CineMax MX
 const MOVIES = [
   {
+    "title": "Jefe Qin, Su Esposa es Una Guerrera del Pasado",
+    "slug": "jefe-qin-su-esposa-es-una-guerrera-del-pasado",
+    "genre": "Ciencia Ficción",
+    "genres": [
+      "Ciencia Ficción",
+      "Viajes en el tiempo"
+    ],
+    "type": "Película",
+    "year": 2026,
+    "rating": 9,
+    "duration": "1h 46min",
+    "emoji": "🎬",
+    "yt": "zseMcrufe6g",
+    "thumb": "https://i3.ytimg.com/vi/zseMcrufe6g/hqdefault.jpg",
+    "desc": "Género: dramas coreanos en español, películas románticas, películas chinas, dramas coreanos en español, peliculas completas en español latino, Series de Reencarnación, Drama Histórico Chino, peliculas de viajes en el tiempo, Identidad Misteriosa y Matrimonio Relámpago, Amor a través del tiempo y espacio, Amor Por Contrato, Boda Relámpago Intencional, Acción / Aventura",
+    "episodes": [],
+    "id": 64,
+    "addedAt": "2026-07-16T09:09:40.054Z"
+  },
+  {
+    "title": "Te Amo Pero No Puedo Estar Contigo",
+    "slug": "te-amo-pero-no-puedo-estar-contigo",
+    "genre": "Romance",
+    "genres": [
+      "Romance"
+    ],
+    "type": "Película",
+    "year": 2026,
+    "rating": 8.3,
+    "duration": "2h 50min",
+    "emoji": "🎬",
+    "yt": "yYTZJ2vfTPs",
+    "thumb": "https://i3.ytimg.com/vi/yYTZJ2vfTPs/hqdefault.jpg",
+    "desc": "Actrices: Zhao Ke Chun, Zhai Yi Ying\nGénero: películas románticas, películas chinas, novelas coreanas en español, dramas coreanos en español, doramas en español latino completas, kdrama español completos, identidad misteriosa y matrimonio relámpago, cenicienta se casa con un tio guapo, peliculas completas en español latino",
+    "episodes": [],
+    "id": 63,
+    "addedAt": "2026-07-16T09:08:03.431Z"
+  },
+  {
+    "title": "Luchando por Sobrevivir",
+    "slug": "luchando-por-sobrevivir",
+    "genre": "Drama",
+    "genres": [
+      "Drama",
+      "Thriller"
+    ],
+    "type": "Película",
+    "year": 2026,
+    "rating": 8.7,
+    "duration": "2h 04min",
+    "emoji": "🎬",
+    "yt": "qxgX80Ay9-A",
+    "thumb": "https://i3.ytimg.com/vi/qxgX80Ay9-A/hqdefault.jpg",
+    "desc": "Tienda de Peliculas presenta la historia de una persona que oculta su verdadera identidad como heredero mientras enfrenta el desprecio constante de su pareja y los desafíos de una grave enfermedad. En medio de conflictos familiares y laborales, busca el apoyo necesario para sobrevivir, enfrentando traiciones que pondrán a prueba su resiliencia y su destino.\nGénero: películas románticas, películas chinas, Película de acción de artes marciales y kungfu, dramas coreanos en español, doramas en español latino completas, kdrama español completos, el gobernante ascendente, el señor dragon oculto, peliculas de accion en español, series coreanas en español, dramas chinos en español, Amor desde el Divorcio, el multimillonario oculta su identidad",
+    "episodes": [],
+    "id": 62,
+    "addedAt": "2026-07-16T09:06:39.927Z"
+  },
+  {
+    "title": "Papá CEO, Alegiste a la Mamá Equivocada",
+    "slug": "papa-ceo-alegiste-a-la-mama-equivocada",
+    "genre": "Drama",
+    "genres": [
+      "Drama",
+      "Romance"
+    ],
+    "type": "Película",
+    "year": 2025,
+    "rating": 8.7,
+    "duration": "1h 40min",
+    "emoji": "🎬",
+    "yt": "771ce160s-g",
+    "thumb": "https://i3.ytimg.com/vi/771ce160s-g/hqdefault.jpg",
+    "desc": "Tienda de Peliculas presenta el reencuentro de Che Shinian con el CEO de Grupo Chengi, Sheng Shinian, seis años después de un encuentro fortuito. Ahora, el destino los une laboralmente, mientras ella intenta ocultar que el hijo de su amiga es en realidad su propio hijo con el empresario.\nActrices: Zou Ming, Guo Yuxin\nGénero: películas románticas, películas chinas, Multimillonario se hace pasar por pobre, peliculas completas en español latino, dramas coreanos en español, cenicienta se casa con un tio guapo, el multimillonario oculta su identidad, Identidad Misteriosa y Matrimonio Relámpago, Boda Relámpago Intencional, es burlada por embarazo fuera del matrimonio",
+    "episodes": [],
+    "id": 61,
+    "addedAt": "2026-07-16T08:49:17.967Z"
+  },
+  {
     "title": "La Felicidad Nunca Llega Tarde",
     "slug": "la-felicidad-nunca-llega-tarde",
     "genre": "Familia",
@@ -682,10 +761,10 @@ const MOVIES = [
   {
     "title": "El resplandor de un padre",
     "slug": "el-resplandor-de-un-padre",
-    "genre": "Drama",
+    "genre": "Familia",
     "genres": [
-      "Drama",
-      "Thriller"
+      "Familia",
+      "Emotivo"
     ],
     "type": "Película",
     "year": 2026,
