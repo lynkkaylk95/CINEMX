@@ -27,11 +27,8 @@ const ADMIN_GENRE_LABELS = {
 };
 let currentMovies = loadSavedMovies().map(normalizeMovieGenres);
 let activeEpisodeTags = [];
-let youtubeDurationPlayer = null;
-let youtubeApiPromise = null;
 let durationRequestId = 0;
 let durationLookupTimer = null;
-let durationPollTimer = null;
 
 function getMovieSortValue(movie) {
   const addedTime = Date.parse(movie?.addedAt || movie?.createdAt || '');
@@ -107,66 +104,10 @@ function setDurationStatus(message, isError = false) {
 
 function formatVideoDuration(totalSeconds) {
   const totalMinutes = Math.floor(Number(totalSeconds) / 60);
-  if (!Number.isFinite(totalMinutes) || totalMinutes < 0) return '';
+  if (!Number.isFinite(totalMinutes) || totalMinutes <= 0) return '';
   const hours = Math.floor(totalMinutes / 60);
   const minutes = totalMinutes % 60;
   return hours > 0 ? `${hours}h ${String(minutes).padStart(2, '0')}min` : `${minutes}min`;
-}
-
-function loadYouTubeIframeApi() {
-  if (window.YT?.Player) return Promise.resolve(window.YT);
-  if (youtubeApiPromise) return youtubeApiPromise;
-
-  youtubeApiPromise = new Promise((resolve, reject) => {
-    const previousReady = window.onYouTubeIframeAPIReady;
-    window.onYouTubeIframeAPIReady = () => {
-      if (typeof previousReady === 'function') previousReady();
-      resolve(window.YT);
-    };
-    const script = document.createElement('script');
-    script.src = 'https://www.youtube.com/iframe_api';
-    script.async = true;
-    script.onerror = () => reject(new Error('Không tải được YouTube Player API.'));
-    document.head.appendChild(script);
-  });
-  return youtubeApiPromise;
-}
-
-function resetYouTubePlayerHost() {
-  if (youtubeDurationPlayer) {
-    youtubeDurationPlayer.destroy();
-    youtubeDurationPlayer = null;
-  }
-  let host = document.getElementById('youtube-duration-player');
-  if (!host) {
-    host = document.createElement('div');
-    host.id = 'youtube-duration-player';
-    host.className = 'youtube-duration-player';
-    host.setAttribute('aria-hidden', 'true');
-    document.body.appendChild(host);
-  }
-}
-
-function pollYouTubeDuration(player, requestId) {
-  clearInterval(durationPollTimer);
-  let attempts = 0;
-  durationPollTimer = setInterval(() => {
-    if (requestId !== durationRequestId) {
-      clearInterval(durationPollTimer);
-      return;
-    }
-
-    attempts++;
-    const formatted = formatVideoDuration(player.getDuration());
-    if (formatted) {
-      clearInterval(durationPollTimer);
-      document.getElementById('duration').value = formatted;
-      setDurationStatus(`Đã tự động lấy thời lượng: ${formatted}`);
-    } else if (attempts >= 40) {
-      clearInterval(durationPollTimer);
-      setDurationStatus('Không đọc được thời lượng. Bạn có thể nhập tay.', true);
-    }
-  }, 250);
 }
 
 async function syncDurationFromYouTube() {
@@ -183,26 +124,13 @@ async function syncDurationFromYouTube() {
   setDurationStatus('Đang lấy thời lượng từ YouTube...');
 
   try {
-    const YT = await loadYouTubeIframeApi();
+    const response = await fetch(`/api/youtube-duration?id=${encodeURIComponent(videoId)}`);
+    const result = await response.json();
     if (requestId !== durationRequestId) return;
-    resetYouTubePlayerHost();
-    youtubeDurationPlayer = new YT.Player('youtube-duration-player', {
-      width: '1', height: '1', videoId,
-      playerVars: { controls: 0, disablekb: 1, playsinline: 1 },
-      events: {
-        onReady(event) {
-          if (requestId === durationRequestId) {
-            event.target.cueVideoById(videoId);
-            pollYouTubeDuration(event.target, requestId);
-          }
-        },
-        onError() {
-          if (requestId === durationRequestId) {
-            setDurationStatus('YouTube không cho phép đọc video này. Bạn có thể nhập thời lượng thủ công.', true);
-          }
-        }
-      }
-    });
+    const formatted = response.ok && result.ok ? formatVideoDuration(result.seconds) : '';
+    if (!formatted) throw new Error(result.error || 'duration_unavailable');
+    durationInput.value = formatted;
+    setDurationStatus(`Đã tự động lấy thời lượng: ${formatted}`);
   } catch (error) {
     if (requestId === durationRequestId) {
       setDurationStatus('Không thể kết nối YouTube. Bạn có thể nhập thời lượng thủ công.', true);
@@ -477,7 +405,6 @@ function resetMovieForm() {
   toggleEpisodesField();
   renderEpisodeTags();
   durationRequestId++;
-  clearInterval(durationPollTimer);
   setDurationStatus('Dán link YouTube để tự động lấy thời lượng video.');
 }
 
