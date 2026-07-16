@@ -1,6 +1,106 @@
 // Base de datos de películas y series de CineMax MX
 const MOVIES = [
   {
+    "title": "La Última Esperanza del Médico Santo",
+    "slug": "la-ultima-esperanza-del-medico-santo",
+    "genre": "Drama",
+    "genres": [
+      "Drama",
+      "Thriller"
+    ],
+    "type": "Película",
+    "year": 2024,
+    "rating": 8.3,
+    "duration": "1h 44min",
+    "emoji": "🎬",
+    "yt": "pSHwBg_-its",
+    "thumb": "https://i3.ytimg.com/vi/pSHwBg_-its/hqdefault.jpg",
+    "desc": "Género: películas románticas, películas chinas, Película de acción de artes marciales y kungfu, dramas coreanos en español, doramas en español latino completas, kdrama español completos, el gobernante ascendente, Identidad Misteriosa y Matrimonio Relámpago, el señor dragon oculto, peliculas de accion en español,",
+    "episodes": [],
+    "id": 72,
+    "addedAt": "2026-07-16T09:45:05.557Z"
+  },
+  {
+    "title": "Prisión del Dragón",
+    "slug": "prision-del-dragon",
+    "genre": "Drama",
+    "genres": [
+      "Drama",
+      "Thriller"
+    ],
+    "type": "Película",
+    "year": 2026,
+    "rating": 8.1,
+    "duration": "2h 17min",
+    "emoji": "🎬",
+    "yt": "cJQ6WTXbanU",
+    "thumb": "https://i3.ytimg.com/vi/cJQ6WTXbanU/hqdefault.jpg",
+    "desc": "Tras salir de prisión, un heredero se enfrenta a la indiferencia de la familia de su cónyuge y a la arrogancia de otro pretendiente. Con el respaldo de poderosas figuras, busca demostrar su verdadero estatus y recuperar a su pareja.\n\nGénero: películas románticas, películas chinas, Multimillonario se hace pasar por pobre, dramas coreanos en español, doramas en español latino completas, kdrama español completos, el gobernante ascendente, fortunas reveladas mi esposo es poderoso, Arrepentimiento después del divorcio",
+    "episodes": [],
+    "id": 71,
+    "addedAt": "2026-07-16T09:43:59.061Z"
+  },
+  {
+    "title": "La Venganza de la Princesa Renacida",
+    "slug": "la-venganza-de-la-princesa-renacida",
+    "genre": "De época",
+    "genres": [
+      "De época",
+      "Intrigas palaciegas"
+    ],
+    "type": "Película",
+    "year": 2026,
+    "rating": 8.7,
+    "duration": "2h 32min",
+    "emoji": "🎬",
+    "yt": "dg9dY-UvyZs",
+    "thumb": "https://i3.ytimg.com/vi/dg9dY-UvyZs/hqdefault.jpg",
+    "desc": "Tienda de Peliculas presenta cómo una experta en medicina utiliza sus conocimientos para salvar al príncipe Chen de un veneno ancestral mientras planea arruinar su propio compromiso matrimonial. Ella debe enfrentar las calumnias de su familia para cambiar su destino en esta vida.\n\nGénero: dramas coreanos en español, películas románticas, películas chinas, dramas coreanos en español, peliculas completas en español latino, Series de Reencarnación, Drama Histórico Chino, peliculas de viajes en el tiempo, Identidad Misteriosa y Matrimonio Relámpago, Amor a través del tiempo y espacio, Se casa a toda prisa, Boda Relámpago Intencional",
+    "episodes": [],
+    "id": 70,
+    "addedAt": "2026-07-16T09:42:46.541Z"
+  },
+  {
+    "title": "La Esposa Muda",
+    "slug": "la-esposa-muda",
+    "genre": "Familia",
+    "genres": [
+      "Familia",
+      "Romance"
+    ],
+    "type": "Película",
+    "year": 2025,
+    "rating": 8.4,
+    "duration": "3h 12min",
+    "emoji": "🎬",
+    "yt": "DKxke3WzxCg",
+    "thumb": "https://i3.ytimg.com/vi/DKxke3WzxCg/hqdefault.jpg",
+    "desc": "Actrices: Bai Fang Wen, Yu Yin\nGénero: películas románticas, películas chinas, peliculas completas en español latino, dramas coreanos en español, La Esposa Muda del CEO, Identidad Misteriosa y Matrimonio Relámpago, Matrimonio Relámpago con un multimillonario",
+    "episodes": [],
+    "id": 69,
+    "addedAt": "2026-07-16T09:41:27.302Z"
+  },
+  {
+    "title": "El Regreso de la Heredera Perdida",
+    "slug": "el-regreso-de-la-heredera-perdida",
+    "genre": "Drama",
+    "genres": [
+      "Drama",
+      "Familia"
+    ],
+    "type": "Película",
+    "year": 2025,
+    "rating": 8.2,
+    "duration": "1h 44min",
+    "emoji": "🎬",
+    "yt": "j-ltTK6mRds",
+    "thumb": "https://i3.ytimg.com/vi/j-ltTK6mRds/hqdefault.jpg",
+    "desc": "Durante la boda, la familia de la pareja impone tradiciones humillantes y reglas estrictas para someter a la novia huérfana. Justo cuando la situación se vuelve inmanejable, un poderoso ejecutivo interviene para protegerla.\nGénero: películas románticas, películas chinas, Multimillonario se hace pasar por pobre, dramas coreanos en español, doramas en español latino completas, kdrama español completos,  , el multimillonario oculta su identidad, presidente disfrazado de pobre, Identidad Misteriosa y Matrimonio Relámpago",
+    "episodes": [],
+    "id": 68,
+    "addedAt": "2026-07-16T09:39:00.053Z"
+  },
+  {
     "title": "El Sabor del Amor Familiar",
     "slug": "el-sabor-del-amor-familiar",
     "genre": "Familia",
