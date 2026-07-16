@@ -1,6 +1,66 @@
 // Base de datos de películas y series de CineMax MX
 const MOVIES = [
   {
+    "title": "El Sabor del Amor Familiar",
+    "slug": "el-sabor-del-amor-familiar",
+    "genre": "Familia",
+    "genres": [
+      "Familia",
+      "Emotivo"
+    ],
+    "type": "Película",
+    "year": 2026,
+    "rating": 8.9,
+    "duration": "3h 32min",
+    "emoji": "🎬",
+    "yt": "lU6jEVeswyY",
+    "thumb": "https://i3.ytimg.com/vi/lU6jEVeswyY/hqdefault.jpg",
+    "desc": "Nadie sabe que recolector de basura al que humillan es padre biológico del poderoso multimillonario\nGénero: películas románticas, películas chinas, Pelicula de Accion de Artes Marciales, dramas coreanos en español, doramas en español latino completas, kdrama español completos, el gobernante ascendente, Identidad Misteriosa y Matrimonio Relámpago",
+    "episodes": [],
+    "id": 67,
+    "addedAt": "2026-07-16T09:24:19.558Z"
+  },
+  {
+    "title": "Bajo La Montaña Kunlun",
+    "slug": "bajo-la-montana-kunlun",
+    "genre": "Drama",
+    "genres": [
+      "Drama",
+      "Viajes en el tiempo"
+    ],
+    "type": "Película",
+    "year": 2025,
+    "rating": 8.2,
+    "duration": "2h 01min",
+    "emoji": "🎬",
+    "yt": "Wc9f9m4EoVQ",
+    "thumb": "https://i3.ytimg.com/vi/Wc9f9m4EoVQ/hqdefault.jpg",
+    "desc": "Tras abandonar una cumbre empresarial crucial, el sucesor de la corporación Mingyue se dirige a las montañas de Kunlun. Allí, busca finalizar un antiguo acuerdo matrimonial con la familia Ning, quienes desconocen su verdadera identidad y poder, tratándolo con desdén en medio de un banquete de compromiso.\n\n\nActrices: Bai Fang Wen\nGénero: películas románticas, películas chinas, Pelicula de Accion de Artes Marciales, dramas coreanos en español, doramas en español latino completas, kdrama español completos, el gobernante ascendente, Identidad Misteriosa y Matrimonio Relámpago, el señor dragon oculto, amanecer oculto el gobernante ascendente, cenicienta se casa con un tio guapo, doctora divina baja de la montaña",
+    "episodes": [],
+    "id": 66,
+    "addedAt": "2026-07-16T09:22:25.462Z"
+  },
+  {
+    "title": "Haz Que El CEO Sea Papá",
+    "slug": "haz-que-el-ceo-sea-papa",
+    "genre": "Romance",
+    "genres": [
+      "Romance",
+      "Thriller"
+    ],
+    "type": "Película",
+    "year": 2025,
+    "rating": 8.5,
+    "duration": "2h 09min",
+    "emoji": "🎬",
+    "yt": "iCzrWnwWUY4",
+    "thumb": "https://i3.ytimg.com/vi/iCzrWnwWUY4/hqdefault.jpg",
+    "desc": "Años después de que una boda fallida arruinara su reputación y un encuentro fortuito cambiara su vida, una mujer busca empleo en una prestigiosa empresa. Sin saberlo, el nuevo director general es la persona con quien tuvo aquel encuentro, desencadenando una serie de malentendidos laborales y personales.\n\nActrices: Bai Fang Wen\nGénero: películas románticas, películas chinas, Multimillonario se hace pasar por pobre, peliculas completas en español latino, dramas coreanos en español, Tras una noche de pasion con el ceo, Casarse primero amar después, Matrimonio instantáneo con un multimillonario, Series Romántico",
+    "episodes": [],
+    "id": 65,
+    "addedAt": "2026-07-16T09:19:00.999Z"
+  },
+  {
     "title": "Jefe Qin, Su Esposa es Una Guerrera del Pasado",
     "slug": "jefe-qin-su-esposa-es-una-guerrera-del-pasado",
     "genre": "Ciencia Ficción",
