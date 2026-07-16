@@ -4,6 +4,7 @@
 ============================================================ */
 
 const MOVIES_STORAGE_KEY = 'cinemax_movies';
+const YOUTUBE_DURATION_API = 'https://cinemaxmx.com/api/youtube-duration';
 const GENRE_ALIASES = {
   'Học đường': 'Escolar',
   'Xuy\u00EAn kh\u00F4ng': 'Viajes en el tiempo',
@@ -124,7 +125,7 @@ async function syncDurationFromYouTube() {
   setDurationStatus('Đang lấy thời lượng từ YouTube...');
 
   try {
-    const response = await fetch(`/api/youtube-duration?id=${encodeURIComponent(videoId)}`);
+    const response = await fetch(`${YOUTUBE_DURATION_API}?id=${encodeURIComponent(videoId)}`);
     const result = await response.json();
     if (requestId !== durationRequestId) return;
     const formatted = response.ok && result.ok ? formatVideoDuration(result.seconds) : '';
@@ -133,7 +134,7 @@ async function syncDurationFromYouTube() {
     setDurationStatus(`Đã tự động lấy thời lượng: ${formatted}`);
   } catch (error) {
     if (requestId === durationRequestId) {
-      setDurationStatus('Không thể kết nối YouTube. Bạn có thể nhập thời lượng thủ công.', true);
+      setDurationStatus('Không lấy được thời lượng video này. Hãy kiểm tra video có công khai hay không.', true);
     }
     console.warn(error);
   }

@@ -69,7 +69,10 @@ async function handleYouTubeDuration(url) {
       return jsonResponse({ ok: false, error: "duration_unavailable" }, { status: 404 });
     }
     return jsonResponse({ ok: true, seconds }, {
-      headers: { "cache-control": "public, max-age=86400" }
+      headers: {
+        "cache-control": "public, max-age=86400",
+        "access-control-allow-origin": "*"
+      }
     });
   } catch (error) {
     console.warn("YouTube duration lookup failed", error);
