@@ -377,10 +377,23 @@
     script.async = true;
     script.type = 'application/javascript';
     script.src = CINEMAX_POPUNDER_SRC;
-    script.onload = () => report('playPopunder', 'script-loaded', { provider: 'effectivecpmnetwork' });
-    script.onerror = () => report('playPopunder', 'script-error', { provider: 'effectivecpmnetwork' });
+    script.dataset.exoIdzone = popunder.zoneId;
+    script.dataset.exoTriggerMethod = popunder.triggerMethod;
+    script.dataset.exoTriggerClass = popunder.triggerClass;
+    script.dataset.exoFrequencyPeriod = popunder.frequencyPeriod;
+    script.dataset.exoFrequencyCount = popunder.frequencyCount;
+    script.dataset.exoPopupFallback = 'false';
+    script.dataset.exoPopupForce = 'false';
+    script.dataset.exoChromeEnabled = 'true';
+    script.dataset.exoNewTab = 'false';
+    script.dataset.exoTriggerDelay = '0';
+    script.dataset.exoCappingEnabled = 'true';
+    script.dataset.exoTcfEnabled = 'true';
+    script.dataset.exoAgegoCrossSiteEnabled = 'false';
+    script.onload = () => report('playPopunder', 'script-loaded', { provider: 'exoclick', zoneId: popunder.zoneId });
+    script.onerror = () => report('playPopunder', 'script-error', { provider: 'exoclick', zoneId: popunder.zoneId });
     document.body.appendChild(script);
-    report('playPopunder', 'armed', { provider: 'effectivecpmnetwork' });
+    report('playPopunder', 'armed', { provider: 'exoclick', zoneId: popunder.zoneId });
   }
 
   function loadSocialBar() {
