@@ -11,7 +11,7 @@ window.CINEMAX_AD_CONFIG = Object.freeze({
     exoFullpage: 'https://a.pemsrv.com/ad-provider.js',
     homeNative: 'https://pl30342251.effectivecpmnetwork.com/d0d0a44841736d86ead326116f2d0134/invoke.js',
     socialBar: 'https://pl30309365.effectivecpmnetwork.com/68/55/71/68557162785fb21a64b74f1737d7c4b8.js',
-    popunder: 'https://pl30309364.effectivecpmnetwork.com/1d/86/38/1d8638ca8e45a4479b2a0d59d09d9c0c.js'
+    popunder: 'https://a.pemsrv.com/popunder1000.js'
   },
   smartlink: {
     enabled: true,
@@ -19,6 +19,7 @@ window.CINEMAX_AD_CONFIG = Object.freeze({
   },
   placements: {
     fullpageInterstitial: { enabled: true, provider: 'exoFullpage', zoneId: '5969616', className: 'eas6a97888e33', pages: ['home'] },
+    videoSlider: { enabled: true, provider: 'exoDisplay', zoneId: '5979522', className: 'eas6a97888e31' },
     messagePopup: { enabled: true, provider: 'exoDisplay', zoneId: '5971714', className: 'eas6a97888e14', pages: ['home', 'movie'] },
     movieNative: { enabled: true, provider: 'exoDisplay', zoneId: '5973194', className: 'eas6a97888e20' },
     homeFeedNative: { enabled: true, provider: 'homeNative', containerId: 'container-d0d0a44841736d86ead326116f2d0134', pages: ['home'] },
@@ -27,7 +28,16 @@ window.CINEMAX_AD_CONFIG = Object.freeze({
     movieLeftRail: { enabled: true, provider: 'exoDisplay', zoneId: '5973188', className: 'eas6a97888e2', size: '160x600', minWidth: 1181 },
     movieRightRail: { enabled: true, provider: 'exoDisplay', zoneId: '5971764', className: 'eas6a97888e2', size: '160x600', minWidth: 1181 },
     socialBar: { enabled: true, provider: 'socialBar', pages: ['home', 'movie'] },
-    playPopunder: { enabled: true, provider: 'popunder', pages: ['home', 'movie'] }
+    playPopunder: {
+      enabled: true,
+      provider: 'popunder',
+      pages: ['movie'],
+      zoneId: '5971718',
+      triggerMethod: '2',
+      triggerClass: 'video-play-button',
+      frequencyPeriod: '60',
+      frequencyCount: '1'
+    }
   },
   formatBanners: {
     '300x250': { enabled: true, key: 'defd11363035ea0ee41c73133839e9db', width: 300, height: 250 },

@@ -364,6 +364,37 @@
     report('messagePopup', 'armed', { zoneId: zone.zoneId });
   }
 
+  function loadVideoSlider() {
+    const zone = CINEMAX_EXO_ZONES.videoSlider;
+    if (!zone?.enabled || !isEnabledOnCurrentPage(zone)) {
+      report('videoSlider', 'skipped', { reason: `disabled-on-${getPageType()}-page` });
+      return;
+    }
+    if (document.querySelector(`ins[data-zoneid="${zone.zoneId}"]`)) return;
+
+    if (!document.querySelector(`script[src="${CINEMAX_EXO_PROVIDER_SRC}"]`)) {
+      const providerScript = document.createElement('script');
+      providerScript.async = true;
+      providerScript.type = 'application/javascript';
+      providerScript.src = CINEMAX_EXO_PROVIDER_SRC;
+      providerScript.onerror = () => report('videoSlider', 'script-error', { zoneId: zone.zoneId });
+      document.body.appendChild(providerScript);
+    }
+
+    const slot = document.createElement('ins');
+    slot.className = zone.className;
+    slot.dataset.zoneid = zone.zoneId;
+    document.body.appendChild(slot);
+
+    const serveScript = document.createElement('script');
+    serveScript.text = '(AdProvider = window.AdProvider || []).push({"serve": {}});';
+    document.body.appendChild(serveScript);
+    report('videoSlider', 'armed', {
+      zoneId: zone.zoneId,
+      priority: window.matchMedia('(max-width: 768px)').matches ? 'mobile' : 'desktop'
+    });
+  }
+
   function loadPopunder() {
     const popunder = CINEMAX_EXO_ZONES.playPopunder;
     if (!popunder?.enabled || !isEnabledOnCurrentPage(popunder)) {
@@ -430,6 +461,11 @@
   onDomReady(() => safely('social bar', loadSocialBar));
   onDomReady(() => safely('message popup', loadMessagePopup));
   onDomReady(() => {
+    if (window.matchMedia('(max-width: 768px)').matches) {
+      safely('video slider', loadVideoSlider);
+    }
+  });
+  onDomReady(() => {
     const breakpoint = window.matchMedia(`(max-width: ${config.breakpoints.movieRails}px)`);
     const mobileBreakpoint = window.matchMedia('(max-width: 768px)');
     if (typeof breakpoint.addEventListener === 'function') {
@@ -438,6 +474,12 @@
     } else if (typeof breakpoint.addListener === 'function') {
       breakpoint.addListener(remountResponsiveAds);
       mobileBreakpoint.addListener(remountResponsiveAds);
+    }
+  });
+
+  afterPageLoad(() => {
+    if (!window.matchMedia('(max-width: 768px)').matches) {
+      safely('video slider', loadVideoSlider);
     }
   });
 

@@ -19,6 +19,7 @@ window.CINEMAX_AD_CONFIG = Object.freeze({
   },
   placements: {
     fullpageInterstitial: { enabled: true, provider: 'exoFullpage', zoneId: '5969616', className: 'eas6a97888e33', pages: ['home'] },
+    videoSlider: { enabled: true, provider: 'exoDisplay', zoneId: '5979522', className: 'eas6a97888e31' },
     messagePopup: { enabled: true, provider: 'exoDisplay', zoneId: '5971714', className: 'eas6a97888e14', pages: ['home', 'movie'] },
     movieNative: { enabled: true, provider: 'exoDisplay', zoneId: '5973194', className: 'eas6a97888e20' },
     homeFeedNative: { enabled: true, provider: 'homeNative', containerId: 'container-d0d0a44841736d86ead326116f2d0134', pages: ['home'] },
