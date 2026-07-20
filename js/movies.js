@@ -1,6 +1,86 @@
 // Base de datos de películas y series de CineMax MX
 const MOVIES = [
   {
+    "title": "La Espada Oculta y Afilada",
+    "slug": "la-espada-oculta-y-afilada",
+    "genre": "Acción",
+    "genres": [
+      "Acción",
+      "Thriller"
+    ],
+    "type": "Película",
+    "year": 2026,
+    "rating": 8.9,
+    "duration": "1h 45min",
+    "emoji": "🎬",
+    "yt": "LGOSSX5wMm8",
+    "thumb": "https://i3.ytimg.com/vi/LGOSSX5wMm8/hqdefault.jpg",
+    "desc": "Tras enfrentar una injusta condena, una persona forma una alianza inesperada con un enigmático recluso. Bajo su tutela, adquiere habilidades estratégicas cruciales para recuperar su vida y proteger a sus seres queridos de una poderosa organización criminal que amenaza su entorno fuera de prisión.\n\nGénero: películas románticas, películas chinas, Película de acción de artes marciales y kungfu, dramas coreanos en español, doramas en español latino completas, kdrama español completos, el gobernante ascendente, Identidad Misteriosa y Matrimonio Relámpago, el señor dragon oculto, \npeliculas de accion en español, joven encarcelado injustamente",
+    "episodes": [],
+    "id": 84,
+    "addedAt": "2026-07-20T02:45:38.620Z"
+  },
+  {
+    "title": "El Maestro Supremo",
+    "slug": "el-maestro-supremo",
+    "genre": "Acción",
+    "genres": [
+      "Acción",
+      "Ciencia Ficción"
+    ],
+    "type": "Película",
+    "year": 2026,
+    "rating": 9.2,
+    "duration": "1h 55min",
+    "emoji": "🎬",
+    "yt": "TooF1IQyoZQ",
+    "thumb": "https://i3.ytimg.com/vi/TooF1IQyoZQ/hqdefault.jpg",
+    "desc": "El despreciado Chang Shuyang, tras recuperar sus poderes, busca venganza contra quienes lo humillaron y recuperar su posición. Mientras tanto, debe probar su verdadera identidad ante su familia política y demostrar su valor frente a enemigos poderosos en Yang Cheng.\nGénero: películas románticas, películas chinas, Multimillonario se hace pasar por pobre, dramas coreanos en español, doramas en español latino completas, kdrama español completos, soy un millonario oculto, películas de acción, peliculas completas en español latino, presidente disfrazado de pobre para poner a prueba, Película de acción de artes marciales y kungfu",
+    "episodes": [],
+    "id": 83,
+    "addedAt": "2026-07-20T02:44:42.475Z"
+  },
+  {
+    "title": "Renuncia de Amor",
+    "slug": "renuncia-de-amor",
+    "genre": "Comedia",
+    "genres": [
+      "Comedia",
+      "Romance"
+    ],
+    "type": "Película",
+    "year": 2025,
+    "rating": 8.3,
+    "duration": "1h 48min",
+    "emoji": "🎬",
+    "yt": "zzPYZWhXBz8",
+    "thumb": "https://i3.ytimg.com/vi/zzPYZWhXBz8/hqdefault.jpg",
+    "desc": "Tras años de dedicación silenciosa como secretaria personal y confidente, Sia decide renunciar al darse cuenta de que nunca ocupará el lugar de la persona amada por su jefe. Mientras intenta rehacer su vida, el destino y un reencuentro inesperado cambian las prioridades de todos los involucrados.",
+    "episodes": [],
+    "id": 82,
+    "addedAt": "2026-07-20T02:42:56.459Z"
+  },
+  {
+    "title": "Traición y Libertad",
+    "slug": "traicion-y-libertad",
+    "genre": "Drama",
+    "genres": [
+      "Drama",
+      "Romance"
+    ],
+    "type": "Película",
+    "year": 2026,
+    "rating": 8.5,
+    "duration": "1h 28min",
+    "emoji": "🎬",
+    "yt": "Ih3ASbBcTlY",
+    "thumb": "https://i3.ytimg.com/vi/Ih3ASbBcTlY/hqdefault.jpg",
+    "desc": "Julieta decide poner fin a su infeliz matrimonio con Homero, quien está secretamente enamorado de su mejor amiga, Tania. Tras sufrir un accidente y enfrentar la fría indiferencia de su pareja, ella busca recuperar su libertad lejos de él.",
+    "episodes": [],
+    "id": 81,
+    "addedAt": "2026-07-20T02:41:09.859Z"
+  },
+  {
     "title": "Luz de luna sobre una estrella solitaria",
     "slug": "luz-de-luna-sobre-una-estrella-solitaria",
     "genre": "Acción",
