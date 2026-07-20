@@ -1,6 +1,167 @@
 // Base de datos de películas y series de CineMax MX
 const MOVIES = [
   {
+    "title": "Luz de luna sobre una estrella solitaria",
+    "slug": "luz-de-luna-sobre-una-estrella-solitaria",
+    "genre": "Acción",
+    "genres": [
+      "Acción",
+      "Thriller"
+    ],
+    "type": "Película",
+    "year": 2026,
+    "rating": 9.1,
+    "duration": "1h 55min",
+    "emoji": "🎬",
+    "yt": "1HAPRKuOMJk",
+    "thumb": "https://i3.ytimg.com/vi/1HAPRKuOMJk/hqdefault.jpg",
+    "desc": "Daniel sufre el desprecio de su familia y la traición de su pareja, quienes prefieren confiar en su hermano adoptivo. Tras ser encarcelado injustamente, planea su regreso con una nueva identidad para revelar la verdad. Dramas supercorto presenta esta intensa historia de venganza.",
+    "episodes": [],
+    "id": 80,
+    "addedAt": "2026-07-20T02:39:04.259Z"
+  },
+  {
+    "title": "El Dulce Sabor del Triunfo",
+    "slug": "el-dulce-sabor-del-triunfo",
+    "genre": "Comedia",
+    "genres": [
+      "Comedia",
+      "Ciencia Ficción"
+    ],
+    "type": "Película",
+    "year": 2026,
+    "rating": 8.8,
+    "duration": "1h 32min",
+    "emoji": "🎬",
+    "yt": "IukPQDZzHi0",
+    "thumb": "https://i3.ytimg.com/vi/IukPQDZzHi0/hqdefault.jpg",
+    "desc": "Esteban Parra lucha por salvar el restaurante Río Dine, enfrentándose a traiciones y un crítico culinario de alto nivel. Para evitar la ruina del legado familiar, Esteban recluta a una talentosa y audaz cocinera para competir en un intenso enfrentamiento de habilidades gastronómicas contra antiguos colegas.",
+    "episodes": [],
+    "id": 79,
+    "addedAt": "2026-07-20T02:37:31.851Z"
+  },
+  {
+    "title": "Compromiso Anulado",
+    "slug": "compromiso-anulado",
+    "genre": "Drama",
+    "genres": [
+      "Drama",
+      "Romance"
+    ],
+    "type": "Película",
+    "year": 2025,
+    "rating": 8.2,
+    "duration": "2h 42min",
+    "emoji": "🎬",
+    "yt": "waqIOOFzS80",
+    "thumb": "https://i3.ytimg.com/vi/waqIOOFzS80/hqdefault.jpg",
+    "desc": "Valeria Soto decide anular su compromiso de años tras descubrir que Diego Mendoza fingía accidentes para posponer la boda. Ahora busca sanar sus heridas físicas y emocionales lejos de la familia Mendoza. En su camino, encuentra el apoyo necesario para reconstruir su vida y recuperar su voz.",
+    "episodes": [],
+    "id": 78,
+    "addedAt": "2026-07-20T02:36:39.326Z"
+  },
+  {
+    "title": "Regreso con Sistema",
+    "slug": "regreso-con-sistema",
+    "genre": "Viajes en el tiempo",
+    "genres": [
+      "Viajes en el tiempo",
+      "De época"
+    ],
+    "type": "Película",
+    "year": 2026,
+    "rating": 8.4,
+    "duration": "1h 48min",
+    "emoji": "🎬",
+    "yt": "HOSDARj-Rkg",
+    "thumb": "https://i3.ytimg.com/vi/HOSDARj-Rkg/hqdefault.jpg",
+    "desc": "Tras viajar al pasado y activar un sistema de mejoras, una persona debe demostrar su astucia y valor para liderar una rebelión contra un canciller tiránico. En su búsqueda por salvar a su familia y derrocar el poder establecido, deberá forjar alianzas inesperadas y superar desafíos estratégicos en un mundo lleno de caos y peligros.",
+    "episodes": [],
+    "id": 77,
+    "addedAt": "2026-07-20T02:33:05.627Z"
+  },
+  {
+    "title": "De Pobre a Millonaria",
+    "slug": "de-pobre-a-millonaria",
+    "genre": "Drama",
+    "genres": [
+      "Drama",
+      "Thriller"
+    ],
+    "type": "Película",
+    "year": 2026,
+    "rating": 9.1,
+    "duration": "3h 00min",
+    "emoji": "🎬",
+    "yt": "amitsuVApY4",
+    "thumb": "https://i3.ytimg.com/vi/amitsuVApY4/hqdefault.jpg",
+    "desc": "¡Despertó una visión mágica por accidente! Pasó de ser una estudiante pobre a la mujer más rica.",
+    "episodes": [],
+    "id": 76,
+    "addedAt": "2026-07-20T02:31:35.124Z"
+  },
+  {
+    "title": "Juego de Seducción",
+    "slug": "juego-de-seduccion",
+    "genre": "Thriller",
+    "genres": [
+      "Thriller",
+      "Escolar"
+    ],
+    "type": "Película",
+    "year": 2026,
+    "rating": 8.7,
+    "duration": "1h 32min",
+    "emoji": "🎬",
+    "yt": "NEeKbK-8BwM",
+    "thumb": "https://i3.ytimg.com/vi/NEeKbK-8BwM/hqdefault.jpg",
+    "desc": "Valentina Salazar, una estudiante becada, es elegida como objetivo en un cruel juego de seducción organizado por el presidente del consejo estudiantil, Mateo Fuentes. Sin que el grupo de herederos sospeche, ella oculta una identidad poderosa mientras enfrenta las humillaciones de sus compañeros y las consecuencias de una apuesta que pretende arruinar su reputación.",
+    "episodes": [],
+    "id": 75,
+    "addedAt": "2026-07-20T02:27:34.869Z"
+  },
+  {
+    "title": "Justicia Bajo los Puños",
+    "slug": "justicia-bajo-los-punos",
+    "genre": "Acción",
+    "genres": [
+      "Acción",
+      "Thriller"
+    ],
+    "type": "Película",
+    "year": 2026,
+    "rating": 9,
+    "duration": "1h 47min",
+    "emoji": "🎬",
+    "yt": "gnuPeRTjhgg",
+    "thumb": "https://i3.ytimg.com/vi/gnuPeRTjhgg/hqdefault.jpg",
+    "desc": "Tras salir de prisión, Fernando busca un nuevo comienzo, pero se ve obligado a defender a su antiguo club de artes marciales contra poderosos rivales. En su búsqueda de justicia por la muerte de su progenitor, se enfrenta a peligrosos oponentes clandestinos.",
+    "episodes": [],
+    "id": 74,
+    "addedAt": "2026-07-20T02:18:44.230Z"
+  },
+  {
+    "title": "El Ministro Secreto de la Emperatriz",
+    "slug": "el-ministro-secreto-de-la-emperatriz",
+    "genre": "Comedia",
+    "genres": [
+      "Comedia",
+      "Viajes en el tiempo",
+      "De época"
+    ],
+    "type": "Película",
+    "year": 2025,
+    "rating": 8.7,
+    "duration": "3h 27min",
+    "emoji": "🎬",
+    "yt": "X_7ybJYE350",
+    "thumb": "https://i3.ytimg.com/vi/X_7ybJYE350/hqdefault.jpg",
+    "desc": "Un joven pobre viaja al pasado y usa ideas modernas para ayudar a Emperatriz a conquistar 5 ciudades\n\nGénero: dramas coreanos en español, películas románticas, películas chinas, dramas coreanos en español, peliculas completas en español latino, Series de Reencarnación, Drama Histórico Chino, peliculas de viajes en el tiempo, Identidad Misteriosa y Matrimonio Relámpago, Amor a través del tiempo y espacio, doctora viaja en el tiempo, Pensamientos internos, Lectura de mentes",
+    "episodes": [],
+    "id": 73,
+    "addedAt": "2026-07-16T10:01:15.654Z"
+  },
+  {
     "title": "La Última Esperanza del Médico Santo",
     "slug": "la-ultima-esperanza-del-medico-santo",
     "genre": "Drama",
