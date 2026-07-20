@@ -12,6 +12,8 @@
   const CINEMAX_SMARTLINK_URL = config.smartlink.url;
   const CINEMAX_SOCIAL_BAR_SRC = config.providers.socialBar;
   const CINEMAX_SOCIAL_BAR_ID = 'cinemax-social-bar';
+  const CINEMAX_MONETAG_POPUNDER_ID = 'cinemax-monetag-play-popunder';
+  const CINEMAX_MONETAG_PUSH_ID = 'cinemax-monetag-push';
   const CINEMAX_PLACEMENTS = config.placements;
   const CINEMAX_FORMAT_BANNERS = config.formatBanners;
   function report(placement, status, extra = {}) {
@@ -271,6 +273,43 @@
     report('socialBar', 'armed', { provider: 'effectivecpmnetwork' });
   }
 
+  function wireMonetagPlayPopunder() {
+    const placement = CINEMAX_PLACEMENTS.monetagPlayPopunder;
+    if (!placement?.enabled || !isEnabledOnCurrentPage(placement)) return;
+
+    const playButton = document.querySelector('.video-play-button');
+    if (!playButton || playButton.dataset.monetagPopunderWired === 'true') return;
+    playButton.dataset.monetagPopunderWired = 'true';
+
+    playButton.addEventListener('click', () => {
+      if (document.getElementById(CINEMAX_MONETAG_POPUNDER_ID)) return;
+      const script = document.createElement('script');
+      script.id = CINEMAX_MONETAG_POPUNDER_ID;
+      script.dataset.zone = placement.zoneId;
+      script.src = config.providers.monetagPopunder;
+      script.onload = () => report('monetagPlayPopunder', 'script-loaded', { provider: 'monetag', zoneId: placement.zoneId });
+      script.onerror = () => report('monetagPlayPopunder', 'script-error', { provider: 'monetag', zoneId: placement.zoneId });
+      document.body.appendChild(script);
+      report('monetagPlayPopunder', 'armed', { provider: 'monetag', zoneId: placement.zoneId });
+    }, { capture: true, once: true });
+  }
+
+  function loadMonetagPush() {
+    const placement = CINEMAX_PLACEMENTS.monetagPush;
+    if (!placement?.enabled || !isEnabledOnCurrentPage(placement)) return;
+    if (document.getElementById(CINEMAX_MONETAG_PUSH_ID)) return;
+
+    const script = document.createElement('script');
+    script.id = CINEMAX_MONETAG_PUSH_ID;
+    script.async = true;
+    script.dataset.cfasync = 'false';
+    script.src = config.providers.monetagPush;
+    script.onload = () => report('monetagPush', 'script-loaded', { provider: 'monetag', zoneId: placement.zoneId });
+    script.onerror = () => report('monetagPush', 'script-error', { provider: 'monetag', zoneId: placement.zoneId });
+    document.body.appendChild(script);
+    report('monetagPush', 'armed', { provider: 'monetag', zoneId: placement.zoneId });
+  }
+
   function wireSmartlinks() {
     document.querySelectorAll('#ad-top-bar a').forEach(wireSmartlinkAnchor);
 
@@ -283,6 +322,8 @@
 
   onDomReady(() => safely('smartlink wiring', wireSmartlinks));
   onDomReady(() => safely('social bar', loadSocialBar));
+  onDomReady(() => safely('Monetag play popunder', wireMonetagPlayPopunder));
+  onDomReady(() => safely('Monetag push notifications', loadMonetagPush));
   onDomReady(() => {
     const breakpoint = window.matchMedia(`(max-width: ${config.breakpoints.movieRails}px)`);
     const mobileBreakpoint = window.matchMedia('(max-width: 768px)');
