@@ -274,25 +274,20 @@
     report('socialBar', 'armed', { provider: 'effectivecpmnetwork' });
   }
 
-  function wireMonetagPlayPopunder() {
+  function loadMonetagPlayPopunder() {
     const placement = CINEMAX_PLACEMENTS.monetagPlayPopunder;
     if (!placement?.enabled || !isEnabledOnCurrentPage(placement)) return;
+    if (!document.querySelector('.video-play-button')) return;
+    if (document.getElementById(CINEMAX_MONETAG_POPUNDER_ID)) return;
 
-    const playButton = document.querySelector('.video-play-button');
-    if (!playButton || playButton.dataset.monetagPopunderWired === 'true') return;
-    playButton.dataset.monetagPopunderWired = 'true';
-
-    playButton.addEventListener('click', () => {
-      if (document.getElementById(CINEMAX_MONETAG_POPUNDER_ID)) return;
-      const script = document.createElement('script');
-      script.id = CINEMAX_MONETAG_POPUNDER_ID;
-      script.dataset.zone = placement.zoneId;
-      script.src = config.providers.monetagPopunder;
-      script.onload = () => report('monetagPlayPopunder', 'script-loaded', { provider: 'monetag', zoneId: placement.zoneId });
-      script.onerror = () => report('monetagPlayPopunder', 'script-error', { provider: 'monetag', zoneId: placement.zoneId });
-      document.body.appendChild(script);
-      report('monetagPlayPopunder', 'armed', { provider: 'monetag', zoneId: placement.zoneId });
-    }, { capture: true, once: true });
+    const script = document.createElement('script');
+    script.id = CINEMAX_MONETAG_POPUNDER_ID;
+    script.dataset.zone = placement.zoneId;
+    script.src = config.providers.monetagPopunder;
+    script.onload = () => report('monetagPlayPopunder', 'ready', { provider: 'monetag', zoneId: placement.zoneId });
+    script.onerror = () => report('monetagPlayPopunder', 'script-error', { provider: 'monetag', zoneId: placement.zoneId });
+    document.body.appendChild(script);
+    report('monetagPlayPopunder', 'loading', { provider: 'monetag', zoneId: placement.zoneId });
   }
 
   function loadMonetagPush() {
@@ -338,7 +333,7 @@
 
   onDomReady(() => safely('smartlink wiring', wireSmartlinks));
   onDomReady(() => safely('social bar', loadSocialBar));
-  onDomReady(() => safely('Monetag play popunder', wireMonetagPlayPopunder));
+  onDomReady(() => safely('Monetag play popunder', loadMonetagPlayPopunder));
   onDomReady(() => safely('Monetag push notifications', loadMonetagPush));
   onDomReady(() => safely('Monetag vignette banner', loadMonetagVignette));
   onDomReady(() => {
