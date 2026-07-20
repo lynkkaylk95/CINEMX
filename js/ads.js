@@ -10,13 +10,9 @@
   }
 
   const CINEMAX_SMARTLINK_URL = config.smartlink.url;
-  const CINEMAX_POPUNDER_SRC = config.providers.popunder;
-  const CINEMAX_POPUNDER_ID = 'cinemax-popunder';
   const CINEMAX_SOCIAL_BAR_SRC = config.providers.socialBar;
   const CINEMAX_SOCIAL_BAR_ID = 'cinemax-social-bar';
-  const CINEMAX_EXO_PROVIDER_SRC = config.providers.exoDisplay;
-  const CINEMAX_EXO_FULLPAGE_PROVIDER_SRC = config.providers.exoFullpage;
-  const CINEMAX_EXO_ZONES = config.placements;
+  const CINEMAX_PLACEMENTS = config.placements;
   const CINEMAX_FORMAT_BANNERS = config.formatBanners;
   function report(placement, status, extra = {}) {
     window.dispatchEvent(new CustomEvent('cinemax:ad-status', { detail: { placement, status, ...extra } }));
@@ -148,53 +144,6 @@
     checkForEmptyCreative(element, placement);
   }
 
-  function mountExoClickZone(element, zone, placement = 'exo-zone') {
-    if (!element || !zone || zone.enabled === false || element.dataset.exoZoneMounted === 'true') return;
-    if (isHiddenAdSlot(element)) {
-      report(placement, 'skipped', { reason: 'hidden-by-breakpoint', zoneId: zone.zoneId });
-      return;
-    }
-
-    element.dataset.exoZoneMounted = 'true';
-    element.dataset.exoZoneId = zone.zoneId;
-    if (zone.size) element.dataset.adSize = zone.size;
-    element.classList.remove('ad-clickable');
-    element.removeAttribute('role');
-    element.removeAttribute('tabindex');
-    element.removeAttribute('aria-label');
-    if (zone.size) {
-      const [width, height] = zone.size.split('x');
-      element.classList.add('ad-fixed-slot', `ad-fixed-slot--${zone.size}`);
-      element.style.setProperty('--ad-w', `${width}px`);
-      element.style.setProperty('--ad-h', `${height}px`);
-    } else {
-      element.dataset.nativeAd = 'true';
-    }
-    element.innerHTML = '';
-
-    if (!document.querySelector(`script[src="${CINEMAX_EXO_PROVIDER_SRC}"]`)) {
-      const providerScript = document.createElement('script');
-      providerScript.async = true;
-      providerScript.type = 'application/javascript';
-      providerScript.src = CINEMAX_EXO_PROVIDER_SRC;
-      providerScript.onerror = () => report(placement, 'script-error', { zoneId: zone.zoneId });
-      element.appendChild(providerScript);
-    }
-
-    const slot = document.createElement('ins');
-    slot.className = zone.className;
-    slot.dataset.zoneid = zone.zoneId;
-    slot.style.display = 'block';
-    slot.style.width = '100%';
-    slot.style.maxWidth = '100%';
-    element.appendChild(slot);
-
-    const serveScript = document.createElement('script');
-    serveScript.text = '(AdProvider = window.AdProvider || []).push({"serve": {}});';
-    element.appendChild(serveScript);
-    report(placement, 'mounted', { zoneId: zone.zoneId, size: zone.size || 'native' });
-  }
-
   function mountAdsterraNative(element, placement, native) {
     if (!element || !native?.enabled || element.dataset.homeNativeMounted === 'true') return;
     if (isHiddenAdSlot(element)) {
@@ -255,7 +204,7 @@
     });
 
     const homeRectangle = document.querySelector('.ad-zone-home-feed');
-    if (homeRectangle) mountAdsterraNative(homeRectangle, 'homeFeedNative', CINEMAX_EXO_ZONES.homeFeedNative);
+    if (homeRectangle) mountAdsterraNative(homeRectangle, 'homeFeedNative', CINEMAX_PLACEMENTS.homeFeedNative);
 
     const homeBottom = document.querySelector('.ad-zone-home-bottom');
     if (homeBottom) {
@@ -280,10 +229,6 @@
       }
     }
 
-    const movieLeftRail = document.querySelector('.movie-ad-left .movie-ad-code');
-    if (movieLeftRail) mountExoClickZone(movieLeftRail, CINEMAX_EXO_ZONES.movieLeftRail, 'movieLeftRail');
-    const movieRightRail = document.querySelector('.movie-ad-right .movie-ad-code');
-    if (movieRightRail) mountExoClickZone(movieRightRail, CINEMAX_EXO_ZONES.movieRightRail, 'movieRightRail');
   }
 
   function remountResponsiveAds() {
@@ -297,7 +242,7 @@
     const movieTarget = document.querySelector('.ad-below-player');
     if (movieTarget) {
       movieTarget.dataset.adPlacement = 'movieBelowPlayerNative';
-      mountAdsterraNative(movieTarget, 'movieBelowPlayerNative', CINEMAX_EXO_ZONES.movieBelowPlayerNative);
+      mountAdsterraNative(movieTarget, 'movieBelowPlayerNative', CINEMAX_PLACEMENTS.movieBelowPlayerNative);
       return;
     }
 
@@ -307,128 +252,8 @@
     mountFormatBanner(target, '320x50');
   }
 
-  function loadFullpageInterstitial() {
-    const zone = CINEMAX_EXO_ZONES.fullpageInterstitial;
-    if (!zone.enabled || !isEnabledOnCurrentPage(zone)) {
-      report('fullpageInterstitial', 'skipped', { reason: `disabled-on-${getPageType()}-page` });
-      return;
-    }
-
-    if (document.querySelector(`ins[data-zoneid="${zone.zoneId}"]`)) return;
-
-    if (!document.querySelector(`script[src="${CINEMAX_EXO_FULLPAGE_PROVIDER_SRC}"]`)) {
-      const providerScript = document.createElement('script');
-      providerScript.async = true;
-      providerScript.type = 'application/javascript';
-      providerScript.src = CINEMAX_EXO_FULLPAGE_PROVIDER_SRC;
-      providerScript.onerror = () => console.warn('CineMax fullpage provider failed to load.');
-      document.body.appendChild(providerScript);
-    }
-
-    const slot = document.createElement('ins');
-    slot.className = zone.className;
-    slot.dataset.zoneid = zone.zoneId;
-    document.body.appendChild(slot);
-
-    const serveScript = document.createElement('script');
-    serveScript.text = '(AdProvider = window.AdProvider || []).push({"serve": {}});';
-    document.body.appendChild(serveScript);
-    report('fullpageInterstitial', 'armed', { zoneId: zone.zoneId });
-  }
-
-  function loadMessagePopup() {
-    const zone = CINEMAX_EXO_ZONES.messagePopup;
-    if (!zone.enabled || !isEnabledOnCurrentPage(zone)) {
-      report('messagePopup', 'skipped', { reason: `disabled-on-${getPageType()}-page` });
-      return;
-    }
-    if (document.querySelector(`ins[data-zoneid="${zone.zoneId}"]`)) return;
-
-    if (!document.querySelector(`script[src="${CINEMAX_EXO_PROVIDER_SRC}"]`)) {
-      const providerScript = document.createElement('script');
-      providerScript.async = true;
-      providerScript.type = 'application/javascript';
-      providerScript.src = CINEMAX_EXO_PROVIDER_SRC;
-      providerScript.onerror = () => console.warn('CineMax message popup provider failed to load.');
-      document.body.appendChild(providerScript);
-    }
-
-    const slot = document.createElement('ins');
-    slot.className = zone.className;
-    slot.dataset.zoneid = zone.zoneId;
-    document.body.appendChild(slot);
-
-    const serveScript = document.createElement('script');
-    serveScript.text = '(AdProvider = window.AdProvider || []).push({"serve": {}});';
-    document.body.appendChild(serveScript);
-    report('messagePopup', 'armed', { zoneId: zone.zoneId });
-  }
-
-  function loadVideoSlider() {
-    const zone = CINEMAX_EXO_ZONES.videoSlider;
-    if (!zone?.enabled || !isEnabledOnCurrentPage(zone)) {
-      report('videoSlider', 'skipped', { reason: `disabled-on-${getPageType()}-page` });
-      return;
-    }
-    if (document.querySelector(`ins[data-zoneid="${zone.zoneId}"]`)) return;
-
-    if (!document.querySelector(`script[src="${CINEMAX_EXO_PROVIDER_SRC}"]`)) {
-      const providerScript = document.createElement('script');
-      providerScript.async = true;
-      providerScript.type = 'application/javascript';
-      providerScript.src = CINEMAX_EXO_PROVIDER_SRC;
-      providerScript.onerror = () => report('videoSlider', 'script-error', { zoneId: zone.zoneId });
-      document.body.appendChild(providerScript);
-    }
-
-    const slot = document.createElement('ins');
-    slot.className = zone.className;
-    slot.dataset.zoneid = zone.zoneId;
-    document.body.appendChild(slot);
-
-    const serveScript = document.createElement('script');
-    serveScript.text = '(AdProvider = window.AdProvider || []).push({"serve": {}});';
-    document.body.appendChild(serveScript);
-    report('videoSlider', 'armed', {
-      zoneId: zone.zoneId,
-      priority: window.matchMedia('(max-width: 768px)').matches ? 'mobile' : 'desktop'
-    });
-  }
-
-  function loadPopunder() {
-    const popunder = CINEMAX_EXO_ZONES.playPopunder;
-    if (!popunder?.enabled || !isEnabledOnCurrentPage(popunder)) {
-      report('playPopunder', 'skipped', { reason: `disabled-on-${getPageType()}-page` });
-      return;
-    }
-    if (document.getElementById(CINEMAX_POPUNDER_ID)) return;
-
-    const script = document.createElement('script');
-    script.id = CINEMAX_POPUNDER_ID;
-    script.async = true;
-    script.type = 'application/javascript';
-    script.src = CINEMAX_POPUNDER_SRC;
-    script.dataset.exoIdzone = popunder.zoneId;
-    script.dataset.exoTriggerMethod = popunder.triggerMethod;
-    script.dataset.exoTriggerClass = popunder.triggerClass;
-    script.dataset.exoFrequencyPeriod = popunder.frequencyPeriod;
-    script.dataset.exoFrequencyCount = popunder.frequencyCount;
-    script.dataset.exoPopupFallback = 'false';
-    script.dataset.exoPopupForce = 'false';
-    script.dataset.exoChromeEnabled = 'true';
-    script.dataset.exoNewTab = 'false';
-    script.dataset.exoTriggerDelay = '0';
-    script.dataset.exoCappingEnabled = 'true';
-    script.dataset.exoTcfEnabled = 'true';
-    script.dataset.exoAgegoCrossSiteEnabled = 'false';
-    script.onload = () => report('playPopunder', 'script-loaded', { provider: 'exoclick', zoneId: popunder.zoneId });
-    script.onerror = () => report('playPopunder', 'script-error', { provider: 'exoclick', zoneId: popunder.zoneId });
-    document.body.appendChild(script);
-    report('playPopunder', 'armed', { provider: 'exoclick', zoneId: popunder.zoneId });
-  }
-
   function loadSocialBar() {
-    const socialBar = CINEMAX_EXO_ZONES.socialBar;
+    const socialBar = CINEMAX_PLACEMENTS.socialBar;
     if (!socialBar?.enabled || !isEnabledOnCurrentPage(socialBar)) {
       report('socialBar', 'skipped', { reason: `disabled-on-${getPageType()}-page` });
       return;
@@ -457,14 +282,7 @@
   }
 
   onDomReady(() => safely('smartlink wiring', wireSmartlinks));
-  onDomReady(() => safely('popunder', loadPopunder));
   onDomReady(() => safely('social bar', loadSocialBar));
-  onDomReady(() => safely('message popup', loadMessagePopup));
-  onDomReady(() => {
-    if (window.matchMedia('(max-width: 768px)').matches) {
-      safely('video slider', loadVideoSlider);
-    }
-  });
   onDomReady(() => {
     const breakpoint = window.matchMedia(`(max-width: ${config.breakpoints.movieRails}px)`);
     const mobileBreakpoint = window.matchMedia('(max-width: 768px)');
@@ -478,17 +296,10 @@
   });
 
   afterPageLoad(() => {
-    if (!window.matchMedia('(max-width: 768px)').matches) {
-      safely('video slider', loadVideoSlider);
-    }
-  });
-
-  afterPageLoad(() => {
     if (window.__cinemaxAdsMounted) return;
     window.__cinemaxAdsMounted = true;
 
     safely('native banner', loadNativeBanner);
     safely('format banners', mountAllFormatBanners);
-    safely('fullpage interstitial', loadFullpageInterstitial);
   });
 })();
