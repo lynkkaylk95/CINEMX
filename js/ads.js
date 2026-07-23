@@ -12,7 +12,6 @@
   const CINEMAX_SMARTLINK_URL = config.smartlink.url;
   const CINEMAX_SOCIAL_BAR_SRC = config.providers.socialBar;
   const CINEMAX_SOCIAL_BAR_ID = 'cinemax-social-bar';
-  const CINEMAX_MONETAG_POPUNDER_ID = 'cinemax-monetag-play-popunder';
   const CINEMAX_MONETAG_PUSH_ID = 'cinemax-monetag-push';
   const CINEMAX_MONETAG_VIGNETTE_ID = 'cinemax-monetag-vignette';
   const CINEMAX_PLACEMENTS = config.placements;
@@ -274,22 +273,6 @@
     report('socialBar', 'armed', { provider: 'effectivecpmnetwork' });
   }
 
-  function loadMonetagPlayPopunder() {
-    const placement = CINEMAX_PLACEMENTS.monetagPlayPopunder;
-    if (!placement?.enabled || !isEnabledOnCurrentPage(placement)) return;
-    if (!document.querySelector('.video-play-button')) return;
-    if (document.getElementById(CINEMAX_MONETAG_POPUNDER_ID)) return;
-
-    const script = document.createElement('script');
-    script.id = CINEMAX_MONETAG_POPUNDER_ID;
-    script.dataset.zone = placement.zoneId;
-    script.src = config.providers.monetagPopunder;
-    script.onload = () => report('monetagPlayPopunder', 'ready', { provider: 'monetag', zoneId: placement.zoneId });
-    script.onerror = () => report('monetagPlayPopunder', 'script-error', { provider: 'monetag', zoneId: placement.zoneId });
-    document.body.appendChild(script);
-    report('monetagPlayPopunder', 'loading', { provider: 'monetag', zoneId: placement.zoneId });
-  }
-
   function loadMonetagPush() {
     const placement = CINEMAX_PLACEMENTS.monetagPush;
     if (!placement?.enabled || !isEnabledOnCurrentPage(placement)) return;
@@ -333,7 +316,6 @@
 
   onDomReady(() => safely('smartlink wiring', wireSmartlinks));
   onDomReady(() => safely('social bar', loadSocialBar));
-  onDomReady(() => safely('Monetag play popunder', loadMonetagPlayPopunder));
   onDomReady(() => safely('Monetag push notifications', loadMonetagPush));
   onDomReady(() => safely('Monetag vignette banner', loadMonetagVignette));
   onDomReady(() => {
