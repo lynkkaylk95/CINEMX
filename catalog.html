@@ -22,7 +22,7 @@
       <a href="/genero/accion">Acción</a>
       <a href="/genero/series">Series</a>
     </nav>
-    <a class="search-link" href="/?search=open" aria-label="Buscar">⌕ <span>Buscar</span></a>
+    <a class="search-link" href="/buscar" aria-label="Buscar"><i class="search-icon" aria-hidden="true"></i><span>Buscar</span></a>
   </header>
 
   <main>
@@ -30,6 +30,11 @@
       <div class="eyebrow">COLECCIÓN CINEMAX</div>
       <h1 id="catalog-title">Películas para ti</h1>
       <p id="catalog-copy">Encuentra una historia para cada momento.</p>
+      <form class="catalog-search" id="catalog-search" role="search" hidden>
+        <i class="search-icon" aria-hidden="true"></i>
+        <input id="catalog-search-input" type="search" placeholder="Busca una película o serie…" autocomplete="off" aria-label="Buscar películas y series">
+        <button type="submit">Buscar</button>
+      </form>
       <div class="filter-strip" aria-label="Explorar por género">
         <a href="/genero/romance">Romance</a>
         <a href="/genero/drama">Drama</a>
@@ -69,7 +74,7 @@
     <a href="/">⌂<span>Inicio</span></a>
     <a class="active" href="/genero/romance">▦<span>Explorar</span></a>
     <a href="/ano/2026">◷<span>Nuevas</span></a>
-    <a href="/?search=open">⌕<span>Buscar</span></a>
+    <a href="/buscar"><i class="search-icon" aria-hidden="true"></i><span>Buscar</span></a>
   </nav>
 
   <footer>© 2026 CineMax MX · Películas y series en español latino</footer>

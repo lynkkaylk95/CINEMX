@@ -23,23 +23,28 @@
   const yearMatch = path.match(/\/ano\/(\d{4})/);
   const selectedGenre = genreMatch ? genreMatch[1] : '';
   const selectedYear = yearMatch ? Number(yearMatch[1]) : 0;
+  const searchMode = /^\/buscar\/?$/.test(path);
+  let searchQuery = new URLSearchParams(location.search).get('q')?.trim() || '';
   const prettyGenre = selectedGenre
     ? selectedGenre.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
     : '';
 
-  let list = source.filter(movie => {
+  const baseList = source.filter(movie => {
     if (selectedYear) return Number(movie.year) === selectedYear;
     if (!selectedGenre) return true;
     if (selectedGenre === 'series') return String(movie.type).toLowerCase() === 'serie' || genres(movie).some(g => slugify(g) === 'series');
     return genres(movie).some(g => slugify(g) === selectedGenre);
   });
+  let list = baseList;
 
-  const title = selectedYear ? `Películas de ${selectedYear}` : (prettyGenre || 'Todas las películas');
+  const title = searchMode ? 'Buscar en CineMax' : selectedYear ? `Películas de ${selectedYear}` : (prettyGenre || 'Todas las películas');
   document.getElementById('catalog-title').textContent = title;
-  document.getElementById('catalog-copy').textContent = selectedYear
+  document.getElementById('catalog-copy').textContent = searchMode
+    ? 'Encuentra rápidamente tu próxima película o serie.'
+    : selectedYear
     ? `Estrenos y favoritas publicadas en ${selectedYear}, reunidas en un solo lugar.`
     : `Historias de ${prettyGenre.toLowerCase()} seleccionadas para ver cuando quieras.`;
-  document.title = `${title} en español latino — CineMax MX`;
+  document.title = `${title} — CineMax MX`;
   document.getElementById('meta-desc').content = `Mira ${title.toLowerCase()} en español latino en CineMax MX.`;
   document.querySelectorAll('.filter-strip a,.year-strip a').forEach(a => {
     const active = selectedYear ? a.textContent.trim() === String(selectedYear) : a.getAttribute('href')?.endsWith(`/${selectedGenre}`);
@@ -59,8 +64,8 @@
     </a>`;
   }
 
-  function ad(index) {
-    const video = (index / 9) % 2 === 0;
+  function ad(sequence) {
+    const video = sequence % 2 === 0;
     return `<aside class="feed-ad ${video ? 'feed-ad-video' : 'feed-ad-native'}" aria-label="Publicidad">
       <span class="ad-label">PUBLICIDAD</span>
       <div class="ad-visual">${video ? '<span class="ad-play">▶</span><small>Video patrocinado</small>' : '<span>Contenido recomendado</span><strong>Descubre una oferta elegida para ti</strong>'}</div>
@@ -68,19 +73,60 @@
     </aside>`;
   }
 
+  function getAdInterval() {
+    if (matchMedia('(max-width: 640px)').matches) return 6;
+    if (matchMedia('(max-width: 1000px)').matches) return 12;
+    return 18;
+  }
+
+  function applySearch() {
+    const query = slugify(searchQuery);
+    list = !query ? baseList : baseList.filter(movie => slugify([
+      movie.title, movie.desc, movie.type, movie.year, ...genres(movie)
+    ].join(' ')).includes(query));
+  }
+
   function render(sort) {
+    applySearch();
     const sorted = [...list].sort((a, b) => sort === 'newest'
       ? Number(b.year) - Number(a.year)
       : sort === 'rating' ? Number(b.rating) - Number(a.rating) : Number(b.id) - Number(a.id));
     const chunks = [];
+    const adInterval = getAdInterval();
     sorted.forEach((movie, index) => {
       chunks.push(card(movie));
-      if ((index + 1) % 9 === 0 && index < sorted.length - 1) chunks.push(ad(index + 1));
+      if ((index + 1) % adInterval === 0 && index < sorted.length - 1) chunks.push(ad((index + 1) / adInterval));
     });
     document.getElementById('catalog-feed').innerHTML = chunks.join('');
     document.getElementById('result-count').textContent = sorted.length;
     document.getElementById('empty-state').hidden = sorted.length > 0;
   }
+  if (searchMode) {
+    const form = document.getElementById('catalog-search');
+    const input = document.getElementById('catalog-search-input');
+    form.hidden = false;
+    input.value = searchQuery;
+    input.addEventListener('input', () => {
+      searchQuery = input.value.trim();
+      history.replaceState({}, '', searchQuery ? `/buscar?q=${encodeURIComponent(searchQuery)}` : '/buscar');
+      render(document.getElementById('sort-select').value);
+    });
+    form.addEventListener('submit', event => {
+      event.preventDefault();
+      searchQuery = input.value.trim();
+      render(document.getElementById('sort-select').value);
+    });
+    document.querySelector('.mobile-dock a:last-child')?.classList.add('active');
+    setTimeout(() => input.focus(), 80);
+  }
   document.getElementById('sort-select').addEventListener('change', event => render(event.target.value));
+  let lastInterval = getAdInterval();
+  addEventListener('resize', () => {
+    const interval = getAdInterval();
+    if (interval !== lastInterval) {
+      lastInterval = interval;
+      render(document.getElementById('sort-select').value);
+    }
+  });
   render('popular');
 })();

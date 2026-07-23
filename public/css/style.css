@@ -84,6 +84,26 @@ ul { list-style: none; }
   color: var(--text2); font-size: 17px; transition: var(--tr);
 }
 #search-toggle:hover { color: var(--white); background: rgba(255,255,255,.08); }
+.ui-search-icon {
+  display: block;
+  width: 18px;
+  height: 18px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+  position: relative;
+}
+.ui-search-icon::after {
+  content: "";
+  position: absolute;
+  width: 7px;
+  height: 2px;
+  right: -5px;
+  bottom: -2px;
+  border-radius: 2px;
+  background: currentColor;
+  transform: rotate(45deg);
+  transform-origin: left center;
+}
 #search-box {
   position: absolute; right: 34px;
   width: 0; opacity: 0; overflow: hidden;

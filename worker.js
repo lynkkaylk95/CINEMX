@@ -468,7 +468,7 @@ export default {
       return serveMovieShell(request, env, movie, "/movie.html");
     }
 
-    if (/^\/ano\/\d{4}\/?$/.test(url.pathname) || /^\/genero\/[^/]+\/?$/.test(url.pathname)) {
+    if (/^\/ano\/\d{4}\/?$/.test(url.pathname) || /^\/genero\/[^/]+\/?$/.test(url.pathname) || /^\/buscar\/?$/.test(url.pathname)) {
       const catalogUrl = new URL("/catalog.html", request.url);
       return env.ASSETS.fetch(new Request(catalogUrl, { method: "GET", headers: request.headers }));
     }
