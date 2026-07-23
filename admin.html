@@ -14,7 +14,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=admin-filters-20260723">
+  <link rel="stylesheet" href="css/style.css?v=admin-view-fix-20260723">
 </head>
 <body>
 
@@ -40,63 +40,62 @@
       <!-- Form Card -->
       <div class="admin-form-card">
         <h2 id="form-title">Phim / Series Mới</h2>
+        <p class="admin-form-intro">Điền thông tin theo từng nhóm bên dưới. Các trường có dấu * là bắt buộc.</p>
         <form id="movie-form" onsubmit="return false;">
           <input type="hidden" id="movie-id">
 
+          <div class="admin-form-section-title"><span>1</span> Thông tin cơ bản</div>
           <div class="form-group">
-            <label for="title">Tiêu đề:</label>
+            <label for="title">Tiêu đề <em>*</em></label>
             <input type="text" id="title" placeholder="VD: Vương Triều Cuối Cùng" required>
           </div>
 
-          <div class="form-row">
+          <div class="form-row form-row-three">
             <div class="form-group">
-              <label>Thể loại:</label>
-              <div class="genre-check-list" id="genre-options">
-                <label class="genre-check"><input type="checkbox" name="genres" value="Acción"> <span>Hành động</span></label>
-                <label class="genre-check"><input type="checkbox" name="genres" value="Comedia"> <span>Hài hước</span></label>
-                <label class="genre-check"><input type="checkbox" name="genres" value="Drama"> <span>Chính kịch</span></label>
-                <label class="genre-check"><input type="checkbox" name="genres" value="Familia"> <span>Gia đình</span></label>
-                <label class="genre-check"><input type="checkbox" name="genres" value="Emotivo"> <span>Cảm động</span></label>
-                <label class="genre-check"><input type="checkbox" name="genres" value="Ciencia Ficción"> <span>Viễn tưởng</span></label>
-                <label class="genre-check"><input type="checkbox" name="genres" value="Romance"> <span>Lãng mạn</span></label>
-                <label class="genre-check"><input type="checkbox" name="genres" value="Thriller"> <span>Gây cấn</span></label>
-                <label class="genre-check"><input type="checkbox" name="genres" value="Series"> <span>Phim bộ</span></label>
-                <label class="genre-check"><input type="checkbox" name="genres" value="Escolar"> <span>Học đường</span></label>
-                <label class="genre-check"><input type="checkbox" name="genres" value="Viajes en el tiempo"> <span>Xuyên không</span></label>
-                <label class="genre-check"><input type="checkbox" name="genres" value="De época"> <span>Cổ trang</span></label>
-                <label class="genre-check"><input type="checkbox" name="genres" value="Intrigas palaciegas"> <span>Cung đấu</span></label>
-              </div>
-              <div class="form-hint">Có thể chọn nhiều thể loại cho cùng một phim.</div>
-            </div>
-            <div class="form-group">
-              <label for="type">Loại:</label>
+              <label for="type">Loại <em>*</em></label>
               <select id="type" onchange="toggleEpisodesField()">
                 <option value="Película">Phim lẻ (Película)</option>
                 <option value="Serie">Phim bộ (Serie)</option>
               </select>
             </div>
-          </div>
-
-          <div class="form-row">
             <div class="form-group">
-              <label for="year">Năm phát hành:</label>
+              <label for="year">Năm phát hành <em>*</em></label>
               <input type="number" id="year" placeholder="2026" value="2026" required>
             </div>
             <div class="form-group">
-              <label for="rating">Đánh giá (⭐):</label>
+              <label for="rating">Đánh giá ⭐ <em>*</em></label>
               <input type="number" id="rating" placeholder="8.5" step="0.1" min="1" max="10" value="8.5" required>
             </div>
           </div>
 
-          <div class="form-row">
-            <div class="form-group">
-              <label for="duration">Thời lượng / Số tập:</label>
-              <input type="text" id="duration" placeholder="VD: 2h 15phút hoặc 8 tập" required>
-            </div>
+          <div class="form-group">
+            <label for="duration">Thời lượng / Số tập <em>*</em></label>
+            <input type="text" id="duration" placeholder="VD: 2h 15 phút hoặc 8 tập" required>
           </div>
 
           <div class="form-group">
-            <label for="yt">Link Video YouTube:</label>
+            <label>Thể loại <em>*</em></label>
+            <div class="genre-check-list" id="genre-options">
+              <label class="genre-check"><input type="checkbox" name="genres" value="Acción"> <span>Hành động</span></label>
+              <label class="genre-check"><input type="checkbox" name="genres" value="Comedia"> <span>Hài hước</span></label>
+              <label class="genre-check"><input type="checkbox" name="genres" value="Drama"> <span>Chính kịch</span></label>
+              <label class="genre-check"><input type="checkbox" name="genres" value="Familia"> <span>Gia đình</span></label>
+              <label class="genre-check"><input type="checkbox" name="genres" value="Emotivo"> <span>Cảm động</span></label>
+              <label class="genre-check"><input type="checkbox" name="genres" value="Ciencia Ficción"> <span>Viễn tưởng</span></label>
+              <label class="genre-check"><input type="checkbox" name="genres" value="Romance"> <span>Lãng mạn</span></label>
+              <label class="genre-check"><input type="checkbox" name="genres" value="Thriller"> <span>Gây cấn</span></label>
+              <label class="genre-check"><input type="checkbox" name="genres" value="Series"> <span>Phim bộ</span></label>
+              <label class="genre-check"><input type="checkbox" name="genres" value="Escolar"> <span>Học đường</span></label>
+              <label class="genre-check"><input type="checkbox" name="genres" value="Viajes en el tiempo"> <span>Xuyên không</span></label>
+              <label class="genre-check"><input type="checkbox" name="genres" value="De época"> <span>Cổ trang</span></label>
+              <label class="genre-check"><input type="checkbox" name="genres" value="Intrigas palaciegas"> <span>Cung đấu</span></label>
+            </div>
+            <div class="form-hint">Có thể chọn nhiều thể loại cho cùng một phim.</div>
+          </div>
+
+          <div class="admin-form-section-title"><span>2</span> Video và ảnh bìa</div>
+          <div class="form-group">
+            <label for="yt">Link Video YouTube <em>*</em></label>
             <input type="text" id="yt" placeholder="VD: https://www.youtube.com/watch?v=RWVu58ucAwk" required>
             <div class="form-hint">Có thể dán link YouTube đầy đủ, link youtu.be, Shorts, Embed hoặc chỉ ID video.</div>
           </div>
@@ -116,18 +115,19 @@
             <div class="admin-ep-wrap" id="admin-ep-container"></div>
           </div>
 
+          <div class="admin-form-section-title"><span>3</span> Nội dung phim</div>
           <div class="form-group">
-            <label for="desc">Mô tả / Tóm tắt nội dung:</label>
+            <label for="desc">Mô tả / Tóm tắt nội dung <em>*</em></label>
             <textarea id="desc" placeholder="Nhập tóm tắt nội dung phim..." required></textarea>
           </div>
 
           <div class="admin-btns">
-            <button type="button" class="btn-save" id="btn-submit" onclick="saveMovie()">Lưu phim</button>
-            <button type="button" class="btn-reset" onclick="resetMovieForm()">Xóa form</button>
+            <button type="button" class="btn-save" id="btn-submit" onclick="saveMovie()">✓ Lưu phim</button>
+            <button type="button" class="btn-reset" onclick="resetMovieForm()">↻ Xóa form</button>
           </div>
         </form>
 
-        <div style="margin-top: 24px; border-top: 1px solid var(--border); padding-top: 18px; display: flex; gap: 8px; flex-wrap: wrap;">
+        <div class="admin-export-row">
           <button type="button" class="btn-export" onclick="exportMoviesJS()">💾 Lưu và Xuất file movies.js</button>
         </div>
       </div>
@@ -154,8 +154,8 @@
             </label>
             <label class="admin-filter-field">
               <span>Lượt xem</span>
-              <select id="admin-view-filter" onchange="renderAdminList()">
-                <option value="">Mặc định</option>
+              <select id="admin-view-filter" onchange="renderAdminList()" disabled>
+                <option value="">Đang tải lượt xem...</option>
                 <option value="desc">Cao đến thấp</option>
                 <option value="asc">Thấp đến cao</option>
               </select>
@@ -175,6 +175,6 @@
   <div id="toast"></div>
   <!-- Scripts -->
   <script src="js/movies.js?v=seo-20260702"></script>
-  <script src="js/admin.js?v=admin-filters-20260723"></script>
+  <script src="js/admin.js?v=admin-view-fix-20260723"></script>
 </body>
 </html>

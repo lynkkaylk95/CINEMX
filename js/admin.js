@@ -4,6 +4,7 @@
 ============================================================ */
 
 const MOVIES_STORAGE_KEY = 'cinemax_movies';
+const ADMIN_VIEWS_API = 'https://cinemaxmx.com/api/views';
 const GENRE_ALIASES = {
   'Học đường': 'Escolar',
   'Xuy\u00EAn kh\u00F4ng': 'Viajes en el tiempo',
@@ -28,6 +29,7 @@ const ADMIN_GENRE_LABELS = {
 let currentMovies = loadSavedMovies().map(normalizeMovieGenres);
 let activeEpisodeTags = [];
 let adminMovieViewCounts = {};
+let adminViewsLoaded = false;
 
 function getMovieSortValue(movie) {
   const addedTime = Date.parse(movie?.addedAt || movie?.createdAt || '');
@@ -133,6 +135,7 @@ function formatViewNumber(value) {
 async function loadAdminMovieViews() {
   const slugs = [...new Set(currentMovies.map(getAdminMovieSlug).filter(Boolean))];
   if (!slugs.length) return;
+  const viewFilter = document.getElementById('admin-view-filter');
 
   try {
     const batches = [];
@@ -140,16 +143,27 @@ async function loadAdminMovieViews() {
       batches.push(slugs.slice(index, index + 80));
     }
     const results = await Promise.all(batches.map(async batch => {
-      const response = await fetch(`/api/views?slugs=${encodeURIComponent(batch.join(','))}`, {
+      const response = await fetch(`${ADMIN_VIEWS_API}?slugs=${encodeURIComponent(batch.join(','))}`, {
         headers: { Accept: 'application/json' }
       });
       if (!response.ok) throw new Error(`Views API: ${response.status}`);
       return response.json();
     }));
     adminMovieViewCounts = Object.assign({}, ...results.map(data => data.views || {}));
+    adminViewsLoaded = true;
+    if (viewFilter) {
+      viewFilter.disabled = false;
+      viewFilter.options[0].textContent = 'Mặc định';
+    }
     renderAdminList();
   } catch (error) {
     console.warn('Không thể tải lượt xem phim.', error);
+    if (viewFilter) {
+      viewFilter.disabled = true;
+      viewFilter.value = '';
+      viewFilter.options[0].textContent = 'Không tải được lượt xem';
+    }
+    renderAdminList();
   }
 }
 
@@ -317,7 +331,7 @@ function renderAdminList(searchQuery = '') {
         </div>
         <div class="admin-movie-extra">
           <span>Ngày thêm: <strong>${escapeHTML(formatMovieAddedDate(m))}</strong></span>
-          <span>Lượt xem: <strong>${escapeHTML(formatViewNumber(views))}</strong></span>
+          <span>Lượt xem: <strong>${adminViewsLoaded ? escapeHTML(formatViewNumber(views)) : 'Đang tải...'}</strong></span>
         </div>
       </div>
       <div class="admin-movie-actions">
