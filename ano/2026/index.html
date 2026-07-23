@@ -1,480 +1,86 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es-MX">
 <head>
-  <meta charset="UTF-8">
-  <link rel="icon" href="/favicon.ico" sizes="any">
-  <link rel="icon" type="image/png" href="/favicon-48x48.png" sizes="48x48">
-  <link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96">
-  <link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180">
-  <link rel="manifest" href="/site.webmanifest">
-  <base href="/">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-  <meta name="description" id="meta-desc" content="Mira películas y series de 2026 en español latino en CineMax MX. Estrenos, dramas, romance, acción y títulos populares.">
-  <meta name="robots" content="index, follow">
-  <meta name="theme-color" content="#0a0a0f">
-  <link rel="canonical" id="canonical-link" href="https://cinemaxmx.com/ano/2026">
-  <meta property="og:type" content="website">
-  <meta property="og:site_name" content="CineMax MX">
-  <meta property="og:title" id="og-title" content="Películas 2026 en español latino - CineMax MX">
-  <meta property="og:description" id="og-desc" content="Mira películas y series de 2026 en español latino en CineMax MX. Estrenos, dramas, romance, acción y títulos populares.">
-  <meta property="og:url" id="og-url" content="https://cinemaxmx.com/ano/2026">
-  <meta property="og:image" id="og-image" content="https://i3.ytimg.com/vi/Qb-2xKrPsP0/maxresdefault.jpg">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" id="twitter-title" content="Películas 2026 en español latino - CineMax MX">
-  <meta name="twitter:description" id="twitter-desc" content="Mira películas y series de 2026 en español latino en CineMax MX. Estrenos, dramas, romance, acción y títulos populares.">
-  <meta name="twitter:image" id="twitter-image" content="https://i3.ytimg.com/vi/Qb-2xKrPsP0/maxresdefault.jpg">
-  <title>Películas 2026 en español latino - CineMax MX</title>
-  <script type="application/ld+json" id="structured-data"></script>
-
-  <!-- Google Analytics -->
-  <script src="js/analytics.js"></script>
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-55GL8N8TFV"></script>
-
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#09090b">
+  <meta name="description" id="meta-desc" content="Explora películas y series en español latino por género y año.">
+  <link rel="canonical" id="canonical-link" href="https://cinemaxmx.com/">
+  <title>Colección — CineMax MX</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=right-rail-20260713">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/discovery.css?v=20260724-layout2">
 </head>
 <body>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="CineMax MX, inicio">CINE<span>MAX</span></a>
+    <nav class="desktop-nav" aria-label="Navegación principal">
+      <a href="/">Inicio</a>
+      <a href="/genero/romance">Romance</a>
+      <a href="/genero/drama">Drama</a>
+      <a href="/genero/accion">Acción</a>
+      <a href="/genero/series">Series</a>
+    </nav>
+    <a class="search-link" href="/buscar" aria-label="Buscar"><i class="search-icon" aria-hidden="true"></i><span>Buscar</span></a>
+  </header>
 
-  <!-- Adsterra Smartlink - Top Bar -->
-  <div id="ad-top-bar">
-    🎬 <strong>CineMax MX</strong> &nbsp;|&nbsp; Mira miles de títulos gratis &nbsp;|&nbsp;
-    <a href="#" onclick="showToast('¡Oferta Adsterra Smartlink!'); return false;">Ver oferta exclusiva →</a>
-  </div>
-
-  <!-- Navbar -->
-  <nav id="navbar">
-    <div class="nav-logo" onclick="window.location.href='index.html'">CINE<span>MAX</span></div>
-
-    <div class="nav-links">
-      <a href="index.html" class="active" onclick="filterByGenre('Todos'); return false;">Inicio</a>
-      <a href="about.html">Sobre Nosotros</a>
-      <a href="index.html?genre=Acci%C3%B3n" onclick="filterByGenre('Acción'); return false;">Acción</a>
-      <a href="index.html?genre=Comedia" onclick="filterByGenre('Comedia'); return false;">Comedia</a>
-      <a href="index.html?genre=Drama" onclick="filterByGenre('Drama'); return false;">Drama</a>
-      <a href="index.html?genre=Familia" onclick="filterByGenre('Familia'); return false;">Familia</a>
-      <a href="index.html?genre=Emotivo" onclick="filterByGenre('Emotivo'); return false;">Emotivo</a>
-      <a href="index.html?genre=Series" onclick="filterByGenre('Series'); return false;">Series</a>
-      <a href="index.html?genre=Escolar" onclick="filterByGenre('Escolar'); return false;">Escolar</a>
-      <a href="index.html?genre=Viajes%20en%20el%20tiempo" onclick="filterByGenre('Viajes en el tiempo'); return false;">Viajes en el tiempo</a>
-      <a href="index.html?genre=De%20%C3%A9poca" onclick="filterByGenre('De época'); return false;">De época</a>
-      <a href="index.html?genre=Intrigas%20palaciegas" onclick="filterByGenre('Intrigas palaciegas'); return false;">Intrigas palaciegas</a>
-    </div>
-
-    <div class="nav-right">
-      <div class="nav-search-wrap">
-        <div id="search-box">
-          <input type="search" id="search-input" placeholder="Buscar película..." autocomplete="off">
-        </div>
-        <button id="search-toggle" onclick="toggleSearch()" aria-label="Buscar">🔍</button>
+  <main>
+    <section class="catalog-hero">
+      <div class="eyebrow">COLECCIÓN CINEMAX</div>
+      <h1 id="catalog-title">Películas para ti</h1>
+      <p id="catalog-copy">Encuentra una historia para cada momento.</p>
+      <form class="catalog-search" id="catalog-search" role="search" hidden>
+        <i class="search-icon" aria-hidden="true"></i>
+        <input id="catalog-search-input" type="search" placeholder="Busca una película o serie…" autocomplete="off" aria-label="Buscar películas y series">
+        <button type="submit">Buscar</button>
+      </form>
+      <div class="filter-strip" aria-label="Explorar por género">
+        <a href="/genero/romance">Romance</a>
+        <a href="/genero/drama">Drama</a>
+        <a href="/genero/comedia">Comedia</a>
+        <a href="/genero/thriller">Thriller</a>
+        <a href="/genero/familia">Familia</a>
+        <a href="/genero/series">Series</a>
       </div>
-      <button id="hamburger" onclick="toggleMenu()" aria-label="Menú">
-        <span></span><span></span><span></span>
-      </button>
-    </div>
-  </nav>
-
-  <!-- Mobile Menu -->
-  <div id="mobile-menu">
-    <a href="index.html" onclick="filterByGenre('Todos'); closeMenu(); return false;">🏠 Inicio</a>
-    <a href="about.html" onclick="closeMenu()">Sobre Nosotros</a>
-    <a href="index.html?genre=Acci%C3%B3n" onclick="filterByGenre('Acción'); closeMenu(); return false;">💥 Acción</a>
-    <a href="index.html?genre=Comedia" onclick="filterByGenre('Comedia'); closeMenu(); return false;">😂 Comedia</a>
-    <a href="index.html?genre=Drama" onclick="filterByGenre('Drama'); closeMenu(); return false;">🎭 Drama</a>
-    <a href="index.html?genre=Familia" onclick="filterByGenre('Familia'); closeMenu(); return false;">Familia</a>
-    <a href="index.html?genre=Emotivo" onclick="filterByGenre('Emotivo'); closeMenu(); return false;">Emotivo</a>
-    <a href="index.html?genre=Ciencia%20Ficci%C3%B3n" onclick="filterByGenre('Ciencia Ficción'); closeMenu(); return false;">🚀 Ciencia Ficción</a>
-    <a href="index.html?genre=Romance" onclick="filterByGenre('Romance'); closeMenu(); return false;">💖 Romance</a>
-    <a href="index.html?genre=Thriller" onclick="filterByGenre('Thriller'); closeMenu(); return false;">🕵️ Thriller</a>
-    <a href="index.html?genre=Series" onclick="filterByGenre('Series'); closeMenu(); return false;">📺 Series</a>
-    <a href="index.html?genre=Escolar" onclick="filterByGenre('Escolar'); closeMenu(); return false;">🏫 Escolar</a>
-    <a href="index.html?genre=Viajes%20en%20el%20tiempo" onclick="filterByGenre('Viajes en el tiempo'); closeMenu(); return false;">⏳ Viajes en el tiempo</a>
-    <a href="index.html?genre=De%20%C3%A9poca" onclick="filterByGenre('De época'); closeMenu(); return false;">👘 De época</a>
-    <a href="index.html?genre=Intrigas%20palaciegas" onclick="filterByGenre('Intrigas palaciegas'); closeMenu(); return false;">⚔️ Intrigas palaciegas</a>
-    <div id="mob-search">
-      <input type="search" id="mob-search-input" placeholder="🔍 Buscar película o serie..." oninput="handleSearch(this.value)" autocomplete="off">
-    </div>
-  </div>
-
-  <!-- Hero Section -->
-  <section id="hero">
-    <div class="hero-bg"></div>
-    <div class="hero-glow"></div>
-    <div class="hero-fade"></div>
-    <div class="hero-deco"></div>
-    <div id="hero-content">
-      <div class="hero-badge">🔥 Tendencia #1 en México</div>
-      <h1 id="hero-title">El Último Imperio</h1>
-      <p id="hero-desc">
-        En un México del futuro cercano, un joven hacker descubre que los cimientos del poder ocultan un secreto que podría cambiarlo todo. Una historia de traición, redención y revolución.
-      </p>
-      <div class="hero-meta">
-        <span class="hero-meta-item">
-          <span class="rating-pill">⭐ 8.7</span>
-        </span>
-        <span class="hero-meta-item"><span class="dot"></span> 2026</span>
-        <span class="hero-meta-item"><span class="dot"></span> 2h 18min</span>
-        <span class="hero-meta-item"><span class="dot"></span> Acción • Ciencia Ficción</span>
-      </div>
-      <div class="hero-btns">
-        <button class="btn-play" onclick="navigateToMovie(1)">▶ Ver Ahora</button>
-        <button class="btn-info" onclick="navigateToMovie(1)">ℹ Más info</button>
-      </div>
-    </div>
-  </section>
-</div>
-
-  <!-- Main Content -->
-  <main id="main">
-
-    <!-- Genre Filter Tabs -->
-    <div class="genre-bar">
-      <div class="genre-tabs" id="genre-tabs-container">
-        <button class="genre-tab active" onclick="filterByGenre('Todos')">🎬 Todos</button>
-        <button class="genre-tab" onclick="filterByGenre('Acción')">💥 Acción</button>
-        <button class="genre-tab" onclick="filterByGenre('Comedia')">😂 Comedia</button>
-        <button class="genre-tab" onclick="filterByGenre('Drama')">🎭 Drama</button>
-        <button class="genre-tab" onclick="filterByGenre('Familia')">Familia</button>
-        <button class="genre-tab" onclick="filterByGenre('Emotivo')">Emotivo</button>
-        <button class="genre-tab" onclick="filterByGenre('Ciencia Ficción')">🚀 Ciencia Ficción</button>
-        <button class="genre-tab" onclick="filterByGenre('Romance')">💖 Romance</button>
-        <button class="genre-tab" onclick="filterByGenre('Thriller')">🕵️ Thriller</button>
-        <button class="genre-tab" onclick="filterByGenre('Series')">📺 Series</button>
-        <button class="genre-tab" onclick="filterByGenre('Escolar')">🏫 Escolar</button>
-        <button class="genre-tab" onclick="filterByGenre('Viajes en el tiempo')">⏳ Viajes en el tiempo</button>
-        <button class="genre-tab" onclick="filterByGenre('De época')">👘 De época</button>
-        <button class="genre-tab" onclick="filterByGenre('Intrigas palaciegas')">⚔️ Intrigas palaciegas</button>
-      </div>
-    </div>
-
-    <div class="genre-bar year-bar">
-      <div class="genre-tabs" id="year-tabs-container">
-        <a class="genre-tab year-tab" href="ano/2023" onclick="filterByYear(2023); return false;">2023</a>
-        <a class="genre-tab year-tab" href="ano/2024" onclick="filterByYear(2024); return false;">2024</a>
-        <a class="genre-tab year-tab" href="ano/2025" onclick="filterByYear(2025); return false;">2025</a>
-        <a class="genre-tab year-tab" href="ano/2026" onclick="filterByYear(2026); return false;">2026</a>
-      </div>
-    </div>
-
-    <!-- No Results -->
-    <div id="no-results">
-      <div class="nr-icon">🔍</div>
-      <h3>Sin resultados</h3>
-      <p>No encontramos películas con ese criterio. Intenta con otro término.</p>
-    </div>
-
-    <!-- Section: Trending -->
-    <section id="sect-trending" class="content-section">
-      <div class="section-header">
-        <h2 class="section-title"><span class="icon">🔥</span> Más Vistos Esta Semana <span class="section-line"></span></h2>
-        <a href="#" class="view-all" onclick="filterByGenre('Todos'); return false;">Ver todo →</a>
-      </div>
-      <div class="movies-grid" id="grid-trending"></div>
-    </section>
-
-    <!-- Adsterra Smartlink - Mid -->
-    <div class="ad-zone ad-zone-home-mid">
-      <div class="ad-zone-label">
-        <strong>📢 Publicidad</strong>
-        Zona Adsterra Smartlink — Pega aquí tu script
-      </div>
-    </div>
-
-    <!-- Section: Estrenos -->
-    <section id="sect-new" class="content-section">
-      <div class="section-header">
-        <h2 class="section-title"><span class="icon">✨</span> Estrenos 2026 <span class="section-line"></span></h2>
-        <a href="#" class="view-all" onclick="filterByGenre('Todos'); return false;">Ver todo →</a>
-      </div>
-      <div class="movies-row" id="grid-new"></div>
-    </section>
-
-    <!-- Section: Series -->
-    <section id="sect-series" class="content-section">
-      <div class="section-header">
-        <h2 class="section-title"><span class="icon">📺</span> Series Populares <span class="section-line"></span></h2>
-        <a href="#" class="view-all" onclick="filterByGenre('Series'); return false;">Ver todo →</a>
-      </div>
-      <div class="featured-row" id="grid-series"></div>
-    </section>
-
-    <!-- Affiliate Section -->
-    <section id="affiliate-section">
-      <div class="aff-label">🛒 Ofertas para ti</div>
-      <h2 class="aff-title">Mejora tu experiencia de cine</h2>
-      <p class="aff-desc">
-        Disfruta películas con el mejor equipo. Aprovecha estas ofertas exclusivas seleccionadas para ti en México.
-      </p>
-      <div class="aff-links">
-        <a href="#" class="aff-btn aff-btn-1" onclick="showToast('Redirigiendo a Amazon México...'); return true;">
-          📺 Smart TV 4K — Ver oferta
-        </a>
-        <a href="#" class="aff-btn aff-btn-2" onclick="showToast('Redirigiendo a Mercado Libre...'); return true;">
-          🎧 Audífonos Bluetooth — Ver oferta
-        </a>
-        <a href="#" class="aff-btn aff-btn-3" onclick="showToast('Redirigiendo a NordVPN...'); return true;">
-          🚀 VPN Premium — Descuento
-        </a>
+      <div class="year-strip" aria-label="Explorar por año">
+        <span>Año</span>
+        <a href="/ano/2026">2026</a><a href="/ano/2025">2025</a>
+        <a href="/ano/2024">2024</a><a href="/ano/2023">2023</a>
       </div>
     </section>
 
-    <!-- Section: Acción -->
-    <section id="sect-action" class="content-section">
-      <div class="section-header">
-        <h2 class="section-title"><span class="icon">💥</span> Acción y Aventura <span class="section-line"></span></h2>
-        <a href="#" class="view-all" onclick="filterByGenre('Acción'); return false;">Ver todo →</a>
+    <section class="catalog-content">
+      <div class="results-head">
+        <div><span id="result-count">0</span> títulos</div>
+        <label>Ordenar
+          <select id="sort-select">
+            <option value="popular">Más populares</option>
+            <option value="newest">Más recientes</option>
+            <option value="rating">Mejor valoradas</option>
+          </select>
+        </label>
       </div>
-      <div class="movies-grid" id="grid-action"></div>
+      <div id="catalog-feed" class="catalog-feed" aria-live="polite"></div>
+      <div id="empty-state" class="empty-state" hidden>
+        <strong>Aún no hay títulos aquí</strong>
+        <p>Prueba otra colección o vuelve al inicio.</p>
+        <a href="/">Explorar CineMax</a>
+      </div>
     </section>
-
-    <!-- Adsterra Smartlink - Bottom -->
-    <div class="ad-zone ad-zone-home-feed">
-      <div class="ad-zone-label">
-        <strong>📢 Publicidad</strong>
-        Zona Adsterra Smartlink — Pega aquí tu script
-      </div>
-    </div>
-
-    <!-- Section: Comedia -->
-    <section id="sect-comedy" class="content-section">
-      <div class="section-header">
-        <h2 class="section-title"><span class="icon">😂</span> Comedia y Familia <span class="section-line"></span></h2>
-        <a href="#" class="view-all" onclick="filterByGenre('Comedia'); return false;">Ver todo →</a>
-      </div>
-      <div class="movies-grid" id="grid-comedy"></div>
-    </section>
-
-
-    <!-- Banner - Category Break -->
-    <div class="ad-zone ad-zone-category-break">
-      <div class="ad-zone-label">
-        <strong>Publicidad</strong>
-        Banner entre categorías
-      </div>
-    </div>
-    <!-- Section: Drama -->
-    <section id="sect-drama" class="content-section">
-      <div class="section-header">
-        <h2 class="section-title"><span class="icon">🎭</span> Drama y Emoción <span class="section-line"></span></h2>
-        <a href="#" class="view-all" onclick="filterByGenre('Drama'); return false;">Ver todo →</a>
-      </div>
-      <div class="movies-grid" id="grid-drama"></div>
-    </section>
-
-
-    <!-- Banner - Category Break -->
-    <div class="ad-zone ad-zone-category-break">
-      <div class="ad-zone-label">
-        <strong>Publicidad</strong>
-        Banner entre categorías
-      </div>
-    </div>
-    <!-- Section: Familia -->
-    <section id="sect-family" class="content-section">
-      <div class="section-header">
-        <h2 class="section-title"><span class="icon"></span> Familia <span class="section-line"></span></h2>
-        <a href="#" class="view-all" onclick="filterByGenre('Familia'); return false;">Ver todo →</a>
-      </div>
-      <div class="movies-grid" id="grid-family"></div>
-    </section>
-
-
-    <!-- Banner - Category Break -->
-    <div class="ad-zone ad-zone-category-break">
-      <div class="ad-zone-label">
-        <strong>Publicidad</strong>
-        Banner entre categorías
-      </div>
-    </div>
-    <!-- Section: Emotivo -->
-    <section id="sect-emotive" class="content-section">
-      <div class="section-header">
-        <h2 class="section-title"><span class="icon"></span> Emotivo <span class="section-line"></span></h2>
-        <a href="#" class="view-all" onclick="filterByGenre('Emotivo'); return false;">Ver todo →</a>
-      </div>
-      <div class="movies-grid" id="grid-emotive"></div>
-    </section>
-
-
-    <!-- Banner - Category Break -->
-    <div class="ad-zone ad-zone-category-break">
-      <div class="ad-zone-label">
-        <strong>Publicidad</strong>
-        Banner entre categorías
-      </div>
-    </div>
-    <!-- Section: Ciencia Ficción -->
-    <section id="sect-sci-fi" class="content-section">
-      <div class="section-header">
-        <h2 class="section-title"><span class="icon">🚀</span> Ciencia Ficción <span class="section-line"></span></h2>
-        <a href="#" class="view-all" onclick="filterByGenre('Ciencia Ficción'); return false;">Ver todo →</a>
-      </div>
-      <div class="movies-grid" id="grid-sci-fi"></div>
-    </section>
-
-
-    <!-- Banner - Category Break -->
-    <div class="ad-zone ad-zone-category-break">
-      <div class="ad-zone-label">
-        <strong>Publicidad</strong>
-        Banner entre categorías
-      </div>
-    </div>
-    <!-- Section: Romance -->
-    <section id="sect-romance" class="content-section">
-      <div class="section-header">
-        <h2 class="section-title"><span class="icon">💖</span> Romance Destacado <span class="section-line"></span></h2>
-        <a href="#" class="view-all" onclick="filterByGenre('Romance'); return false;">Ver todo →</a>
-      </div>
-      <div class="movies-grid" id="grid-romance"></div>
-    </section>
-
-
-    <!-- Banner - Category Break -->
-    <div class="ad-zone ad-zone-category-break">
-      <div class="ad-zone-label">
-        <strong>Publicidad</strong>
-        Banner entre categorías
-      </div>
-    </div>
-    <!-- Section: Thriller -->
-    <section id="sect-thriller" class="content-section">
-      <div class="section-header">
-        <h2 class="section-title"><span class="icon">🕵️</span> Thriller y Misterio <span class="section-line"></span></h2>
-        <a href="#" class="view-all" onclick="filterByGenre('Thriller'); return false;">Ver todo →</a>
-      </div>
-      <div class="movies-grid" id="grid-thriller"></div>
-    </section>
-
-
-    <!-- Banner - Category Break -->
-    <div class="ad-zone ad-zone-category-break">
-      <div class="ad-zone-label">
-        <strong>Publicidad</strong>
-        Banner entre categorías
-      </div>
-    </div>
-    <!-- Section: Escolar -->
-    <section id="sect-school" class="content-section">
-      <div class="section-header">
-        <h2 class="section-title"><span class="icon">🏫</span> Escolar <span class="section-line"></span></h2>
-        <a href="#" class="view-all" onclick="filterByGenre('Escolar'); return false;">Ver todo →</a>
-      </div>
-      <div class="movies-grid" id="grid-school"></div>
-    </section>
-
-
-    <!-- Banner - Category Break -->
-    <div class="ad-zone ad-zone-category-break">
-      <div class="ad-zone-label">
-        <strong>Publicidad</strong>
-        Banner entre categorías
-      </div>
-    </div>
-    <!-- Section: Viajes en el tiempo -->
-    <section id="sect-time-travel" class="content-section">
-      <div class="section-header">
-        <h2 class="section-title"><span class="icon">⏳</span> Viajes en el tiempo <span class="section-line"></span></h2>
-        <a href="#" class="view-all" onclick="filterByGenre('Viajes en el tiempo'); return false;">Ver todo →</a>
-      </div>
-      <div class="movies-grid" id="grid-time-travel"></div>
-    </section>
-
-
-    <!-- Banner - Category Break -->
-    <div class="ad-zone ad-zone-category-break">
-      <div class="ad-zone-label">
-        <strong>Publicidad</strong>
-        Banner entre categorías
-      </div>
-    </div>
-    <!-- Section: De época -->
-    <section id="sect-costume" class="content-section">
-      <div class="section-header">
-        <h2 class="section-title"><span class="icon">👘</span> De época <span class="section-line"></span></h2>
-        <a href="#" class="view-all" onclick="filterByGenre('De época'); return false;">Ver todo →</a>
-      </div>
-      <div class="movies-grid" id="grid-costume"></div>
-    </section>
-
-
-    <!-- Banner - Category Break -->
-    <div class="ad-zone ad-zone-category-break">
-      <div class="ad-zone-label">
-        <strong>Publicidad</strong>
-        Banner entre categorías
-      </div>
-    </div>
-    <!-- Section: Intrigas palaciegas -->
-    <section id="sect-palace" class="content-section">
-      <div class="section-header">
-        <h2 class="section-title"><span class="icon">⚔️</span> Intrigas palaciegas <span class="section-line"></span></h2>
-        <a href="#" class="view-all" onclick="filterByGenre('Intrigas palaciegas'); return false;">Ver todo →</a>
-      </div>
-      <div class="movies-grid" id="grid-palace"></div>
-    </section>
-
-    <!-- Adsterra Smartlink - Home Bottom -->
-    <div class="ad-zone ad-zone--leaderboard ad-zone-home-bottom">
-      <div class="ad-zone-label">
-        <strong>📢 Publicidad</strong>
-        Banner inferior para Adsterra
-      </div>
-    </div>
-
   </main>
 
-  <!-- Footer -->
-  <footer>
-    <div class="footer-grid">
-      <div class="footer-brand">
-        <div class="logo">CINE<span>MAX</span></div>
-        <p>La mejor plataforma de streaming gratis en México. Disfruta el mejor cine y series desde tu smartphone.</p>
-      </div>
-      <div class="footer-col">
-        <h4>Géneros</h4>
-        <ul>
-          <li><a href="index.html?genre=Acci%C3%B3n" onclick="filterByGenre('Acción'); return false;">Acción</a></li>
-          <li><a href="index.html?genre=Comedia" onclick="filterByGenre('Comedia'); return false;">Comedia</a></li>
-          <li><a href="index.html?genre=Drama" onclick="filterByGenre('Drama'); return false;">Drama</a></li>
-          <li><a href="index.html?genre=Familia" onclick="filterByGenre('Familia'); return false;">Familia</a></li>
-          <li><a href="index.html?genre=Emotivo" onclick="filterByGenre('Emotivo'); return false;">Emotivo</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>Plataforma</h4>
-        <ul>
-          <li><a href="index.html">Inicio</a></li>
-          <li><a href="about.html">Sobre Nosotros</a></li>
-          <li><a href="privacy.html">Privacy Policy</a></li>
-          <li><a href="terms.html">Terms</a></li>
-        </ul>
-      </div>
-      <div class="footer-col">
-        <h4>Contacto</h4>
-        <ul>
-          <li><a href="contact.html">Contact</a></li>
-          <li><a href="dmca.html">DMCA</a></li>
-          <li><a href="contact.html">Publicidad</a></li>
-        </ul>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <p>© 2026 CineMax MX — Sitio estático optimizado para Cloudflare Pages.</p>
-      <button onclick="showToast('Idioma: Español (México)')">🇲🇽 ES-MX</button>
-    </div>
-  </footer>
+  <nav class="mobile-dock" aria-label="Navegación móvil">
+    <a href="/">⌂<span>Inicio</span></a>
+    <a class="active" href="/genero/romance">▦<span>Explorar</span></a>
+    <a href="/ano/2026">◷<span>Nuevas</span></a>
+    <a href="/buscar"><i class="search-icon" aria-hidden="true"></i><span>Buscar</span></a>
+  </nav>
 
-  <button id="back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Volver arriba">↑</button>
-  <div id="toast"></div>
-
-  <!-- Scripts -->
-  <script src="js/movies.js?v=seo-20260702"></script>
-  <script src="js/ads-config.js?v=ads-no-onclick-20260723" defer></script>
-  <script src="js/ads-health.js?v=ads-manager-20260714" defer></script>
-  <script src="js/ads.js?v=ads-no-onclick-20260723" defer></script>
-  <script src="js/app.js?v=weeklyviews-20260713"></script>
-
+  <footer>© 2026 CineMax MX · Películas y series en español latino</footer>
+  <script src="/js/movies.js?v=20260723"></script>
+  <script src="/js/catalog.js?v=20260724-native1"></script>
+  <script src="/js/ads-config.js?v=ads-no-onclick-20260723" defer></script>
+  <script src="/js/ads.js?v=native-single-20260724" defer></script>
 </body>
 </html>

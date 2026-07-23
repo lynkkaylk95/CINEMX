@@ -148,6 +148,11 @@
 
   function mountAdsterraNative(element, placement, native) {
     if (!element || !native?.enabled || element.dataset.homeNativeMounted === 'true') return;
+    const existingContainer = document.getElementById(native.containerId);
+    if (existingContainer && !element.contains(existingContainer)) {
+      report(placement, 'skipped', { reason: 'native-container-already-exists' });
+      return;
+    }
     if (isHiddenAdSlot(element)) {
       report(placement, 'skipped', { reason: 'hidden-by-breakpoint' });
       return;

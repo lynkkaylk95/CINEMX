@@ -65,8 +65,9 @@
   }
 
   function ad(sequence) {
-    const video = sequence % 2 === 0;
-    return `<aside class="feed-ad ${video ? 'feed-ad-video' : 'feed-ad-native'}" aria-label="Publicidad">
+    const isNative = sequence === 1;
+    const video = !isNative;
+    return `<aside ${isNative ? 'id="catalog-native-slot"' : ''} class="feed-ad ${isNative ? 'feed-ad-native ad-zone-home-feed' : 'feed-ad-video'}" aria-label="Publicidad">
       <span class="ad-label">PUBLICIDAD</span>
       <div class="ad-visual">${video ? '<span class="ad-play">▶</span><small>Video patrocinado</small>' : '<span>Contenido recomendado</span><strong>Descubre una oferta elegida para ti</strong>'}</div>
       <div class="ad-copy"><strong>${video ? 'Una pausa breve antes de seguir explorando' : 'Una recomendación para tu próxima noche de cine'}</strong><span>${video ? 'El video comenzará solo cuando sea visible.' : 'Espacio native banner adaptable a tu red publicitaria.'}</span></div>
@@ -86,8 +87,12 @@
     ].join(' ')).includes(query));
   }
 
+  let preservedNativeSlot = null;
+
   function render(sort) {
     applySearch();
+    const feed = document.getElementById('catalog-feed');
+    const mountedNative = document.getElementById('catalog-native-slot') || preservedNativeSlot;
     const sorted = [...list].sort((a, b) => sort === 'newest'
       ? Number(b.year) - Number(a.year)
       : sort === 'rating' ? Number(b.rating) - Number(a.rating) : Number(b.id) - Number(a.id));
@@ -95,9 +100,20 @@
     const adInterval = getAdInterval();
     sorted.forEach((movie, index) => {
       chunks.push(card(movie));
-      if ((index + 1) % adInterval === 0 && index < sorted.length - 1) chunks.push(ad((index + 1) / adInterval));
+      if ((index + 1) % adInterval === 0) {
+        chunks.push(ad((index + 1) / adInterval));
+      } else if (index === sorted.length - 1 && sorted.length < adInterval) {
+        chunks.push(ad(1));
+      }
     });
-    document.getElementById('catalog-feed').innerHTML = chunks.join('');
+    feed.innerHTML = chunks.join('');
+    const freshNative = document.getElementById('catalog-native-slot');
+    if (mountedNative?.dataset.homeNativeMounted === 'true' && freshNative) {
+      freshNative.replaceWith(mountedNative);
+      preservedNativeSlot = mountedNative;
+    } else if (mountedNative?.dataset.homeNativeMounted === 'true') {
+      preservedNativeSlot = mountedNative;
+    }
     document.getElementById('result-count').textContent = sorted.length;
     document.getElementById('empty-state').hidden = sorted.length > 0;
   }
