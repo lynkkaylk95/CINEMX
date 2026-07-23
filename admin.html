@@ -14,7 +14,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=right-rail-20260713">
+  <link rel="stylesheet" href="css/style.css?v=admin-filters-20260723">
 </head>
 <body>
 
@@ -139,8 +139,29 @@
           <span class="admin-count" id="admin-movie-count">0</span>
         </div>
 
-        <div style="padding: 0 18px;">
+        <div class="admin-list-controls">
           <input type="search" class="admin-search-input" id="admin-search" placeholder="🔍 Tìm phim theo tiêu đề hoặc thể loại..." oninput="renderAdminList(this.value)">
+          <div class="admin-filter-row">
+            <label class="admin-filter-field">
+              <span>Ngày thêm</span>
+              <input type="date" id="admin-date-filter" onchange="renderAdminList()">
+            </label>
+            <label class="admin-filter-field">
+              <span>Thể loại</span>
+              <select id="admin-genre-filter" onchange="renderAdminList()">
+                <option value="">Tất cả thể loại</option>
+              </select>
+            </label>
+            <label class="admin-filter-field">
+              <span>Lượt xem</span>
+              <select id="admin-view-filter" onchange="renderAdminList()">
+                <option value="">Mặc định</option>
+                <option value="desc">Cao đến thấp</option>
+                <option value="asc">Thấp đến cao</option>
+              </select>
+            </label>
+            <button type="button" class="btn-reset admin-filter-reset" onclick="resetAdminFilters()">Xóa bộ lọc</button>
+          </div>
         </div>
 
         <div id="admin-movie-list">
@@ -154,6 +175,6 @@
   <div id="toast"></div>
   <!-- Scripts -->
   <script src="js/movies.js?v=seo-20260702"></script>
-  <script src="js/admin.js?v=duplicate-link-20260711"></script>
+  <script src="js/admin.js?v=admin-filters-20260723"></script>
 </body>
 </html>

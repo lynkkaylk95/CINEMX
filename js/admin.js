@@ -27,11 +27,36 @@ const ADMIN_GENRE_LABELS = {
 };
 let currentMovies = loadSavedMovies().map(normalizeMovieGenres);
 let activeEpisodeTags = [];
+let adminMovieViewCounts = {};
 
 function getMovieSortValue(movie) {
   const addedTime = Date.parse(movie?.addedAt || movie?.createdAt || '');
   if (!Number.isNaN(addedTime)) return addedTime;
   return Number(movie?.id || 0);
+}
+
+function getMovieAddedDate(movie) {
+  // Legacy entries 1-37 were imported into the current catalog on 07/07/2026,
+  // before individual addedAt timestamps were stored.
+  const legacyImportDate = Number(movie?.id) >= 1 && Number(movie?.id) <= 37
+    ? '2026-07-07T12:00:00.000Z'
+    : '';
+  const date = new Date(movie?.addedAt || movie?.createdAt || legacyImportDate);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function formatMovieAddedDate(movie) {
+  const date = getMovieAddedDate(movie);
+  return date ? new Intl.DateTimeFormat('vi-VN').format(date) : 'Không rõ';
+}
+
+function getLocalDateKey(movie) {
+  const date = getMovieAddedDate(movie);
+  if (!date) return '';
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 }
 
 function sortMoviesNewestFirst(movies) {
@@ -80,6 +105,77 @@ function getThumbnailUrl(value, fallbackYtId = '') {
     return `https://i3.ytimg.com/vi/${ytId}/hqdefault.jpg`;
   }
   return raw || (ytId ? `https://i3.ytimg.com/vi/${ytId}/hqdefault.jpg` : '');
+}
+
+function escapeHTML(value) {
+  return String(value ?? '').replace(/[&<>"']/g, char => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  }[char]));
+}
+
+function getAdminMovieUrl(movie) {
+  const slug = movie?.slug || slugify(movie?.title) || `pelicula-${movie?.id || ''}`;
+  return `https://cinemaxmx.com/pelicula/${encodeURIComponent(slug)}`;
+}
+
+function getAdminMovieSlug(movie) {
+  return movie?.slug || slugify(movie?.title) || `pelicula-${movie?.id || ''}`;
+}
+
+function formatViewNumber(value) {
+  return new Intl.NumberFormat('vi-VN').format(Number(value) || 0);
+}
+
+async function loadAdminMovieViews() {
+  const slugs = [...new Set(currentMovies.map(getAdminMovieSlug).filter(Boolean))];
+  if (!slugs.length) return;
+
+  try {
+    const batches = [];
+    for (let index = 0; index < slugs.length; index += 80) {
+      batches.push(slugs.slice(index, index + 80));
+    }
+    const results = await Promise.all(batches.map(async batch => {
+      const response = await fetch(`/api/views?slugs=${encodeURIComponent(batch.join(','))}`, {
+        headers: { Accept: 'application/json' }
+      });
+      if (!response.ok) throw new Error(`Views API: ${response.status}`);
+      return response.json();
+    }));
+    adminMovieViewCounts = Object.assign({}, ...results.map(data => data.views || {}));
+    renderAdminList();
+  } catch (error) {
+    console.warn('Không thể tải lượt xem phim.', error);
+  }
+}
+
+async function copyMovieVideoLink(id) {
+  const movie = currentMovies.find(m => Number(m.id) === Number(id));
+  if (!movie) {
+    showToast('Không tìm thấy phim.');
+    return;
+  }
+  const movieUrl = getAdminMovieUrl(movie);
+
+  try {
+    await navigator.clipboard.writeText(movieUrl);
+  } catch (err) {
+    const input = document.createElement('textarea');
+    input.value = movieUrl;
+    input.setAttribute('readonly', '');
+    input.style.position = 'fixed';
+    input.style.opacity = '0';
+    document.body.appendChild(input);
+    input.select();
+    document.execCommand('copy');
+    input.remove();
+  }
+
+  showToast('Đã sao chép liên kết phim!');
 }
 
 function syncThumbnailFromYouTube() {
@@ -156,7 +252,9 @@ document.addEventListener('DOMContentLoaded', () => {
     ytInput.addEventListener('input', syncThumbnailFromYouTube);
     ytInput.addEventListener('paste', () => setTimeout(syncThumbnailFromYouTube, 0));
   }
+  populateAdminGenreFilter();
   renderAdminList();
+  loadAdminMovieViews();
 });
 
 // Helper to find next unique ID
@@ -172,15 +270,28 @@ function renderAdminList(searchQuery = '') {
   const countBadge = document.getElementById('admin-movie-count');
   if (!container) return;
 
-  const query = searchQuery.trim().toLowerCase();
+  const searchInput = document.getElementById('admin-search');
+  const query = String(searchQuery || searchInput?.value || '').trim().toLowerCase();
+  const addedDate = document.getElementById('admin-date-filter')?.value || '';
+  const genre = document.getElementById('admin-genre-filter')?.value || '';
+  const viewOrder = document.getElementById('admin-view-filter')?.value || '';
   const filtered = currentMovies.filter(m => {
-    return !query || 
-           m.title.toLowerCase().includes(query) || 
-           getGenreLabel(m).toLowerCase().includes(query) ||
-           m.type.toLowerCase().includes(query);
+    const matchesQuery = !query ||
+      String(m.title || '').toLowerCase().includes(query) ||
+      getGenreLabel(m).toLowerCase().includes(query) ||
+      String(m.type || '').toLowerCase().includes(query);
+    const matchesDate = !addedDate || getLocalDateKey(m) === addedDate;
+    const matchesGenre = !genre || getMovieGenres(m).includes(genre);
+    return matchesQuery && matchesDate && matchesGenre;
   });
 
-  const sorted = sortMoviesNewestFirst(filtered);
+  const sorted = viewOrder
+    ? [...filtered].sort((a, b) => {
+        const difference = (adminMovieViewCounts[getAdminMovieSlug(b)] || 0) -
+          (adminMovieViewCounts[getAdminMovieSlug(a)] || 0);
+        return viewOrder === 'asc' ? -difference : difference;
+      })
+    : sortMoviesNewestFirst(filtered);
   countBadge.textContent = sorted.length;
 
   if (sorted.length === 0) {
@@ -188,21 +299,55 @@ function renderAdminList(searchQuery = '') {
     return;
   }
 
-  container.innerHTML = sorted.map(m => `
+  container.innerHTML = sorted.map(m => {
+    const thumbnailUrl = getThumbnailUrl(m.thumb, extractYouTubeId(m.yt));
+    const movieUrl = getAdminMovieUrl(m);
+    const views = adminMovieViewCounts[getAdminMovieSlug(m)] || 0;
+    return `
     <div class="admin-movie-item" id="admin-item-${m.id}">
-      <div class="admin-movie-emoji">${m.emoji || "🎬"}</div>
+      <div class="admin-movie-thumb">
+        ${thumbnailUrl
+          ? `<img src="${escapeHTML(thumbnailUrl)}" alt="" loading="lazy">`
+          : `<span>${escapeHTML(m.emoji || "🎬")}</span>`}
+      </div>
       <div class="admin-movie-info">
-        <div class="admin-movie-title">${m.title}</div>
+        <div class="admin-movie-title">${escapeHTML(m.title)}</div>
         <div class="admin-movie-meta">
-          ID: ${m.id} | ${getGenreLabel(m)} | ${m.year} | ⭐ ${m.rating} | ${m.type}
+          ID: ${escapeHTML(m.id)} | ${escapeHTML(getGenreLabel(m))} | ${escapeHTML(m.year)} | ⭐ ${escapeHTML(m.rating)} | ${escapeHTML(m.type)}
+        </div>
+        <div class="admin-movie-extra">
+          <span>Ngày thêm: <strong>${escapeHTML(formatMovieAddedDate(m))}</strong></span>
+          <span>Lượt xem: <strong>${escapeHTML(formatViewNumber(views))}</strong></span>
         </div>
       </div>
       <div class="admin-movie-actions">
+        <button type="button" class="btn-copy-video" onclick="copyMovieVideoLink(${Number(m.id)})">Sao chép link</button>
+        <a class="btn-view-movie" href="${escapeHTML(movieUrl)}" target="_blank" rel="noopener noreferrer">Xem phim</a>
         <button class="btn-edit" onclick="editMovie(${m.id})">Sửa</button>
         <button class="btn-delete" onclick="deleteMovie(${m.id})">Xóa</button>
       </div>
     </div>
-  `).join('');
+  `;
+  }).join('');
+}
+
+function populateAdminGenreFilter() {
+  const select = document.getElementById('admin-genre-filter');
+  if (!select) return;
+  const genres = [...new Set(currentMovies.flatMap(getMovieGenres))].sort((a, b) =>
+    (ADMIN_GENRE_LABELS[a] || a).localeCompare(ADMIN_GENRE_LABELS[b] || b, 'vi')
+  );
+  select.innerHTML = '<option value="">Tất cả thể loại</option>' + genres.map(genre =>
+    `<option value="${escapeHTML(genre)}">${escapeHTML(ADMIN_GENRE_LABELS[genre] || genre)}</option>`
+  ).join('');
+}
+
+function resetAdminFilters() {
+  ['admin-search', 'admin-date-filter', 'admin-genre-filter', 'admin-view-filter'].forEach(id => {
+    const field = document.getElementById(id);
+    if (field) field.value = '';
+  });
+  renderAdminList();
 }
 
 // Toggle visible fields based on Película vs Serie
