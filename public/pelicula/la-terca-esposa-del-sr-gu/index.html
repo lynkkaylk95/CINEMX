@@ -102,7 +102,7 @@
         <span id="breadcrumb-title">Cargando...</span>
       </nav>
 
-      <a href="index.html" class="movie-back-btn">
+      <a href="/" class="movie-back-btn" onclick="event.preventDefault(); if (document.referrer || window.history.length > 1) { window.history.back(); } else { window.location.href = '/'; } return false;">
         &#8592; Volver al catálogo
       </a>
 
