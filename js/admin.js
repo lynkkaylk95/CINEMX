@@ -109,6 +109,70 @@ function getThumbnailUrl(value, fallbackYtId = '') {
   return raw || (ytId ? `https://i3.ytimg.com/vi/${ytId}/hqdefault.jpg` : '');
 }
 
+function isImageSharePageUrl(value) {
+  try {
+    const url = new URL(String(value || '').trim());
+    const host = url.hostname.toLowerCase().replace(/^www\./, '');
+    return host === 'ibb.co'
+      || host === 'imgur.com'
+      || host === 'postimg.cc'
+      || host === 'photos.app.goo.gl';
+  } catch (_) {
+    return false;
+  }
+}
+
+function updateThumbnailPreview() {
+  const input = document.getElementById('thumb');
+  const preview = document.getElementById('admin-thumb-preview');
+  const image = document.getElementById('admin-thumb-preview-img');
+  const title = document.getElementById('admin-thumb-preview-title');
+  const status = document.getElementById('admin-thumb-preview-status');
+  if (!input || !preview || !image || !title || !status) return;
+
+  const raw = input.value.trim();
+  const fallbackYtId = extractYouTubeId(document.getElementById('yt')?.value);
+  const thumbnailUrl = getThumbnailUrl(raw, fallbackYtId);
+  input.dataset.imageState = '';
+
+  if (!thumbnailUrl) {
+    preview.hidden = true;
+    image.removeAttribute('src');
+    return;
+  }
+
+  preview.hidden = false;
+  preview.classList.remove('is-valid', 'is-invalid');
+
+  if (raw && isImageSharePageUrl(raw)) {
+    input.dataset.imageState = 'invalid';
+    preview.classList.add('is-invalid');
+    image.removeAttribute('src');
+    title.textContent = 'Đây là link trang chia sẻ, không phải link ảnh';
+    status.textContent = 'Hãy sao chép mục “Direct link” từ dịch vụ lưu ảnh.';
+    return;
+  }
+
+  title.textContent = 'Đang kiểm tra ảnh…';
+  status.textContent = thumbnailUrl;
+  input.dataset.imageState = 'checking';
+  image.onload = () => {
+    input.dataset.imageState = 'valid';
+    preview.classList.add('is-valid');
+    preview.classList.remove('is-invalid');
+    title.textContent = 'Ảnh hiển thị hợp lệ';
+    status.textContent = 'Ảnh này có thể dùng làm thumbnail.';
+  };
+  image.onerror = () => {
+    input.dataset.imageState = 'invalid';
+    preview.classList.add('is-invalid');
+    preview.classList.remove('is-valid');
+    title.textContent = 'Không tải được ảnh từ liên kết này';
+    status.textContent = 'Kiểm tra lại URL hoặc dùng link ảnh trực tiếp.';
+  };
+  image.src = thumbnailUrl;
+}
+
 function escapeHTML(value) {
   return String(value ?? '').replace(/[&<>"']/g, char => ({
     '&': '&amp;',
@@ -200,7 +264,10 @@ function syncThumbnailFromYouTube() {
   const ytId = extractYouTubeId(ytInput.value);
   if (!ytId) return;
 
-  thumbInput.value = `https://i3.ytimg.com/vi/${ytId}/hqdefault.jpg`;
+  if (!thumbInput.value.trim() || /(?:youtube\.com|youtu\.be|ytimg\.com)/.test(thumbInput.value)) {
+    thumbInput.value = `https://i3.ytimg.com/vi/${ytId}/hqdefault.jpg`;
+  }
+  updateThumbnailPreview();
 }
 
 function findDuplicateMovieByVideo(ytId, ignoredId = null) {
@@ -244,7 +311,10 @@ function normalizeMovieGenres(movie) {
     ...movie,
     genre: movie?.genre || normalizedGenres[0],
     genres: normalizedGenres,
-    slug: movie?.slug || slugify(movie?.title) || `pelicula-${movie?.id || ''}`
+    slug: movie?.slug || slugify(movie?.title) || `pelicula-${movie?.id || ''}`,
+    thumb: isImageSharePageUrl(movie?.thumb)
+      ? getThumbnailUrl('', extractYouTubeId(movie?.yt))
+      : movie?.thumb
   };
 }
 
@@ -265,6 +335,11 @@ document.addEventListener('DOMContentLoaded', () => {
   if (ytInput) {
     ytInput.addEventListener('input', syncThumbnailFromYouTube);
     ytInput.addEventListener('paste', () => setTimeout(syncThumbnailFromYouTube, 0));
+  }
+  const thumbInput = document.getElementById('thumb');
+  if (thumbInput) {
+    thumbInput.addEventListener('input', updateThumbnailPreview);
+    thumbInput.addEventListener('paste', () => setTimeout(updateThumbnailPreview, 0));
   }
   populateAdminGenreFilter();
   renderAdminList();
@@ -424,6 +499,7 @@ function editMovie(id) {
   activeEpisodeTags = movie.episodes ? [...movie.episodes] : [];
   toggleEpisodesField();
   renderEpisodeTags();
+  updateThumbnailPreview();
 
   // Scroll form into view
   document.querySelector('.admin-form-card').scrollIntoView({ behavior: 'smooth' });
@@ -439,11 +515,20 @@ function saveMovie() {
   const rating = parseFloat(document.getElementById('rating').value);
   const duration = document.getElementById('duration').value.trim();
   const yt = extractYouTubeId(document.getElementById('yt').value);
-  const thumb = getThumbnailUrl(document.getElementById('thumb').value, yt);
+  const thumbInput = document.getElementById('thumb');
+  const rawThumb = thumbInput.value.trim();
+  const thumb = getThumbnailUrl(rawThumb, yt);
   const desc = document.getElementById('desc').value.trim();
 
   if (!title || !duration || !yt || !desc || genres.length === 0) {
     showToast("Vui lòng điền đầy đủ các trường bắt buộc.");
+    return;
+  }
+  if (rawThumb && (isImageSharePageUrl(rawThumb) || thumbInput.dataset.imageState === 'invalid' || thumbInput.dataset.imageState === 'checking')) {
+    showToast(thumbInput.dataset.imageState === 'checking'
+      ? "Ảnh đang được kiểm tra. Vui lòng đợi một chút."
+      : "Link ảnh bìa không hợp lệ. Hãy dùng link ảnh trực tiếp.");
+    thumbInput.focus();
     return;
   }
 
@@ -511,6 +596,7 @@ function resetMovieForm() {
   activeEpisodeTags = [];
   toggleEpisodesField();
   renderEpisodeTags();
+  updateThumbnailPreview();
 }
 
 // Toast alerts

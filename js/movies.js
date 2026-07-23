@@ -1233,7 +1233,7 @@ const MOVIES = [
     "duration": "1h 33min",
     "emoji": "🎬",
     "yt": "i5rBJqwYLsQ",
-    "thumb": "https://ibb.co/BVFzbF0S",
+    "thumb": "https://i3.ytimg.com/vi/i5rBJqwYLsQ/hqdefault.jpg",
     "desc": "Una joven criada en un pueblo pesquero se ve envuelta en un conflicto inmobiliario cuando una poderosa familia intenta demoler su hogar. La búsqueda del pasado por parte de un magnate amenaza con destruir la vida que conoce.\n\nGénero: películas románticas, películas chinas, Multimillonario se hace pasar por pobre, dramas coreanos en español, doramas en español latino completas, La Amada Esposa del CEO, kdrama español completos, el gobernante ascendente,",
     "badge": "NUEVO",
     "episodes": [],

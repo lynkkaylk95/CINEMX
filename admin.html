@@ -14,7 +14,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=admin-view-fix-20260723">
+  <link rel="stylesheet" href="css/style.css?v=admin-image-link-20260724">
 </head>
 <body>
 
@@ -103,7 +103,14 @@
           <div class="form-group">
             <label for="thumb">URL Ảnh bìa (Không bắt buộc):</label>
             <input type="url" id="thumb" placeholder="VD: https://img.youtube.com/vi/RWVu58ucAwk/hqdefault.jpg">
-            <div class="form-hint">Nếu bỏ trống, hệ thống sẽ tự động dùng ảnh thu nhỏ từ YouTube khi có thể.</div>
+            <div class="form-hint">Dán link ảnh trực tiếp, thường kết thúc bằng .jpg, .png hoặc .webp. Không dùng link trang chia sẻ như ibb.co/abc.</div>
+            <div class="admin-thumb-preview" id="admin-thumb-preview" hidden>
+              <img id="admin-thumb-preview-img" alt="Xem trước ảnh bìa">
+              <div>
+                <strong id="admin-thumb-preview-title">Đang kiểm tra ảnh…</strong>
+                <span id="admin-thumb-preview-status"></span>
+              </div>
+            </div>
           </div>
 
           <div class="form-group" id="episodes-group" style="display: none;">
@@ -175,6 +182,6 @@
   <div id="toast"></div>
   <!-- Scripts -->
   <script src="js/movies.js?v=seo-20260702"></script>
-  <script src="js/admin.js?v=admin-view-fix-20260723"></script>
+  <script src="js/admin.js?v=admin-image-link-20260724"></script>
 </body>
 </html>
