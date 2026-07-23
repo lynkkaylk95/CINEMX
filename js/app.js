@@ -303,18 +303,11 @@ function createThumbBadges(movie) {
   `;
 }
 
-function dailyHeroIndex(total) {
-  const today = new Date();
-  const key = `${today.getFullYear()}-${today.getMonth() + 1}-${today.getDate()}`;
-  let hash = 0;
-  for (let i = 0; i < key.length; i += 1) {
-    hash = ((hash << 5) - hash) + key.charCodeAt(i);
-    hash |= 0;
-  }
-  return Math.abs(hash) % total;
+function randomHeroIndex(total) {
+  return Math.floor(Math.random() * total);
 }
 
-function initDailyHero() {
+function initRandomHero() {
   const hero = document.getElementById('hero');
   const titleEl = document.getElementById('hero-title');
   const descEl = document.getElementById('hero-desc');
@@ -326,7 +319,7 @@ function initDailyHero() {
   const candidates = moviesList.filter(m => m && m.id && m.title);
   if (!hero || !titleEl || !descEl || !candidates.length) return;
 
-  const movie = candidates[dailyHeroIndex(candidates.length)];
+  const movie = candidates[randomHeroIndex(candidates.length)];
   const imageUrl = getMovieImage(movie);
   const movieId = Number(movie.id);
 
@@ -771,7 +764,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   document.getElementById('search-input')?.addEventListener('input', e => handleSearch(e.target.value));
   applyInitialQueryParams();
-  initDailyHero();
+  initRandomHero();
   renderAll();
   updatePageSeo();
   if (currentGenre !== 'Todos' || currentSearch || currentYear) {
