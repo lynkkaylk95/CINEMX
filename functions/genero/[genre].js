@@ -1,16 +1,12 @@
 import { SITE_ORIGIN, escapeHtml, getAssetHtml, replaceMetaContent } from '../_seo-utils.js';
 
 export async function onRequest(context) {
-  const year = String(context.params.year || '').match(/^\d{4}$/)?.[0] || '';
+  const slug = decodeURIComponent(context.params.genre || '');
   let html = await getAssetHtml(context, '/catalog.html');
-  if (!year) {
-    return new Response(html, { headers: { 'content-type': 'text/html; charset=UTF-8' } });
-  }
-
-  const canonicalUrl = `${SITE_ORIGIN}/ano/${year}`;
-  const title = `Películas ${year} en español latino — CineMax MX`;
-  const description = `Mira películas y series de ${year} en español latino en CineMax MX. Estrenos, dramas, romance, acción y títulos populares.`;
-
+  const label = slug.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+  const canonicalUrl = `${SITE_ORIGIN}/genero/${encodeURIComponent(slug)}`;
+  const title = `${label} en español latino — CineMax MX`;
+  const description = `Explora películas y series de ${label.toLowerCase()} en español latino en CineMax MX.`;
   html = html
     .replace(/<title[^>]*>[\s\S]*?<\/title>/, `<title>${escapeHtml(title)}</title>`)
     .replace(/<meta name="description"[^>]*>/, `<meta name="description" id="meta-desc" content="${escapeHtml(description)}">`)
@@ -18,11 +14,5 @@ export async function onRequest(context) {
   html = replaceMetaContent(html, 'og-title', title);
   html = replaceMetaContent(html, 'og-desc', description);
   html = replaceMetaContent(html, 'og-url', canonicalUrl);
-  html = replaceMetaContent(html, 'twitter-title', title);
-  html = replaceMetaContent(html, 'twitter-desc', description);
-
-  return new Response(html, {
-    headers: { 'content-type': 'text/html; charset=UTF-8' },
-    status: 200
-  });
+  return new Response(html, { headers: { 'content-type': 'text/html; charset=UTF-8' }, status: 200 });
 }

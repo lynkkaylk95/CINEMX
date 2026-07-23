@@ -454,6 +454,10 @@
     }
 
     function getMovieUrl(movie) {
+      return `/ver/${encodeURIComponent(getMovieSlug(movie))}`;
+    }
+
+    function getMovieDetailUrl(movie) {
       return `/pelicula/${encodeURIComponent(getMovieSlug(movie))}`;
     }
 
@@ -530,7 +534,7 @@
 
     function getCurrentMovieSlug() {
       const parts = window.location.pathname.split('/').filter(Boolean);
-      const movieIndex = parts.indexOf('pelicula');
+      const movieIndex = parts.indexOf('ver');
       return movieIndex >= 0 ? decodeURIComponent(parts[movieIndex + 1] || '') : '';
     }
 
@@ -777,7 +781,7 @@
           const hasThumb = recThumb !== '';
           const bgStyle = hasThumb ? '' : `background: linear-gradient(135deg, ${hashColor(m.id)})`;
           return `
-            <a class="card" href="${escapeAttr(getMovieUrl(m))}" data-view-slug="${escapeAttr(getMovieSlug(m))}">
+            <a class="card" href="${escapeAttr(getMovieDetailUrl(m))}" data-view-slug="${escapeAttr(getMovieSlug(m))}">
               <div class="card-thumb" style="${bgStyle}">
                 ${hasThumb
                   ? `<img class="card-thumb-img" src="${escapeAttr(recThumb)}" alt="Poster de ${escapeAttr(m.title)}" loading="lazy" decoding="async">`

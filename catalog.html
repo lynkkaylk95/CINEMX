@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="es-MX">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#09090b">
+  <meta name="description" id="meta-desc" content="Explora películas y series en español latino por género y año.">
+  <link rel="canonical" id="canonical-link" href="https://cinemaxmx.com/">
+  <title>Colección — CineMax MX</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/discovery.css?v=20260723">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="CineMax MX, inicio">CINE<span>MAX</span></a>
+    <nav class="desktop-nav" aria-label="Navegación principal">
+      <a href="/">Inicio</a>
+      <a href="/genero/romance">Romance</a>
+      <a href="/genero/drama">Drama</a>
+      <a href="/genero/accion">Acción</a>
+      <a href="/genero/series">Series</a>
+    </nav>
+    <a class="search-link" href="/?search=open" aria-label="Buscar">⌕ <span>Buscar</span></a>
+  </header>
+
+  <main>
+    <section class="catalog-hero">
+      <div class="eyebrow">COLECCIÓN CINEMAX</div>
+      <h1 id="catalog-title">Películas para ti</h1>
+      <p id="catalog-copy">Encuentra una historia para cada momento.</p>
+      <div class="filter-strip" aria-label="Explorar por género">
+        <a href="/genero/romance">Romance</a>
+        <a href="/genero/drama">Drama</a>
+        <a href="/genero/comedia">Comedia</a>
+        <a href="/genero/thriller">Thriller</a>
+        <a href="/genero/familia">Familia</a>
+        <a href="/genero/series">Series</a>
+      </div>
+      <div class="year-strip" aria-label="Explorar por año">
+        <span>Año</span>
+        <a href="/ano/2026">2026</a><a href="/ano/2025">2025</a>
+        <a href="/ano/2024">2024</a><a href="/ano/2023">2023</a>
+      </div>
+    </section>
+
+    <section class="catalog-content">
+      <div class="results-head">
+        <div><span id="result-count">0</span> títulos</div>
+        <label>Ordenar
+          <select id="sort-select">
+            <option value="popular">Más populares</option>
+            <option value="newest">Más recientes</option>
+            <option value="rating">Mejor valoradas</option>
+          </select>
+        </label>
+      </div>
+      <div id="catalog-feed" class="catalog-feed" aria-live="polite"></div>
+      <div id="empty-state" class="empty-state" hidden>
+        <strong>Aún no hay títulos aquí</strong>
+        <p>Prueba otra colección o vuelve al inicio.</p>
+        <a href="/">Explorar CineMax</a>
+      </div>
+    </section>
+  </main>
+
+  <nav class="mobile-dock" aria-label="Navegación móvil">
+    <a href="/">⌂<span>Inicio</span></a>
+    <a class="active" href="/genero/romance">▦<span>Explorar</span></a>
+    <a href="/ano/2026">◷<span>Nuevas</span></a>
+    <a href="/?search=open">⌕<span>Buscar</span></a>
+  </nav>
+
+  <footer>© 2026 CineMax MX · Películas y series en español latino</footer>
+  <script src="/js/movies.js?v=20260723"></script>
+  <script src="/js/catalog.js?v=20260723"></script>
+  <script src="/js/ads-config.js?v=ads-no-onclick-20260723" defer></script>
+  <script src="/js/ads.js?v=ads-no-onclick-20260723" defer></script>
+</body>
+</html>

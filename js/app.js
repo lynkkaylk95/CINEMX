@@ -591,6 +591,10 @@ function toggleSearch() {
 }
 
 function filterByGenre(genre) {
+  if (genre !== 'Todos') {
+    window.location.href = `/genero/${encodeURIComponent(slugify(genre))}`;
+    return;
+  }
   currentGenre = genre;
   currentSearch = '';
   currentYear = '';
@@ -606,6 +610,9 @@ function filterByGenre(genre) {
 }
 
 function filterByYear(year) {
+  window.location.href = `/ano/${encodeURIComponent(year)}`;
+  return;
+  /* Legacy in-page filtering remains below for older cached pages. */
   currentYear = Number(year);
   currentGenre = 'Todos';
   currentSearch = '';

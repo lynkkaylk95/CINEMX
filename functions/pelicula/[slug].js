@@ -4,7 +4,7 @@ export async function onRequest(context) {
   const slug = decodeURIComponent(context.params.slug || '');
   const movies = await getMovies(context);
   const movie = movies.find(item => getMovieSlug(item) === slug);
-  let html = await getAssetHtml(context, '/movie.html');
+  let html = await getAssetHtml(context, '/detail.html');
 
   if (!movie) {
     return new Response(html, {

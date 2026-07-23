@@ -369,8 +369,8 @@ function injectMovieMeta(html, movie, request) {
     .replace(/<script type="application\/ld\+json" id="structured-data">[\s\S]*?<\/script>/, `<script type="application/ld+json" id="structured-data">${JSON.stringify(structuredData).replace(/</g, "\\u003c")}</script>`);
 }
 
-async function serveMovieShell(request, env, movie) {
-  const movieUrl = new URL("/movie.html", request.url);
+async function serveMovieShell(request, env, movie, assetPath = "/movie.html") {
+  const movieUrl = new URL(assetPath, request.url);
   const response = await env.ASSETS.fetch(new Request(movieUrl, { method: "GET", headers: request.headers }));
   if (!response.ok) return response;
 
@@ -395,11 +395,13 @@ function xmlEscape(value) {
 
 function buildSitemap(request, movies) {
   const years = [...new Set(movies.map((movie) => Number(movie.year)).filter(Boolean))].sort((a, b) => b - a);
+  const genres = [...new Set(movies.flatMap((movie) => Array.isArray(movie.genres) ? movie.genres : [movie.genre]).filter(Boolean).map(slugify))];
   const legalPages = ["about.html", "privacy.html", "terms.html", "dmca.html", "contact.html"];
   const urls = [
     { loc: `${SITE_ORIGIN}/`, priority: "1.0" },
     ...legalPages.map((page) => ({ loc: `${SITE_ORIGIN}/${page}`, priority: "0.6" })),
     ...years.map((year) => ({ loc: `${SITE_ORIGIN}/ano/${year}`, priority: "0.8" })),
+    ...genres.map((genre) => ({ loc: `${SITE_ORIGIN}/genero/${encodeURIComponent(genre)}`, priority: "0.8" })),
     ...movies.map((movie) => ({ loc: `${SITE_ORIGIN}/pelicula/${encodeURIComponent(getMovieSlug(movie))}`, priority: "0.9" }))
   ];
 
@@ -450,21 +452,28 @@ export default {
       }
     }
 
-    const assetResponse = await env.ASSETS.fetch(request);
-    if (assetResponse.status !== 404) return assetResponse;
-
     const moviePathMatch = url.pathname.match(/^\/pelicula\/([^/]+)\/?$/);
     if (moviePathMatch) {
       const slug = decodeURIComponent(moviePathMatch[1]);
       const movies = await loadMovies(request, env);
       const movie = movies.find((item) => getMovieSlug(item) === slug);
-      return serveMovieShell(request, env, movie);
+      return serveMovieShell(request, env, movie, "/detail.html");
     }
 
-    if (/^\/ano\/\d{4}\/?$/.test(url.pathname)) {
-      return serveIndexShell(request, env);
+    const watchPathMatch = url.pathname.match(/^\/ver\/([^/]+)\/?$/);
+    if (watchPathMatch) {
+      const slug = decodeURIComponent(watchPathMatch[1]);
+      const movies = await loadMovies(request, env);
+      const movie = movies.find((item) => getMovieSlug(item) === slug);
+      return serveMovieShell(request, env, movie, "/movie.html");
     }
 
+    if (/^\/ano\/\d{4}\/?$/.test(url.pathname) || /^\/genero\/[^/]+\/?$/.test(url.pathname)) {
+      const catalogUrl = new URL("/catalog.html", request.url);
+      return env.ASSETS.fetch(new Request(catalogUrl, { method: "GET", headers: request.headers }));
+    }
+
+    const assetResponse = await env.ASSETS.fetch(request);
     return assetResponse;
   }
 };
