@@ -14,6 +14,29 @@ body>main,.catalog-hero,.catalog-content,.detail-hero,.detail-content,.detail-ma
 .filter-strip,.year-strip{width:100%;max-width:100%;overscroll-behavior-x:contain;-webkit-overflow-scrolling:touch}
 .catalog-feed,.related-grid,.detail-layout,.detail-copy,.section-heading,.feed-ad,.feed-ad>*{min-width:0;max-width:100%}
 .ad-copy,.ad-visual,.feed-ad-native .ad-visual{overflow-wrap:anywhere;word-break:break-word}
+
+/* The native provider replaces the placeholder contents after page load.
+   Reset the placeholder's two-column grid so Adsterra can measure and use the
+   complete feed width on both desktop and mobile. */
+.feed-ad[data-native-ad="true"]{
+  display:block;
+  width:100%;
+  max-width:100%;
+  min-width:0;
+  min-height:0;
+  height:auto;
+  padding:0;
+  overflow:hidden;
+  border:0;
+  border-radius:0;
+  background:transparent;
+}
+.feed-ad[data-native-ad="true"]>div[id^="container-"]{
+  display:block;
+  width:100%;
+  max-width:100%;
+  min-width:0;
+}
 .poster img,.related-grid img,.detail-poster img{max-width:100%}
 @media(max-width:640px){
   .site-header{padding-left:max(14px,env(safe-area-inset-left));padding-right:max(14px,env(safe-area-inset-right));gap:12px}

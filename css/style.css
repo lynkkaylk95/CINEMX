@@ -1312,6 +1312,28 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
   max-width: 100%;
 }
 
+/* Native widgets must own their layout after replacing the ad placeholder. */
+.ad-zone[data-native-ad="true"] {
+  display: block;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  height: auto;
+  min-height: 0;
+  padding: 0;
+  overflow: hidden;
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+}
+.ad-zone[data-native-ad="true"] > div[id^="container-"] {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
 /* Episode list */
 .ep-section-title { font-size: 15px; font-weight: 800; color: var(--white); margin-bottom: 12px; display: flex; align-items: center; gap: 7px; }
 .ep-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(64px,1fr)); gap: 7px; margin-bottom: 24px; }
