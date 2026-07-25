@@ -79,7 +79,7 @@ ul { list-style: none; }
   border-bottom: 1px solid var(--border);
 }
 .nav-logo {
-  font-size: clamp(18px,3.5vw,24px); font-weight: 900;
+  font-size: 23px; font-weight: 900;
   letter-spacing: -1px; color: var(--red); text-transform: uppercase;
   text-shadow: var(--glow-red); flex-shrink: 0;
 }
