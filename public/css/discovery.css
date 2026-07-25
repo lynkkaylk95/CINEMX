@@ -37,8 +37,10 @@ body>main,.catalog-hero,.catalog-content,.detail-hero,.detail-content,.detail-ma
   max-width:100%;
   min-width:0;
 }
+.filter-strip{flex-wrap:wrap;overflow:visible}
 .poster img,.related-grid img,.detail-poster img{max-width:100%}
 @media(max-width:640px){
+  .filter-strip{flex-wrap:nowrap;overflow-x:auto}
   .site-header{padding-left:max(14px,env(safe-area-inset-left));padding-right:max(14px,env(safe-area-inset-right));gap:12px}
   .catalog-hero,.catalog-content,.detail-content,.detail-main{padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right))}
   .catalog-search{width:100%;max-width:100%;gap:8px}
