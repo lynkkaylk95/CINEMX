@@ -1097,7 +1097,8 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
 }
 @media (max-width: 380px) {
   #hero { height: 310px; min-height: 310px; }
-  #hero-desc { display: none; }
+  #hero-desc,
+  #hero-desc.is-expandable { display: none; }
 }
 @media (max-width: 480px) {
   .footer-grid { grid-template-columns: 1fr; }
@@ -2065,7 +2066,8 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
     font-size: clamp(22px, 7vw, 28px);
     -webkit-line-clamp: 1;
   }
-  #hero-desc { display: none; }
+  #hero-desc,
+  #hero-desc.is-expandable { display: none; }
   .hero-meta {
     margin-bottom: 10px;
   }
