@@ -33,7 +33,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=header-refresh-20260725">
+  <link rel="stylesheet" href="css/style.css?v=content-first-20260725">
 </head>
 <body>
 
@@ -107,7 +107,7 @@
       </div>
       <div class="hero-btns">
         <button class="btn-play" onclick="navigateToMovie(1)">▶ Ver Ahora</button>
-        <button class="btn-info" onclick="navigateToMovie(1)">ℹ Más info</button>
+        <button class="btn-info" onclick="navigateToMovie(1)" aria-label="Más información"><span aria-hidden="true">ⓘ</span><span class="btn-info-text">Más info</span></button>
       </div>
     </div>
   </section>
@@ -117,12 +117,14 @@
   <main id="main">
 
     <section class="home-discovery" aria-label="Explorar el catálogo">
-      <div class="home-discovery-head">
-        <div><span>DESCUBRE</span><h2>¿Qué quieres ver?</h2></div>
-        <a href="/buscar">Buscar títulos →</a>
-      </div>
+      <a class="home-search-cta" href="/buscar">
+        <span class="ui-search-icon" aria-hidden="true"></span>
+        <span>Buscar película o serie…</span>
+        <strong>Buscar</strong>
+      </a>
     <!-- Genre Filter Tabs -->
     <div class="genre-bar">
+      <span class="discovery-row-label">Géneros</span>
       <div class="genre-tabs" id="genre-tabs-container">
         <button class="genre-tab active" onclick="filterByGenre('Todos')">🎬 Todos</button>
         <button class="genre-tab" onclick="filterByGenre('Acción')">💥 Acción</button>
@@ -142,6 +144,7 @@
     </div>
 
     <div class="genre-bar year-bar">
+      <span class="discovery-row-label">Años</span>
       <div class="genre-tabs" id="year-tabs-container">
         <a class="genre-tab year-tab" href="ano/2023" onclick="filterByYear(2023); return false;">2023</a>
         <a class="genre-tab year-tab" href="ano/2024" onclick="filterByYear(2024); return false;">2024</a>
