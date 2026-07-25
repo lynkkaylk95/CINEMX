@@ -33,15 +33,9 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=native-responsive-20260724">
+  <link rel="stylesheet" href="css/style.css?v=header-refresh-20260725">
 </head>
 <body>
-
-  <!-- Adsterra Smartlink - Top Bar -->
-  <div id="ad-top-bar">
-    🎬 <strong>CineMax MX</strong> &nbsp;|&nbsp; Mira miles de títulos gratis &nbsp;|&nbsp;
-    <a href="#" onclick="showToast('¡Oferta Adsterra Smartlink!'); return false;">Ver oferta exclusiva →</a>
-  </div>
 
   <!-- Navbar -->
   <nav id="navbar">
@@ -50,16 +44,6 @@
     <div class="nav-links">
       <a href="index.html" class="active" onclick="filterByGenre('Todos'); return false;">Inicio</a>
       <a href="about.html">Sobre Nosotros</a>
-      <a href="index.html?genre=Acci%C3%B3n" onclick="filterByGenre('Acción'); return false;">Acción</a>
-      <a href="index.html?genre=Comedia" onclick="filterByGenre('Comedia'); return false;">Comedia</a>
-      <a href="index.html?genre=Drama" onclick="filterByGenre('Drama'); return false;">Drama</a>
-      <a href="index.html?genre=Familia" onclick="filterByGenre('Familia'); return false;">Familia</a>
-      <a href="index.html?genre=Emotivo" onclick="filterByGenre('Emotivo'); return false;">Emotivo</a>
-      <a href="index.html?genre=Series" onclick="filterByGenre('Series'); return false;">Series</a>
-      <a href="index.html?genre=Escolar" onclick="filterByGenre('Escolar'); return false;">Escolar</a>
-      <a href="index.html?genre=Viajes%20en%20el%20tiempo" onclick="filterByGenre('Viajes en el tiempo'); return false;">Viajes en el tiempo</a>
-      <a href="index.html?genre=De%20%C3%A9poca" onclick="filterByGenre('De época'); return false;">De época</a>
-      <a href="index.html?genre=Intrigas%20palaciegas" onclick="filterByGenre('Intrigas palaciegas'); return false;">Intrigas palaciegas</a>
     </div>
 
     <div class="nav-right">
@@ -69,7 +53,7 @@
         </div>
         <button id="search-toggle" onclick="toggleSearch()" aria-label="Buscar"><span class="ui-search-icon" aria-hidden="true"></span></button>
       </div>
-      <button id="hamburger" onclick="toggleMenu()" aria-label="Menú">
+      <button id="hamburger" onclick="toggleMenu()" aria-label="Menú" aria-expanded="false" aria-controls="mobile-menu">
         <span></span><span></span><span></span>
       </button>
     </div>
@@ -77,6 +61,10 @@
 
   <!-- Mobile Menu -->
   <div id="mobile-menu">
+    <div class="mobile-menu-head">
+      <div><strong>Explorar</strong><span>Películas y series</span></div>
+      <button type="button" class="mobile-menu-close" onclick="closeMenu()" aria-label="Cerrar menú">×</button>
+    </div>
     <a href="index.html" onclick="filterByGenre('Todos'); closeMenu(); return false;">🏠 Inicio</a>
        <a href="about.html" onclick="closeMenu()">Sobre Nosotros</a>
     <a href="index.html?genre=Acci%C3%B3n" onclick="filterByGenre('Acción'); closeMenu(); return false;">💥 Acción</a>
@@ -128,6 +116,11 @@
   <!-- Main Content -->
   <main id="main">
 
+    <section class="home-discovery" aria-label="Explorar el catálogo">
+      <div class="home-discovery-head">
+        <div><span>DESCUBRE</span><h2>¿Qué quieres ver?</h2></div>
+        <a href="/buscar">Buscar títulos →</a>
+      </div>
     <!-- Genre Filter Tabs -->
     <div class="genre-bar">
       <div class="genre-tabs" id="genre-tabs-container">
@@ -156,6 +149,7 @@
         <a class="genre-tab year-tab" href="ano/2026" onclick="filterByYear(2026); return false;">2026</a>
       </div>
     </div>
+    </section>
 
     <!-- No Results -->
     <div id="no-results">
@@ -474,7 +468,7 @@
   <script src="js/ads-config.js?v=ads-no-onclick-20260723" defer></script>
   <script src="js/ads-health.js?v=ads-manager-20260714" defer></script>
   <script src="js/ads.js?v=native-single-20260724" defer></script>
-  <script src="js/app.js?v=random-hero-20260723"></script>
+  <script src="js/app.js?v=mobile-header-20260725"></script>
 
 </body>
 </html>

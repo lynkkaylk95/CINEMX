@@ -632,6 +632,9 @@ function toggleMenu() {
   const hamburger = document.getElementById('hamburger');
   menu?.classList.toggle('open');
   hamburger?.classList.toggle('open');
+  const isOpen = menu?.classList.contains('open');
+  document.body.classList.toggle('menu-open', Boolean(isOpen));
+  hamburger?.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
   if (menu?.classList.contains('open')) {
     setTimeout(() => document.getElementById('mob-search-input')?.focus(), 120);
   }
@@ -640,6 +643,8 @@ function toggleMenu() {
 function closeMenu() {
   document.getElementById('mobile-menu')?.classList.remove('open');
   document.getElementById('hamburger')?.classList.remove('open');
+  document.body.classList.remove('menu-open');
+  document.getElementById('hamburger')?.setAttribute('aria-expanded', 'false');
 }
 
 function showToast(msg) {
