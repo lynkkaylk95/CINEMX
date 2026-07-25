@@ -18,6 +18,14 @@
   const escape = value => String(value ?? '').replace(/[&<>"']/g, char => ({
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
   }[char]));
+  const viewCache = {};
+  let viewRequestId = 0;
+  const formatViews = value => {
+    const number = Math.max(0, Number(value) || 0);
+    if (number >= 1000000) return `${Math.round(number / 100000) / 10}M`;
+    if (number >= 1000) return `${Math.round(number / 100) / 10}K`;
+    return String(Math.round(number));
+  };
   const path = decodeURIComponent(location.pathname);
   const genreMatch = path.match(/\/genero\/([^/]+)/);
   const yearMatch = path.match(/\/ano\/(\d{4})/);
@@ -52,11 +60,13 @@
   });
 
   function card(movie) {
-    return `<a class="discovery-card" href="/pelicula/${encodeURIComponent(movieSlug(movie))}">
+    const slug = movieSlug(movie);
+    return `<a class="discovery-card" href="/pelicula/${encodeURIComponent(slug)}" data-view-slug="${escape(slug)}">
       <div class="poster">
         ${image(movie) ? `<img src="${escape(image(movie))}" alt="${escape(movie.title)}" loading="lazy">` : '<div class="poster-fallback">CINE<span>MAX</span></div>'}
         <span class="quality">${String(movie.type).toLowerCase() === 'serie' ? 'SERIE' : 'HD'}</span>
         <span class="rating">★ ${escape(movie.rating || '—')}</span>
+        <span class="catalog-view-count" aria-label="Visualizaciones"><span aria-hidden="true">◉</span><span data-catalog-view-count>${slug in viewCache ? formatViews(viewCache[slug]) : '—'}</span></span>
         <span class="details-cta">Ver detalles</span>
       </div>
       <h2>${escape(movie.title)}</h2>
@@ -89,6 +99,30 @@
 
   let preservedNativeSlot = null;
 
+  async function loadCatalogViews() {
+    const requestId = ++viewRequestId;
+    const cards = [...document.querySelectorAll('.discovery-card[data-view-slug]')];
+    const slugs = [...new Set(cards.map(card => card.dataset.viewSlug).filter(Boolean))];
+    const missing = slugs.filter(slug => !(slug in viewCache));
+    try {
+      for (let index = 0; index < missing.length; index += 80) {
+        const batch = missing.slice(index, index + 80);
+        const response = await fetch(`/api/views?slugs=${encodeURIComponent(batch.join(','))}`);
+        if (!response.ok) throw new Error(`Views API: ${response.status}`);
+        const data = await response.json();
+        Object.assign(viewCache, data.views || {});
+      }
+    } catch (error) {
+      console.warn('No se pudieron cargar las visualizaciones del catálogo.', error);
+      missing.forEach(slug => { viewCache[slug] = 0; });
+    }
+    if (requestId !== viewRequestId) return;
+    document.querySelectorAll('.discovery-card[data-view-slug]').forEach(card => {
+      const count = card.querySelector('[data-catalog-view-count]');
+      if (count) count.textContent = formatViews(viewCache[card.dataset.viewSlug] || 0);
+    });
+  }
+
   function render(sort) {
     applySearch();
     const feed = document.getElementById('catalog-feed');
@@ -116,6 +150,7 @@
     }
     document.getElementById('result-count').textContent = sorted.length;
     document.getElementById('empty-state').hidden = sorted.length > 0;
+    loadCatalogViews();
   }
   if (searchMode) {
     const form = document.getElementById('catalog-search');
