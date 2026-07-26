@@ -75,12 +75,10 @@
   }
 
   function ad(sequence) {
-    const isNative = sequence === 1;
-    const video = !isNative;
-    return `<aside ${isNative ? 'id="catalog-native-slot"' : ''} class="feed-ad ${isNative ? 'feed-ad-native ad-zone-home-feed' : 'feed-ad-video'}" aria-label="Publicidad">
+    return `<aside id="catalog-native-slot-${sequence}" class="feed-ad feed-ad-native ad-zone-home-feed catalog-native-slot" aria-label="Publicidad">
       <span class="ad-label">PUBLICIDAD</span>
-      <div class="ad-visual">${video ? '<span class="ad-play">▶</span><small>Video patrocinado</small>' : '<span>Contenido recomendado</span><strong>Descubre una oferta elegida para ti</strong>'}</div>
-      <div class="ad-copy"><strong>${video ? 'Una pausa breve antes de seguir explorando' : 'Una recomendación para tu próxima noche de cine'}</strong><span>${video ? 'El video comenzará solo cuando sea visible.' : 'Espacio native banner adaptable a tu red publicitaria.'}</span></div>
+      <div class="ad-visual"><span>Contenido recomendado</span><strong>Descubre una oferta elegida para ti</strong></div>
+      <div class="ad-copy"><strong>Una recomendación para tu próxima noche de cine</strong><span>Espacio native banner adaptable a tu red publicitaria.</span></div>
     </aside>`;
   }
 
@@ -96,8 +94,6 @@
       movie.title, movie.desc, movie.type, movie.year, ...genres(movie)
     ].join(' ')).includes(query));
   }
-
-  let preservedNativeSlot = null;
 
   async function loadCatalogViews() {
     const requestId = ++viewRequestId;
@@ -126,7 +122,6 @@
   function render(sort) {
     applySearch();
     const feed = document.getElementById('catalog-feed');
-    const mountedNative = document.getElementById('catalog-native-slot') || preservedNativeSlot;
     const sorted = [...list].sort((a, b) => sort === 'newest'
       ? Number(b.year) - Number(a.year)
       : sort === 'rating' ? Number(b.rating) - Number(a.rating) : Number(b.id) - Number(a.id));
@@ -141,13 +136,7 @@
       }
     });
     feed.innerHTML = chunks.join('');
-    const freshNative = document.getElementById('catalog-native-slot');
-    if (mountedNative?.dataset.homeNativeMounted === 'true' && freshNative) {
-      freshNative.replaceWith(mountedNative);
-      preservedNativeSlot = mountedNative;
-    } else if (mountedNative?.dataset.homeNativeMounted === 'true') {
-      preservedNativeSlot = mountedNative;
-    }
+    window.dispatchEvent(new CustomEvent('cinemax:ads-refresh'));
     document.getElementById('result-count').textContent = sorted.length;
     document.getElementById('empty-state').hidden = sorted.length > 0;
     loadCatalogViews();

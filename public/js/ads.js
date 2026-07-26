@@ -229,25 +229,23 @@
 
   function mountAllFormatBanners() {
     const categorySlots = [...document.querySelectorAll('.ad-zone-category-break')];
-    const isMobile = window.matchMedia('(max-width: 768px)').matches;
     const isCompactMovie = window.matchMedia(`(max-width: ${config.breakpoints.movieRails}px)`).matches;
     categorySlots.forEach((element, index) => {
-      if (index === 0 && !isMobile) {
-        element.dataset.adPlacement = 'homeCategoryBanner';
-        element.classList.remove('ad-slot-disabled');
-        mountFormatBanner(element, '468x60');
-      } else if (index === 1) {
-        element.dataset.adPlacement = 'homeCategoryNative';
-        element.classList.remove('ad-slot-disabled');
-        mountAdsterraNative(element, 'homeCategoryNative', CINEMAX_PLACEMENTS.homeCategoryNative);
-      } else {
-        element.classList.add('ad-slot-disabled');
-        element.innerHTML = '';
-      }
+      const placement = `homeCategoryNative-${index + 1}`;
+      element.dataset.adPlacement = placement;
+      element.classList.remove('ad-slot-disabled');
+      mountAdsterraNative(element, placement, CINEMAX_PLACEMENTS.homeCategoryNative);
     });
 
-    const homeRectangle = document.querySelector('.ad-zone-home-feed');
-    if (homeRectangle) mountAdsterraNative(homeRectangle, 'homeFeedNative', CINEMAX_PLACEMENTS.homeFeedNative);
+    document.querySelectorAll('.ad-zone-home-feed').forEach((element, index) => {
+      mountAdsterraNative(element, `homeFeedNative-${index + 1}`, CINEMAX_PLACEMENTS.homeFeedNative);
+    });
+
+    const homeAffiliate = document.querySelector('#affiliate-section');
+    if (homeAffiliate) {
+      homeAffiliate.dataset.adPlacement = 'homeAffiliateNative';
+      mountAdsterraNative(homeAffiliate, 'homeAffiliateNative', CINEMAX_PLACEMENTS.homeAffiliateNative);
+    }
 
     const homeBottom = document.querySelector('.ad-zone-home-bottom');
     if (homeBottom) {
@@ -375,6 +373,9 @@
   onDomReady(() => safely('social bar', loadSocialBar));
   onDomReady(() => safely('Monetag push notifications', loadMonetagPush));
   onDomReady(() => safely('Monetag vignette banner', loadMonetagVignette));
+  onDomReady(() => {
+    window.addEventListener('cinemax:ads-refresh', () => safely('dynamic native ads refresh', mountAllFormatBanners));
+  });
   onDomReady(() => {
     const breakpoint = window.matchMedia(`(max-width: ${config.breakpoints.movieRails}px)`);
     const mobileBreakpoint = window.matchMedia('(max-width: 768px)');
