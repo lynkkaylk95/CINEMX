@@ -147,19 +147,22 @@
   }
 
   function mountAdsterraNative(element, placement, native) {
-    if (!element || !native?.enabled || element.dataset.homeNativeMounted === 'true') return;
-    const existingContainer = document.getElementById(native.containerId);
-    if (existingContainer && !element.contains(existingContainer)) {
-      report(placement, 'skipped', { reason: 'native-container-already-exists' });
-      return;
-    }
+    if (!element || !native?.enabled || element.dataset.nativeMounted === 'true') return;
     if (isHiddenAdSlot(element)) {
       report(placement, 'skipped', { reason: 'hidden-by-breakpoint' });
       return;
     }
 
+    const providerSrc = config.providers[native.provider];
+    if (!providerSrc || !native.containerId) {
+      report(placement, 'skipped', { reason: 'native-provider-config-missing' });
+      return;
+    }
+
+    element.dataset.nativeMounted = 'true';
     element.dataset.homeNativeMounted = 'true';
     element.dataset.nativeAd = 'true';
+    element.dataset.nativePlacement = placement;
     element.classList.remove('ad-clickable', 'ad-fixed-slot', 'ad-fixed-slot--300x250');
     element.removeAttribute('role');
     element.removeAttribute('tabindex');
@@ -168,22 +171,50 @@
     element.style.removeProperty('--ad-h');
     element.innerHTML = '';
 
-    const script = document.createElement('script');
-    script.async = true;
-    script.dataset.cfasync = 'false';
-    script.src = config.providers.homeNative;
-    script.onload = () => report(placement, 'script-loaded');
-    script.onerror = () => report(placement, 'script-error');
-
-    const container = document.createElement('div');
-    container.id = native.containerId;
-    element.append(script, container);
+    // Adsterra native snippets use a fixed container id. Each placement runs
+    // inside its own document so the same zone can safely appear more than once
+    // without duplicate ids, globals or provider styles colliding.
+    const frame = document.createElement('iframe');
+    frame.className = 'native-ad-frame';
+    frame.title = 'Publicidad';
+    frame.loading = 'lazy';
+    frame.scrolling = 'no';
+    frame.frameBorder = '0';
+    frame.setAttribute('aria-label', `Publicidad ${placement}`);
+    frame.srcdoc = `<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><base target="_blank"><style>html,body{margin:0;padding:0;width:100%;overflow:hidden;background:transparent}*{box-sizing:border-box}#${native.containerId}{width:100%;max-width:100%;overflow:hidden}</style></head><body><div id="${native.containerId}"></div><script async data-cfasync="false" src="${providerSrc}"><\/script></body></html>`;
+    element.appendChild(frame);
     report(placement, 'mounted');
 
-    window.setTimeout(() => {
-      const rendered = container.children.length > 0 || container.querySelector('iframe, img, a');
-      report(placement, rendered ? 'rendered' : 'empty', rendered ? {} : { reason: 'provider-returned-no-content' });
-    }, config.emptyTimeoutMs);
+    const startedAt = Date.now();
+    const minHeight = config.nativeFrame?.minHeight || 140;
+    const maxHeight = config.nativeFrame?.maxHeight || 1200;
+    const syncFrameHeight = () => {
+      try {
+        const doc = frame.contentDocument;
+        const container = doc?.getElementById(native.containerId);
+        const height = Math.ceil(Math.max(
+          minHeight,
+          container?.scrollHeight || 0,
+          doc?.body?.scrollHeight || 0,
+          doc?.documentElement?.scrollHeight || 0
+        ));
+        frame.style.height = `${Math.min(height, maxHeight)}px`;
+        const rendered = Boolean(container?.children.length || container?.querySelector('iframe, img, a'));
+        if (rendered && element.dataset.nativeRendered !== 'true') {
+          element.dataset.nativeRendered = 'true';
+          report(placement, 'rendered');
+        }
+        if (Date.now() - startedAt < config.emptyTimeoutMs) {
+          window.setTimeout(syncFrameHeight, 300);
+        } else if (!rendered) {
+          element.dataset.adEmpty = 'true';
+          report(placement, 'empty', { reason: 'provider-returned-no-content' });
+        }
+      } catch (error) {
+        report(placement, 'resize-skipped', { reason: 'native-frame-inaccessible' });
+      }
+    };
+    frame.addEventListener('load', syncFrameHeight, { once: true });
   }
 
   function isHiddenAdSlot(element) {
@@ -199,11 +230,16 @@
   function mountAllFormatBanners() {
     const categorySlots = [...document.querySelectorAll('.ad-zone-category-break')];
     const isMobile = window.matchMedia('(max-width: 768px)').matches;
+    const isCompactMovie = window.matchMedia(`(max-width: ${config.breakpoints.movieRails}px)`).matches;
     categorySlots.forEach((element, index) => {
       if (index === 0 && !isMobile) {
         element.dataset.adPlacement = 'homeCategoryBanner';
         element.classList.remove('ad-slot-disabled');
         mountFormatBanner(element, '468x60');
+      } else if (index === 1) {
+        element.dataset.adPlacement = 'homeCategoryNative';
+        element.classList.remove('ad-slot-disabled');
+        mountAdsterraNative(element, 'homeCategoryNative', CINEMAX_PLACEMENTS.homeCategoryNative);
       } else {
         element.classList.add('ad-slot-disabled');
         element.innerHTML = '';
@@ -220,7 +256,15 @@
     }
 
     const movieMobileTop = document.querySelector('.movie-mobile-ad-top');
-    if (movieMobileTop) movieMobileTop.classList.add('ad-slot-disabled');
+    if (movieMobileTop) {
+      movieMobileTop.dataset.adPlacement = 'movieMobileTopNative';
+      if (isCompactMovie) {
+        movieMobileTop.classList.remove('ad-slot-disabled');
+        mountAdsterraNative(movieMobileTop, 'movieMobileTopNative', CINEMAX_PLACEMENTS.movieMobileTopNative);
+      } else {
+        movieMobileTop.classList.add('ad-slot-disabled');
+      }
+    }
     const movieMobileBottom = document.querySelector('.movie-mobile-ad-bottom');
     if (movieMobileBottom) {
       const description = document.querySelector('.movie-desc');
@@ -228,7 +272,7 @@
         description.insertAdjacentElement('afterend', movieMobileBottom);
       }
       movieMobileBottom.dataset.adPlacement = 'movieAfterDescription';
-      if (isMobile) {
+      if (isCompactMovie) {
         movieMobileBottom.classList.remove('ad-slot-disabled');
         mountFormatBanner(movieMobileBottom, '320x50');
       } else {
@@ -236,6 +280,14 @@
       }
     }
 
+    const leftRail = document.querySelector('.movie-ad-left .movie-ad-code');
+    if (leftRail) mountAdsterraNative(leftRail, 'movieLeftRailNative', CINEMAX_PLACEMENTS.movieLeftRailNative);
+    const rightRail = document.querySelector('.movie-ad-right .movie-ad-code');
+    if (rightRail) mountAdsterraNative(rightRail, 'movieRightRailNative', CINEMAX_PLACEMENTS.movieRightRailNative);
+
+    document.querySelectorAll('.legal-native-ad').forEach((element, index) => {
+      mountAdsterraNative(element, `legalNative-${index + 1}`, CINEMAX_PLACEMENTS.legalNative);
+    });
   }
 
   function remountResponsiveAds() {
@@ -256,7 +308,7 @@
     const target = document.querySelector('.ad-zone-home-mid');
     if (!target) return;
     target.dataset.adPlacement = 'homeBeforeEstrenos';
-    mountFormatBanner(target, '320x50');
+    mountAdsterraNative(target, 'homeBeforeEstrenos', CINEMAX_PLACEMENTS.homeMidNative);
   }
 
   function loadSocialBar() {

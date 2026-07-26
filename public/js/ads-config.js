@@ -6,6 +6,10 @@ window.CINEMAX_AD_CONFIG = Object.freeze({
     mobile: 768,
     movieRails: 1180
   },
+  nativeFrame: {
+    minHeight: 140,
+    maxHeight: 1200
+  },
   providers: {
     homeNative: 'https://pl30342251.effectivecpmnetwork.com/d0d0a44841736d86ead326116f2d0134/invoke.js',
     socialBar: 'https://pl30309365.effectivecpmnetwork.com/68/55/71/68557162785fb21a64b74f1737d7c4b8.js',
@@ -18,7 +22,13 @@ window.CINEMAX_AD_CONFIG = Object.freeze({
   },
   placements: {
     homeFeedNative: { enabled: true, provider: 'homeNative', containerId: 'container-d0d0a44841736d86ead326116f2d0134', pages: ['home'] },
+    homeMidNative: { enabled: true, provider: 'homeNative', containerId: 'container-d0d0a44841736d86ead326116f2d0134', pages: ['home'] },
+    homeCategoryNative: { enabled: true, provider: 'homeNative', containerId: 'container-d0d0a44841736d86ead326116f2d0134', pages: ['home'] },
+    legalNative: { enabled: true, provider: 'homeNative', containerId: 'container-d0d0a44841736d86ead326116f2d0134', pages: ['home'] },
     movieBelowPlayerNative: { enabled: true, provider: 'homeNative', containerId: 'container-d0d0a44841736d86ead326116f2d0134', pages: ['movie'] },
+    movieLeftRailNative: { enabled: true, provider: 'homeNative', containerId: 'container-d0d0a44841736d86ead326116f2d0134', pages: ['movie'] },
+    movieRightRailNative: { enabled: true, provider: 'homeNative', containerId: 'container-d0d0a44841736d86ead326116f2d0134', pages: ['movie'] },
+    movieMobileTopNative: { enabled: true, provider: 'homeNative', containerId: 'container-d0d0a44841736d86ead326116f2d0134', pages: ['movie'] },
     socialBar: { enabled: true, provider: 'socialBar', pages: ['home', 'movie'] },
     monetagPush: { enabled: true, provider: 'monetagPush', zoneId: '11351118', pages: ['home', 'movie'] },
     monetagVignette: { enabled: true, provider: 'monetagVignette', zoneId: '11351155', pages: ['home', 'movie'] }

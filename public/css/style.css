@@ -1267,7 +1267,7 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
   min-height: 250px;
 }
 .movie-mobile-ad-top {
-  display: none !important;
+  display: none;
 }
 .movie-back-btn {
   display: inline-flex; align-items: center; gap: 6px;
@@ -1465,6 +1465,26 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
   width: 100%;
   max-width: 100%;
   min-width: 0;
+}
+.native-ad-frame {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  min-height: 140px;
+  border: 0;
+  overflow: hidden;
+  background: transparent;
+}
+.movie-ad-code[data-native-ad="true"] {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
 }
 
 /* Episode list */
