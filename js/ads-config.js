@@ -13,8 +13,7 @@ window.CINEMAX_AD_CONFIG = Object.freeze({
   providers: {
     homeNative: 'https://pl30342251.effectivecpmnetwork.com/d0d0a44841736d86ead326116f2d0134/invoke.js',
     socialBar: 'https://pl30309365.effectivecpmnetwork.com/68/55/71/68557162785fb21a64b74f1737d7c4b8.js',
-    monetagPush: 'https://5gvci.com/act/files/tag.min.js?z=11351118',
-    monetagVignette: 'https://n6wxm.com/vignette.min.js'
+    multitag: 'https://quge5.com/88/tag.min.js'
   },
   smartlink: {
     enabled: true,
@@ -30,8 +29,7 @@ window.CINEMAX_AD_CONFIG = Object.freeze({
     movieRightRailNative: { enabled: true, provider: 'homeNative', containerId: 'container-d0d0a44841736d86ead326116f2d0134', pages: ['movie'] },
     movieMobileTopNative: { enabled: true, provider: 'homeNative', containerId: 'container-d0d0a44841736d86ead326116f2d0134', pages: ['movie'] },
     socialBar: { enabled: true, provider: 'socialBar', pages: ['home', 'movie'] },
-    monetagPush: { enabled: true, provider: 'monetagPush', zoneId: '11351118', pages: ['home', 'movie'] },
-    monetagVignette: { enabled: true, provider: 'monetagVignette', zoneId: '11351155', pages: ['home', 'movie'] }
+    multitag: { enabled: true, provider: 'multitag', zoneId: '262827', pages: ['home', 'movie'] }
   },
   formatBanners: {
     '300x250': { enabled: true, key: 'defd11363035ea0ee41c73133839e9db', width: 300, height: 250 },
