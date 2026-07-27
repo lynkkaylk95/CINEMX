@@ -241,12 +241,6 @@
       mountAdsterraNative(element, `homeFeedNative-${index + 1}`, CINEMAX_PLACEMENTS.homeFeedNative);
     });
 
-    const homeAffiliate = document.querySelector('#affiliate-section');
-    if (homeAffiliate) {
-      homeAffiliate.dataset.adPlacement = 'homeAffiliateNative';
-      mountAdsterraNative(homeAffiliate, 'homeAffiliateNative', CINEMAX_PLACEMENTS.homeAffiliateNative);
-    }
-
     const homeBottom = document.querySelector('.ad-zone-home-bottom');
     if (homeBottom) {
       homeBottom.dataset.adPlacement = 'homeBottomBanner';
