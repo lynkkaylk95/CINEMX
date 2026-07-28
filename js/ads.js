@@ -248,16 +248,6 @@
       mountFormatBanner(homeBottom, window.matchMedia('(max-width: 768px)').matches ? '320x50' : '728x90');
     }
 
-    const movieMobileTop = document.querySelector('.movie-mobile-ad-top');
-    if (movieMobileTop) {
-      movieMobileTop.dataset.adPlacement = 'movieMobileTopNative';
-      if (isCompactMovie && CINEMAX_PLACEMENTS.movieMobileTopNative?.enabled) {
-        movieMobileTop.classList.remove('ad-slot-disabled');
-        mountAdsterraNative(movieMobileTop, 'movieMobileTopNative', CINEMAX_PLACEMENTS.movieMobileTopNative);
-      } else {
-        movieMobileTop.classList.add('ad-slot-disabled');
-      }
-    }
     const movieMobileBottom = document.querySelector('.movie-mobile-ad-bottom');
     if (movieMobileBottom) {
       const description = document.querySelector('.movie-desc');

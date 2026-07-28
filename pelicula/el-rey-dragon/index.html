@@ -45,7 +45,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=player-controls-20260728">
+  <link rel="stylesheet" href="css/style.css?v=remove-mobile-top-20260728">
 </head>
 <body>
 
@@ -89,14 +89,6 @@
       <a href="/" class="movie-back-btn" onclick="event.preventDefault(); if (document.referrer || window.history.length > 1) { window.history.back(); } else { window.location.href = '/'; } return false;">
         &#8592; Volver al catálogo
       </a>
-
-      <!-- Mobile Adsterra Banner -->
-      <div class="ad-zone movie-mobile-ad movie-mobile-ad-top ad-zone--rectangle">
-        <div class="ad-zone-label">
-          <strong>&#128226; Publicidad</strong>
-          Banner móvil superior
-        </div>
-      </div>
 
       <div class="player-title-area">
         <div class="movie-page-badge" id="movie-badge">PELÍCULA</div>
@@ -261,9 +253,9 @@
 
   <!-- Scripts -->
   <script src="js/movies.js?v=seo-20260702"></script>
-  <script src="js/ads-config.js?v=mobile-top-off-20260727" defer></script>
+  <script src="js/ads-config.js?v=remove-mobile-top-20260728" defer></script>
   <script src="js/ads-health.js?v=ads-manager-20260714" defer></script>
-  <script src="js/ads.js?v=mobile-top-off-20260727" defer></script>
+  <script src="js/ads.js?v=remove-mobile-top-20260728" defer></script>
   <script>
     const MOVIES_STORAGE_KEY = 'cinemax_movies';
     let currentMovieYtId = '';
