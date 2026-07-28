@@ -45,7 +45,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=native-all-20260726">
+  <link rel="stylesheet" href="css/style.css?v=fullscreen-player-20260727">
 </head>
 <body>
 
@@ -128,8 +128,9 @@
       <div class="video-wrap" id="video-wrap">
         <div class="video-poster" id="video-poster" aria-hidden="true"></div>
         <div class="video-play-layer" id="video-play-layer">
-          <button type="button" class="video-play-button" id="video-play-button" aria-label="Reproducir video"></button>
+          <button type="button" class="video-play-button" id="video-play-button" aria-label="Nhấn để xem toàn màn hình"><span class="video-play-label">Nhấn để xem toàn màn hình</span></button>
         </div>
+        <button type="button" class="video-fullscreen-close" id="video-fullscreen-close" aria-label="Thoát toàn màn hình">&times;</button>
         <div class="video-container">
           <iframe
             id="yt-player"
@@ -675,6 +676,41 @@
       setPlayer(targetId);
     }
 
+    function leavePlayerFullscreen() {
+      const videoWrap = document.getElementById('video-wrap');
+      videoWrap?.classList.remove('is-webview-fullscreen');
+      document.body.classList.remove('has-webview-fullscreen');
+      if (document.fullscreenElement && document.exitFullscreen) {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    function enterPlayerFullscreen(videoWrap) {
+      if (!videoWrap) return;
+      const requestFullscreen = videoWrap.requestFullscreen
+        || videoWrap.webkitRequestFullscreen
+        || videoWrap.msRequestFullscreen;
+
+      const useWebviewFallback = () => {
+        videoWrap.classList.add('is-webview-fullscreen');
+        document.body.classList.add('has-webview-fullscreen');
+      };
+
+      const isFacebookWebView = /FBAN|FBAV|FB_IAB|Instagram/i.test(navigator.userAgent);
+      if (isFacebookWebView || !requestFullscreen) {
+        useWebviewFallback();
+        return;
+      }
+
+      try {
+        const result = requestFullscreen.call(videoWrap);
+        if (result && typeof result.catch === 'function') {
+          result.catch(useWebviewFallback);
+        }
+      } catch (_) {
+        useWebviewFallback();
+      }
+    }
     document.addEventListener('DOMContentLoaded', () => {
       const urlParams = new URLSearchParams(window.location.search);
       const movieId = Number(urlParams.get('id'));
@@ -715,8 +751,14 @@
 
       const playButton = document.getElementById('video-play-button');
       if (playButton) {
-        playButton.addEventListener('click', () => startPlayback(movieYtId), { once: true });
+        playButton.addEventListener('click', () => {
+          enterPlayerFullscreen(document.getElementById('video-wrap'));
+          startPlayback(movieYtId);
+        }, { once: true });
       }
+
+      const fullscreenClose = document.getElementById('video-fullscreen-close');
+      fullscreenClose?.addEventListener('click', leavePlayerFullscreen);
 
       const videoWrap = document.getElementById('video-wrap');
       if (videoWrap) {

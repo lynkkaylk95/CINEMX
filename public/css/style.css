@@ -1307,26 +1307,76 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
   display: flex;
   align-items: center;
   justify-content: center;
-  width: clamp(62px, 12vw, 82px);
-  height: clamp(44px, 8vw, 58px);
+  gap: 12px;
+  min-height: 58px;
+  padding: 12px 20px;
   border-radius: 16px;
   background: rgba(229,9,20,.94);
   color: #fff;
+  font-size: clamp(13px, 2.8vw, 16px);
+  font-weight: 800;
   box-shadow: 0 8px 26px rgba(0,0,0,.45);
   transition: transform var(--tr), background var(--tr), box-shadow var(--tr);
 }
 .video-play-button::before {
   content: '';
-  display: block;
-  margin-left: 5px;
+  flex: 0 0 auto;
+  margin-left: 3px;
   border-style: solid;
   border-width: 11px 0 11px 18px;
   border-color: transparent transparent transparent #fff;
+}
+.video-play-label {
+  display: block;
+  line-height: 1.2;
+  text-align: left;
 }
 .video-play-button:hover {
   background: var(--red2);
   transform: scale(1.05);
   box-shadow: 0 12px 32px rgba(0,0,0,.55), var(--glow-red);
+}
+.video-fullscreen-close {
+  position: absolute;
+  z-index: 5;
+  top: max(12px, env(safe-area-inset-top));
+  right: max(12px, env(safe-area-inset-right));
+  display: none;
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(255,255,255,.28);
+  border-radius: 50%;
+  background: rgba(0,0,0,.72);
+  color: #fff;
+  font-size: 26px;
+  line-height: 1;
+}
+.video-wrap.is-webview-fullscreen {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483000;
+  width: 100vw;
+  height: 100dvh;
+  margin: 0;
+  padding: 0;
+  border-radius: 0;
+  background: #000;
+}
+.video-wrap.is-webview-fullscreen .video-fullscreen-close {
+  display: grid;
+  place-items: center;
+}
+body.has-webview-fullscreen {
+  overflow: hidden;
+}
+
+@media (max-width: 768px) {
+  .video-play-button {
+    max-width: calc(100% - 32px);
+    min-height: 54px;
+    padding: 11px 16px;
+    border-radius: 14px;
+  }
 }
 
 /* Adsterra zone below player */
