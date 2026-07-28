@@ -45,7 +45,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=fullscreen-player-20260727">
+  <link rel="stylesheet" href="css/style.css?v=player-controls-20260728">
 </head>
 <body>
 
@@ -118,7 +118,7 @@
       <div class="video-wrap" id="video-wrap">
         <div class="video-poster" id="video-poster" aria-hidden="true"></div>
         <div class="video-play-layer" id="video-play-layer">
-          <button type="button" class="video-play-button" id="video-play-button" aria-label="Nhấn để xem toàn màn hình"><span class="video-play-label">Nhấn để xem toàn màn hình</span></button>
+          <button type="button" class="video-play-button" id="video-play-button" aria-label="Phát video toàn màn hình"></button>
         </div>
         <button type="button" class="video-fullscreen-close" id="video-fullscreen-close" aria-label="Thoát toàn màn hình">&times;</button>
         <div class="video-container">
@@ -666,6 +666,20 @@
       setPlayer(targetId);
     }
 
+    let playerNativeFullscreenSeen = false;
+
+    function handlePlayerFullscreenChange() {
+      const fullscreenElement = document.fullscreenElement || document.webkitFullscreenElement;
+      if (fullscreenElement) {
+        playerNativeFullscreenSeen = true;
+        return;
+      }
+      if (!playerNativeFullscreenSeen) return;
+      playerNativeFullscreenSeen = false;
+      const videoWrap = document.getElementById('video-wrap');
+      videoWrap?.classList.remove('is-webview-fullscreen');
+      document.body.classList.remove('has-webview-fullscreen');
+    }
     function leavePlayerFullscreen() {
       const videoWrap = document.getElementById('video-wrap');
       videoWrap?.classList.remove('is-webview-fullscreen');
@@ -746,6 +760,9 @@
           startPlayback(movieYtId);
         }, { once: true });
       }
+
+      document.addEventListener('fullscreenchange', handlePlayerFullscreenChange);
+      document.addEventListener('webkitfullscreenchange', handlePlayerFullscreenChange);
 
       const fullscreenClose = document.getElementById('video-fullscreen-close');
       fullscreenClose?.addEventListener('click', leavePlayerFullscreen);

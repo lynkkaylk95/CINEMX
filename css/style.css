@@ -1307,14 +1307,12 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  min-height: 58px;
-  padding: 12px 20px;
+  width: clamp(68px, 12vw, 82px);
+  height: clamp(48px, 8vw, 58px);
+  padding: 0;
   border-radius: 16px;
   background: rgba(229,9,20,.94);
   color: #fff;
-  font-size: clamp(13px, 2.8vw, 16px);
-  font-weight: 800;
   box-shadow: 0 8px 26px rgba(0,0,0,.45);
   transition: transform var(--tr), background var(--tr), box-shadow var(--tr);
 }
@@ -1325,11 +1323,6 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
   border-style: solid;
   border-width: 11px 0 11px 18px;
   border-color: transparent transparent transparent #fff;
-}
-.video-play-label {
-  display: block;
-  line-height: 1.2;
-  text-align: left;
 }
 .video-play-button:hover {
   background: var(--red2);
@@ -1372,9 +1365,9 @@ body.has-webview-fullscreen {
 
 @media (max-width: 768px) {
   .video-play-button {
-    max-width: calc(100% - 32px);
-    min-height: 54px;
-    padding: 11px 16px;
+    width: 72px;
+    height: 52px;
+    padding: 0;
     border-radius: 14px;
   }
 }
