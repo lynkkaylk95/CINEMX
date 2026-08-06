@@ -81,6 +81,7 @@ async function adminRequest(url, options = {}) {
 
 function showLogin(message = '') {
   document.getElementById('admin-login-screen').hidden = false;
+  document.getElementById('admin-reset-screen').hidden = true;
   document.getElementById('admin-page').hidden = true;
   document.getElementById('admin-login-error').textContent = message;
 }
@@ -358,6 +359,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     thumbInput.addEventListener('paste', () => setTimeout(updateThumbnailPreview, 0));
   }
   const loginForm = document.getElementById('admin-login-form');
+  const resetToken = new URLSearchParams(location.search).get('reset');
+  if (resetToken) {
+    document.getElementById('admin-login-screen').hidden = true;
+    document.getElementById('admin-reset-screen').hidden = false;
+  }
   loginForm.addEventListener('submit', async event => {
     event.preventDefault();
     const error = document.getElementById('admin-login-error');
@@ -386,6 +392,47 @@ document.addEventListener('DOMContentLoaded', async () => {
       button.disabled = false;
     }
   });
+  document.getElementById('admin-forgot-password').addEventListener('click', async event => {
+    const username = document.getElementById('admin-username').value.trim() || 'Admin';
+    const error = document.getElementById('admin-login-error');
+    event.currentTarget.disabled = true;
+    try {
+      await adminRequest('/api/admin/forgot-password', {
+        method: 'POST', body: JSON.stringify({ username })
+      });
+      error.style.color = '#8edb9b';
+      error.textContent = 'Nếu tài khoản hợp lệ, liên kết đặt lại đã được gửi tới email khôi phục.';
+    } catch (forgotError) {
+      error.style.color = '';
+      error.textContent = forgotError.code === 'password_recovery_not_configured'
+        ? 'Email khôi phục chưa được cấu hình trên Cloudflare.'
+        : 'Chưa thể gửi email. Vui lòng thử lại sau.';
+    } finally {
+      event.currentTarget.disabled = false;
+    }
+  });
+  document.getElementById('admin-reset-form').addEventListener('submit', async event => {
+    event.preventDefault();
+    const password = document.getElementById('admin-new-password').value;
+    const confirmation = document.getElementById('admin-confirm-password').value;
+    const error = document.getElementById('admin-reset-error');
+    if (password !== confirmation) {
+      error.textContent = 'Hai mật khẩu không giống nhau.';
+      return;
+    }
+    try {
+      await adminRequest('/api/admin/reset-password', {
+        method: 'POST', body: JSON.stringify({ token: resetToken, password })
+      });
+      history.replaceState({}, '', '/admin');
+      showLogin('Đã đổi mật khẩu. Bạn có thể đăng nhập ngay.');
+      document.getElementById('admin-username').value = 'Admin';
+    } catch (resetError) {
+      error.textContent = resetError.code === 'invalid_or_expired_token'
+        ? 'Liên kết đã hết hạn hoặc đã được sử dụng.'
+        : 'Không thể đổi mật khẩu. Vui lòng thử lại.';
+    }
+  });
   document.getElementById('admin-logout').addEventListener('click', async () => {
     try { await adminRequest('/api/admin/logout', { method: 'POST' }); } catch (_) {}
     currentMovies = [];
@@ -404,6 +451,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       event.currentTarget.disabled = false;
     }
   });
+
+  if (resetToken) return;
 
   try {
     await adminRequest('/api/admin/session');

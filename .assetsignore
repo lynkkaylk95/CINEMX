@@ -12,4 +12,7 @@ node_modules
 node_modules/**
 worker.js
 wrangler.toml
+ADMIN_SETUP.md
+migrations
+migrations/**
 *.log

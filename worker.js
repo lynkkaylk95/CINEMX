@@ -1,3 +1,5 @@
+import { EmailMessage } from "cloudflare:email";
+
 function slugify(value) {
   return String(value || "")
     .normalize("NFD")
@@ -445,8 +447,12 @@ async function handleAdminLogin(request, env) {
   const body = await readJson(request);
   const username = String(body?.username || "").trim();
   const passwordHash = await sha256(String(body?.password || ""));
+  const storedCredential = env.DB
+    ? await env.DB.prepare("SELECT password_hash FROM admin_credentials WHERE username = ?").bind(username).first()
+    : null;
+  const expectedPasswordHash = storedCredential?.password_hash || env.ADMIN_PASSWORD_HASH;
   const valid = timingSafeEqual(username, env.ADMIN_USERNAME)
-    && timingSafeEqual(passwordHash.toLowerCase(), String(env.ADMIN_PASSWORD_HASH).toLowerCase());
+    && timingSafeEqual(passwordHash.toLowerCase(), String(expectedPasswordHash).toLowerCase());
 
   if (!valid) {
     if (env.DB) {
@@ -458,6 +464,75 @@ async function handleAdminLogin(request, env) {
   if (env.DB) await env.DB.prepare("DELETE FROM admin_login_attempts WHERE ip_hash = ?").bind(ipHash).run();
   const token = await createAdminSession(username, env.SESSION_SECRET);
   return jsonResponse({ ok: true, username }, { headers: { "Set-Cookie": adminCookie(token) } });
+}
+
+async function handleForgotPassword(request, env) {
+  if (!env.DB || !env.SEND_EMAIL || !env.ADMIN_RECOVERY_EMAIL || !env.SESSION_SECRET) {
+    return jsonResponse({ ok: false, error: "password_recovery_not_configured" }, { status: 503 });
+  }
+  if (!isSameOrigin(request)) return jsonResponse({ ok: false, error: "invalid_origin" }, { status: 403 });
+  const body = await readJson(request);
+  const username = String(body?.username || "").trim();
+  const genericResponse = jsonResponse({ ok: true });
+  if (!timingSafeEqual(username.toLowerCase(), String(env.ADMIN_USERNAME || "").toLowerCase())) return genericResponse;
+
+  const activeReset = await env.DB.prepare(
+    "SELECT 1 AS active FROM admin_password_resets WHERE username = ? AND used_at IS NULL AND expires_at > datetime('now')"
+  ).bind(env.ADMIN_USERNAME).first();
+  if (activeReset) return genericResponse;
+
+  const tokenBytes = crypto.getRandomValues(new Uint8Array(32));
+  const token = base64UrlEncode(tokenBytes);
+  const tokenHash = await sha256(token);
+  await env.DB.prepare("DELETE FROM admin_password_resets WHERE expires_at <= datetime('now')").run();
+  await env.DB.prepare(
+    "INSERT INTO admin_password_resets (token_hash, username, expires_at) VALUES (?, ?, datetime('now', '+30 minutes'))"
+  ).bind(tokenHash, env.ADMIN_USERNAME).run();
+
+  const resetUrl = `${new URL(request.url).origin}/admin?reset=${encodeURIComponent(token)}`;
+  const from = env.ADMIN_EMAIL_FROM || "admin@cinemaxmx.com";
+  const raw = [
+    `From: CineMax MX <${from}>`,
+    `To: ${env.ADMIN_RECOVERY_EMAIL}`,
+    "Subject: Dat lai mat khau quan tri CineMax MX",
+    "Content-Type: text/plain; charset=UTF-8",
+    "",
+    "Ban da yeu cau dat lai mat khau quan tri CineMax MX.",
+    `Mo lien ket sau trong vong 30 phut: ${resetUrl}`,
+    "Neu ban khong yeu cau, hay bo qua email nay."
+  ].join("\r\n");
+  try {
+    await env.SEND_EMAIL.send(new EmailMessage(from, env.ADMIN_RECOVERY_EMAIL, raw));
+  } catch (error) {
+    console.error("Password recovery email failed", error);
+    return jsonResponse({ ok: false, error: "email_delivery_failed" }, { status: 502 });
+  }
+  return genericResponse;
+}
+
+async function handleResetPassword(request, env) {
+  if (!env.DB || !env.SESSION_SECRET) return jsonResponse({ ok: false, error: "password_recovery_not_configured" }, { status: 503 });
+  if (!isSameOrigin(request)) return jsonResponse({ ok: false, error: "invalid_origin" }, { status: 403 });
+  const body = await readJson(request);
+  const token = String(body?.token || "");
+  const password = String(body?.password || "");
+  if (token.length < 30 || password.length < 10) {
+    return jsonResponse({ ok: false, error: "invalid_reset_request" }, { status: 400 });
+  }
+  const tokenHash = await sha256(token);
+  const reset = await env.DB.prepare(
+    "SELECT username FROM admin_password_resets WHERE token_hash = ? AND used_at IS NULL AND expires_at > datetime('now')"
+  ).bind(tokenHash).first();
+  if (!reset) return jsonResponse({ ok: false, error: "invalid_or_expired_token" }, { status: 400 });
+
+  const newPasswordHash = await sha256(password);
+  await env.DB.batch([
+    env.DB.prepare(`INSERT INTO admin_credentials (username, password_hash, updated_at) VALUES (?, ?, datetime('now'))
+      ON CONFLICT(username) DO UPDATE SET password_hash = excluded.password_hash, updated_at = excluded.updated_at`)
+      .bind(reset.username, newPasswordHash),
+    env.DB.prepare("UPDATE admin_password_resets SET used_at = datetime('now') WHERE token_hash = ?").bind(tokenHash)
+  ]);
+  return jsonResponse({ ok: true });
 }
 
 async function requireAdmin(request, env) {
@@ -682,6 +757,14 @@ export default {
 
     if (url.pathname === "/api/admin/login" && request.method === "POST") {
       return handleAdminLogin(request, env);
+    }
+
+    if (url.pathname === "/api/admin/forgot-password" && request.method === "POST") {
+      return handleForgotPassword(request, env);
+    }
+
+    if (url.pathname === "/api/admin/reset-password" && request.method === "POST") {
+      return handleResetPassword(request, env);
     }
 
     if (url.pathname === "/api/admin/logout" && request.method === "POST") {

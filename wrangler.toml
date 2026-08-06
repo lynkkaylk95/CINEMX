@@ -7,12 +7,15 @@ directory = "."
 binding = "ASSETS"
 not_found_handling = "404-page"
 
-# After running `npx wrangler d1 create cinemax-movies`, add the generated block here:
-# [[d1_databases]]
-# binding = "DB"
-# database_name = "cinemax-movies"
-# database_id = "YOUR_DATABASE_ID"
-# migrations_dir = "migrations"
+[[d1_databases]]
+binding = "DB"
+database_name = "cinemax-movies"
+database_id = "9a69dcf6-66d5-4be1-bd16-b9bc13a5f9fb"
+migrations_dir = "migrations"
+
+[[send_email]]
+name = "SEND_EMAIL"
+destination_address = "tuanlinhnguyen765@gmail.com"
 
 [[durable_objects.bindings]]
 name = "CINEMAX_VIEW_COUNTER"

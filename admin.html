@@ -28,7 +28,22 @@
       <label for="admin-password">Mật khẩu</label>
       <input id="admin-password" name="password" type="password" autocomplete="current-password" required>
       <button type="submit" class="btn-save">Đăng nhập</button>
+      <button type="button" class="admin-forgot-link" id="admin-forgot-password">Quên mật khẩu?</button>
       <div class="admin-login-error" id="admin-login-error" role="alert"></div>
+    </form>
+  </div>
+
+  <div class="admin-login-screen" id="admin-reset-screen" hidden>
+    <form class="admin-login-card" id="admin-reset-form">
+      <div class="admin-login-brand">CINE<span>MAX</span></div>
+      <h1>Đặt lại mật khẩu</h1>
+      <p>Mật khẩu mới cần có ít nhất 10 ký tự.</p>
+      <label for="admin-new-password">Mật khẩu mới</label>
+      <input id="admin-new-password" type="password" minlength="10" autocomplete="new-password" required>
+      <label for="admin-confirm-password">Nhập lại mật khẩu</label>
+      <input id="admin-confirm-password" type="password" minlength="10" autocomplete="new-password" required>
+      <button type="submit" class="btn-save">Đổi mật khẩu</button>
+      <div class="admin-login-error" id="admin-reset-error" role="alert"></div>
     </form>
   </div>
 

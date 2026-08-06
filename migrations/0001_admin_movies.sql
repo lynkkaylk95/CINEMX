@@ -30,3 +30,19 @@ CREATE TABLE IF NOT EXISTS admin_login_attempts (
 
 CREATE INDEX IF NOT EXISTS idx_admin_attempts_ip_time
   ON admin_login_attempts(ip_hash, attempted_at);
+
+CREATE TABLE IF NOT EXISTS admin_credentials (
+  username TEXT PRIMARY KEY,
+  password_hash TEXT NOT NULL,
+  updated_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE TABLE IF NOT EXISTS admin_password_resets (
+  token_hash TEXT PRIMARY KEY,
+  username TEXT NOT NULL,
+  expires_at TEXT NOT NULL,
+  used_at TEXT
+);
+
+CREATE INDEX IF NOT EXISTS idx_admin_password_resets_expiry
+  ON admin_password_resets(expires_at);

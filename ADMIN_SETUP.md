@@ -22,10 +22,10 @@ npx wrangler d1 migrations apply cinemax-movies --remote
 
 ## 2. Tạo tài khoản admin
 
-Tên đăng nhập:
+Tên đăng nhập đã chọn là `Admin`:
 
 ```powershell
-"admin" | npx wrangler secret put ADMIN_USERNAME
+"Admin" | npx wrangler secret put ADMIN_USERNAME
 ```
 
 Tạo mã SHA-256 từ mật khẩu (thay `MAT_KHAU_CUA_BAN`):
@@ -42,7 +42,25 @@ Tạo khóa phiên ngẫu nhiên:
 
 Không ghi mật khẩu hoặc các secret trên vào Git.
 
-## 3. Triển khai
+## 3. Bật khôi phục qua email
+
+Trong Cloudflare Dashboard, bật **Email Routing** cho `cinemaxmx.com` và xác minh địa chỉ nhận `tuanlinhnguyen765@gmail.com`. Sau đó bỏ dấu chú thích ở khối `[[send_email]]` trong `wrangler.toml`.
+
+Đặt địa chỉ khôi phục:
+
+```powershell
+"tuanlinhnguyen765@gmail.com" | npx wrangler secret put ADMIN_RECOVERY_EMAIL
+```
+
+Địa chỉ gửi phải thuộc tên miền đã bật Email Routing:
+
+```powershell
+"admin@cinemaxmx.com" | npx wrangler secret put ADMIN_EMAIL_FROM
+```
+
+Khi bấm **Quên mật khẩu?**, hệ thống gửi liên kết dùng một lần, hết hạn sau 30 phút. Hệ thống không thể và không nên gửi lại mật khẩu cũ.
+
+## 4. Triển khai
 
 ```powershell
 npx wrangler deploy
