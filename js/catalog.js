@@ -19,6 +19,7 @@
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
   }[char]));
   const viewCache = {};
+  const weeklyViewCache = {};
   let viewRequestId = 0;
   const formatViews = value => {
     const number = Math.max(0, Number(value) || 0);
@@ -32,6 +33,8 @@
   const selectedGenre = genreMatch ? genreMatch[1] : '';
   const selectedYear = yearMatch ? Number(yearMatch[1]) : 0;
   const searchMode = /^\/buscar\/?$/.test(path);
+  const trendingMode = /^\/tendencias\/?$/.test(path);
+  let currentSort = trendingMode ? 'weekly' : 'popular';
   let searchQuery = new URLSearchParams(location.search).get('q')?.trim() || '';
   const prettyGenre = selectedGenre
     ? selectedGenre.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
@@ -45,9 +48,11 @@
   });
   let list = baseList;
 
-  const title = searchMode ? 'Buscar en CineMax' : selectedYear ? `Películas de ${selectedYear}` : (prettyGenre || 'Todas las películas');
+  const title = trendingMode ? 'Más Vistos Esta Semana' : searchMode ? 'Buscar en CineMax' : selectedYear ? `Películas de ${selectedYear}` : (prettyGenre || 'Todas las películas');
   document.getElementById('catalog-title').textContent = title;
-  document.getElementById('catalog-copy').textContent = searchMode
+  document.getElementById('catalog-copy').textContent = trendingMode
+    ? 'Las películas más vistas por la comunidad durante esta semana.'
+    : searchMode
     ? 'Encuentra rápidamente tu próxima película o serie.'
     : selectedYear
     ? `Estrenos y favoritas publicadas en ${selectedYear}, reunidas en un solo lugar.`
@@ -107,12 +112,17 @@
         if (!response.ok) throw new Error(`Views API: ${response.status}`);
         const data = await response.json();
         Object.assign(viewCache, data.views || {});
+        Object.assign(weeklyViewCache, data.weeklyViews || {});
       }
     } catch (error) {
       console.warn('No se pudieron cargar las visualizaciones del catálogo.', error);
       missing.forEach(slug => { viewCache[slug] = 0; });
     }
     if (requestId !== viewRequestId) return;
+    if (currentSort === 'weekly' && missing.length) {
+      render('weekly');
+      return;
+    }
     document.querySelectorAll('.discovery-card[data-view-slug]').forEach(card => {
       const count = card.querySelector('[data-catalog-view-count]');
       if (count) count.textContent = formatViews(viewCache[card.dataset.viewSlug] || 0);
@@ -120,9 +130,12 @@
   }
 
   function render(sort) {
+    currentSort = sort;
     applySearch();
     const feed = document.getElementById('catalog-feed');
-    const sorted = [...list].sort((a, b) => sort === 'newest'
+    const sorted = [...list].sort((a, b) => sort === 'weekly'
+      ? (weeklyViewCache[movieSlug(b)] || 0) - (weeklyViewCache[movieSlug(a)] || 0)
+      : sort === 'newest'
       ? Number(b.year) - Number(a.year)
       : sort === 'rating' ? Number(b.rating) - Number(a.rating) : Number(b.id) - Number(a.id));
     const chunks = [];
@@ -168,5 +181,6 @@
       render(document.getElementById('sort-select').value);
     }
   });
-  render('popular');
+  document.getElementById('sort-select').value = currentSort;
+  render(currentSort);
 })();
