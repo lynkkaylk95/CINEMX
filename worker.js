@@ -64,8 +64,123 @@ function jsonResponse(data, init = {}) {
   const headers = new Headers(init.headers || {});
   headers.set("content-type", "application/json;charset=UTF-8");
   headers.set("cache-control", "no-store");
-  headers.set("access-control-allow-origin", "*");
   return new Response(JSON.stringify(data), { ...init, headers });
+}
+
+function base64UrlEncode(value) {
+  const bytes = typeof value === "string" ? new TextEncoder().encode(value) : value;
+  let binary = "";
+  for (const byte of bytes) binary += String.fromCharCode(byte);
+  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/g, "");
+}
+
+function base64UrlDecode(value) {
+  const normalized = String(value || "").replace(/-/g, "+").replace(/_/g, "/");
+  return atob(normalized.padEnd(Math.ceil(normalized.length / 4) * 4, "="));
+}
+
+async function hmac(value, secret) {
+  const key = await crypto.subtle.importKey(
+    "raw",
+    new TextEncoder().encode(secret),
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"]
+  );
+  return base64UrlEncode(new Uint8Array(await crypto.subtle.sign("HMAC", key, new TextEncoder().encode(value))));
+}
+
+function timingSafeEqual(left, right) {
+  const a = new TextEncoder().encode(String(left || ""));
+  const b = new TextEncoder().encode(String(right || ""));
+  if (a.length !== b.length) return false;
+  let difference = 0;
+  for (let index = 0; index < a.length; index += 1) difference |= a[index] ^ b[index];
+  return difference === 0;
+}
+
+async function createAdminSession(username, secret) {
+  const payload = base64UrlEncode(JSON.stringify({ username, exp: Date.now() + 12 * 60 * 60 * 1000 }));
+  return `${payload}.${await hmac(payload, secret)}`;
+}
+
+async function getAdminSession(request, env) {
+  if (!env.SESSION_SECRET) return null;
+  const token = parseCookies(request).cmx_admin_session || "";
+  const [payload, signature] = token.split(".");
+  if (!payload || !signature || !timingSafeEqual(signature, await hmac(payload, env.SESSION_SECRET))) return null;
+  try {
+    const data = JSON.parse(base64UrlDecode(payload));
+    return data.exp > Date.now() && data.username ? data : null;
+  } catch (_) {
+    return null;
+  }
+}
+
+function adminCookie(token, maxAge = 43200) {
+  return `cmx_admin_session=${token}; Max-Age=${maxAge}; Path=/; SameSite=Strict; Secure; HttpOnly`;
+}
+
+function isSameOrigin(request) {
+  const origin = request.headers.get("Origin");
+  return !origin || origin === new URL(request.url).origin;
+}
+
+function normalizeMovieInput(input) {
+  const title = String(input?.title || "").trim();
+  const genres = [...new Set((Array.isArray(input?.genres) ? input.genres : [input?.genre])
+    .map((genre) => String(genre || "").trim()).filter(Boolean))];
+  const yt = getYouTubeId(input?.yt);
+  const movie = {
+    title,
+    slug: slugify(input?.slug || title),
+    genre: genres[0] || "",
+    genres,
+    type: input?.type === "Serie" ? "Serie" : "Película",
+    year: Number(input?.year),
+    rating: Number(input?.rating),
+    duration: String(input?.duration || "").trim(),
+    emoji: String(input?.emoji || "🎬"),
+    yt,
+    thumb: String(input?.thumb || "").trim(),
+    desc: String(input?.desc || "").trim(),
+    badge: String(input?.badge || "").trim(),
+    episodes: (Array.isArray(input?.episodes) ? input.episodes : []).map((episode) => String(episode).trim()).filter(Boolean)
+  };
+  if (!movie.title || !isValidSlug(movie.slug) || !movie.genre || !movie.duration || !movie.yt || !movie.desc) return null;
+  if (!Number.isInteger(movie.year) || movie.year < 1900 || movie.year > 2200) return null;
+  if (!Number.isFinite(movie.rating) || movie.rating < 0 || movie.rating > 10) return null;
+  return movie;
+}
+
+function movieFromRow(row) {
+  let genres = [];
+  let episodes = [];
+  try { genres = JSON.parse(row.genres_json || "[]"); } catch (_) {}
+  try { episodes = JSON.parse(row.episodes_json || "[]"); } catch (_) {}
+  return {
+    id: Number(row.id), title: row.title, slug: row.slug, genre: row.genre,
+    genres, type: row.type, year: Number(row.year), rating: Number(row.rating),
+    duration: row.duration, emoji: row.emoji, yt: row.yt, thumb: row.thumb,
+    desc: row.description, badge: row.badge || "", episodes,
+    addedAt: row.added_at, updatedAt: row.updated_at
+  };
+}
+
+async function loadMoviesFromD1(env) {
+  if (!env.DB) return null;
+  try {
+    const result = await env.DB.prepare("SELECT * FROM movies ORDER BY datetime(added_at) DESC, id DESC").all();
+    return result.results.map(movieFromRow);
+  } catch (error) {
+    console.error("D1 movies query failed", error);
+    return null;
+  }
+}
+
+async function readJson(request) {
+  if (!(request.headers.get("content-type") || "").toLowerCase().includes("application/json")) return null;
+  try { return await request.json(); } catch (_) { return null; }
 }
 
 function parseCookies(request) {
@@ -310,7 +425,136 @@ async function handleMovieViewsBatch(request, env) {
   });
 }
 
+async function handleAdminLogin(request, env) {
+  if (!env.ADMIN_USERNAME || !env.ADMIN_PASSWORD_HASH || !env.SESSION_SECRET) {
+    return jsonResponse({ ok: false, error: "admin_not_configured" }, { status: 503 });
+  }
+  if (!isSameOrigin(request)) return jsonResponse({ ok: false, error: "invalid_origin" }, { status: 403 });
+
+  const ipHash = await sha256(`${getClientIp(request)}|${env.SESSION_SECRET}`);
+  if (env.DB) {
+    await env.DB.prepare("DELETE FROM admin_login_attempts WHERE attempted_at <= datetime('now', '-1 day')").run();
+    const recent = await env.DB.prepare(
+      "SELECT COUNT(*) AS attempts FROM admin_login_attempts WHERE ip_hash = ? AND attempted_at > datetime('now', '-15 minutes')"
+    ).bind(ipHash).first();
+    if (Number(recent?.attempts || 0) >= 10) {
+      return jsonResponse({ ok: false, error: "too_many_attempts" }, { status: 429 });
+    }
+  }
+
+  const body = await readJson(request);
+  const username = String(body?.username || "").trim();
+  const passwordHash = await sha256(String(body?.password || ""));
+  const valid = timingSafeEqual(username, env.ADMIN_USERNAME)
+    && timingSafeEqual(passwordHash.toLowerCase(), String(env.ADMIN_PASSWORD_HASH).toLowerCase());
+
+  if (!valid) {
+    if (env.DB) {
+      await env.DB.prepare("INSERT INTO admin_login_attempts (ip_hash) VALUES (?)").bind(ipHash).run();
+    }
+    return jsonResponse({ ok: false, error: "invalid_credentials" }, { status: 401 });
+  }
+
+  if (env.DB) await env.DB.prepare("DELETE FROM admin_login_attempts WHERE ip_hash = ?").bind(ipHash).run();
+  const token = await createAdminSession(username, env.SESSION_SECRET);
+  return jsonResponse({ ok: true, username }, { headers: { "Set-Cookie": adminCookie(token) } });
+}
+
+async function requireAdmin(request, env) {
+  const session = await getAdminSession(request, env);
+  return session || null;
+}
+
+async function handleAdminMovies(request, env, id = null) {
+  if (!env.DB) return jsonResponse({ ok: false, error: "database_not_configured" }, { status: 503 });
+  if (!await requireAdmin(request, env)) return jsonResponse({ ok: false, error: "unauthorized" }, { status: 401 });
+  if (request.method !== "GET" && !isSameOrigin(request)) {
+    return jsonResponse({ ok: false, error: "invalid_origin" }, { status: 403 });
+  }
+
+  if (request.method === "GET") {
+    return jsonResponse({ ok: true, movies: await loadMoviesFromD1(env) || [] });
+  }
+
+  if (request.method === "DELETE") {
+    const result = await env.DB.prepare("DELETE FROM movies WHERE id = ?").bind(Number(id)).run();
+    return jsonResponse({ ok: true, deleted: Number(result.meta?.changes || 0) > 0 });
+  }
+
+  const body = await readJson(request);
+  const movie = normalizeMovieInput(body);
+  if (!movie) return jsonResponse({ ok: false, error: "invalid_movie" }, { status: 400 });
+
+  try {
+    if (request.method === "POST") {
+      const result = await env.DB.prepare(`
+        INSERT INTO movies (title, slug, genre, genres_json, type, year, rating, duration, emoji, yt, thumb, description, badge, episodes_json)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      `).bind(movie.title, movie.slug, movie.genre, JSON.stringify(movie.genres), movie.type, movie.year,
+        movie.rating, movie.duration, movie.emoji, movie.yt, movie.thumb, movie.desc, movie.badge,
+        JSON.stringify(movie.episodes)).run();
+      const created = await env.DB.prepare("SELECT * FROM movies WHERE id = ?").bind(result.meta.last_row_id).first();
+      return jsonResponse({ ok: true, movie: movieFromRow(created) }, { status: 201 });
+    }
+
+    if (request.method === "PUT" && id) {
+      const result = await env.DB.prepare(`
+        UPDATE movies SET title = ?, slug = ?, genre = ?, genres_json = ?, type = ?, year = ?, rating = ?,
+          duration = ?, emoji = ?, yt = ?, thumb = ?, description = ?, badge = ?, episodes_json = ?,
+          updated_at = datetime('now') WHERE id = ?
+      `).bind(movie.title, movie.slug, movie.genre, JSON.stringify(movie.genres), movie.type, movie.year,
+        movie.rating, movie.duration, movie.emoji, movie.yt, movie.thumb, movie.desc, movie.badge,
+        JSON.stringify(movie.episodes), Number(id)).run();
+      if (!Number(result.meta?.changes || 0)) return jsonResponse({ ok: false, error: "not_found" }, { status: 404 });
+      const updated = await env.DB.prepare("SELECT * FROM movies WHERE id = ?").bind(Number(id)).first();
+      return jsonResponse({ ok: true, movie: movieFromRow(updated) });
+    }
+  } catch (error) {
+    if (String(error?.message || error).includes("UNIQUE")) {
+      return jsonResponse({ ok: false, error: "duplicate_slug_or_video" }, { status: 409 });
+    }
+    console.error("Admin movie mutation failed", error);
+    return jsonResponse({ ok: false, error: "database_error" }, { status: 500 });
+  }
+
+  return jsonResponse({ ok: false, error: "method_not_allowed" }, { status: 405 });
+}
+
+async function handleLegacyMovieImport(request, env) {
+  if (!env.DB) return jsonResponse({ ok: false, error: "database_not_configured" }, { status: 503 });
+  if (!await requireAdmin(request, env)) return jsonResponse({ ok: false, error: "unauthorized" }, { status: 401 });
+  if (!isSameOrigin(request)) return jsonResponse({ ok: false, error: "invalid_origin" }, { status: 403 });
+  const count = await env.DB.prepare("SELECT COUNT(*) AS total FROM movies").first();
+  if (Number(count?.total || 0) > 0) return jsonResponse({ ok: false, error: "database_not_empty" }, { status: 409 });
+
+  const assetUrl = new URL("/js/movies.js", request.url);
+  const response = await env.ASSETS.fetch(new Request(assetUrl));
+  const source = await response.text();
+  const match = source.match(/const\s+MOVIES\s*=\s*(\[[\s\S]*?\]);?\s*$/);
+  if (!match) return jsonResponse({ ok: false, error: "legacy_data_unavailable" }, { status: 500 });
+  let legacyMovies;
+  try { legacyMovies = JSON.parse(match[1]); } catch (_) {
+    return jsonResponse({ ok: false, error: "legacy_data_invalid" }, { status: 500 });
+  }
+
+  const statements = legacyMovies.map((input) => {
+    const movie = normalizeMovieInput(input);
+    if (!movie) return null;
+    return env.DB.prepare(`
+      INSERT INTO movies (id, title, slug, genre, genres_json, type, year, rating, duration, emoji, yt, thumb, description, badge, episodes_json, added_at)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `).bind(Number(input.id), movie.title, movie.slug, movie.genre, JSON.stringify(movie.genres), movie.type,
+      movie.year, movie.rating, movie.duration, movie.emoji, movie.yt, movie.thumb, movie.desc, movie.badge,
+      JSON.stringify(movie.episodes), input.addedAt || new Date().toISOString());
+  }).filter(Boolean);
+  if (!statements.length) return jsonResponse({ ok: false, error: "legacy_data_empty" }, { status: 500 });
+  await env.DB.batch(statements);
+  return jsonResponse({ ok: true, imported: statements.length });
+}
+
 async function loadMovies(request, env) {
+  const databaseMovies = await loadMoviesFromD1(env);
+  if (databaseMovies !== null) return databaseMovies;
   const moviesUrl = new URL("/js/movies.js", request.url);
   const response = await env.ASSETS.fetch(new Request(moviesUrl, { method: "GET" }));
   if (!response.ok) return [];
@@ -324,6 +568,15 @@ async function loadMovies(request, env) {
   } catch (_) {
     return [];
   }
+}
+
+function moviesJavascriptResponse(movies) {
+  return new Response(`// Generated from CineMax MX online database\nconst MOVIES = ${JSON.stringify(movies)};\n`, {
+    headers: {
+      "content-type": "application/javascript;charset=UTF-8",
+      "cache-control": "no-cache, must-revalidate"
+    }
+  });
 }
 
 function injectMovieMeta(html, movie, request) {
@@ -426,6 +679,44 @@ export default {
     const url = new URL(request.url);
     const oldDomainRedirect = redirectOldDomain(url);
     if (oldDomainRedirect) return oldDomainRedirect;
+
+    if (url.pathname === "/api/admin/login" && request.method === "POST") {
+      return handleAdminLogin(request, env);
+    }
+
+    if (url.pathname === "/api/admin/logout" && request.method === "POST") {
+      if (!isSameOrigin(request)) return jsonResponse({ ok: false, error: "invalid_origin" }, { status: 403 });
+      return jsonResponse({ ok: true }, { headers: { "Set-Cookie": adminCookie("", 0) } });
+    }
+
+    if (url.pathname === "/api/admin/session" && request.method === "GET") {
+      const session = await requireAdmin(request, env);
+      return session
+        ? jsonResponse({ ok: true, username: session.username })
+        : jsonResponse({ ok: false, error: "unauthorized" }, { status: 401 });
+    }
+
+    if (url.pathname === "/api/admin/movies") {
+      return handleAdminMovies(request, env);
+    }
+
+    if (url.pathname === "/api/admin/import-legacy" && request.method === "POST") {
+      return handleLegacyMovieImport(request, env);
+    }
+
+    const adminMovieMatch = url.pathname.match(/^\/api\/admin\/movies\/(\d+)$/);
+    if (adminMovieMatch) {
+      return handleAdminMovies(request, env, Number(adminMovieMatch[1]));
+    }
+
+    if ((url.pathname === "/admin" || url.pathname === "/admin/") && request.method === "GET") {
+      return env.ASSETS.fetch(new Request(new URL("/admin.html", request.url), { headers: request.headers }));
+    }
+
+    if (url.pathname === "/js/movies.js" && request.method === "GET") {
+      const movies = await loadMoviesFromD1(env);
+      if (movies !== null) return moviesJavascriptResponse(movies);
+    }
 
     if ((url.pathname === "/api/views" || url.pathname === "/api/view-counts") && request.method === "GET") {
       return handleMovieViewsBatch(request, env);

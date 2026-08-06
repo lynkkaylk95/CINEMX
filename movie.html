@@ -257,17 +257,9 @@
   <script src="js/ads-health.js?v=ads-manager-20260714" defer></script>
   <script src="js/ads.js?v=remove-mobile-top-20260728" defer></script>
   <script>
-    const MOVIES_STORAGE_KEY = 'cinemax_movies';
     let currentMovieYtId = '';
 
     function getMoviesList() {
-      try {
-        const saved = localStorage.getItem(MOVIES_STORAGE_KEY);
-        const parsed = saved ? JSON.parse(saved) : null;
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-      } catch (err) {
-        console.warn('No se pudo leer la lista local de peliculas.', err);
-      }
       return typeof MOVIES !== 'undefined' ? [...MOVIES] : [];
     }
 

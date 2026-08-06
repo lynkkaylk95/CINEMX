@@ -3,7 +3,6 @@
    Logic for index.html (Main Page)
 ============================================================ */
 
-const MOVIES_STORAGE_KEY = 'cinemax_movies';
 const STATIC_GENRES = [
   'Acción',
   'Comedia',
@@ -43,15 +42,7 @@ function sortMoviesNewestFirst(movies) {
 }
 
 function loadMoviesList() {
-  let list = [];
-  try {
-    const saved = localStorage.getItem(MOVIES_STORAGE_KEY);
-    const parsed = saved ? JSON.parse(saved) : null;
-    if (Array.isArray(parsed) && parsed.length > 0) list = parsed;
-  } catch (err) {
-    console.warn('No se pudo leer la lista local de peliculas.', err);
-  }
-  if (!list.length) list = typeof MOVIES !== 'undefined' ? [...MOVIES] : [];
+  const list = typeof MOVIES !== 'undefined' && Array.isArray(MOVIES) ? [...MOVIES] : [];
   return sortMoviesNewestFirst(list);
 }
 

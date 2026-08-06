@@ -18,15 +18,32 @@
 </head>
 <body>
 
-  <div class="admin-page">
+  <div class="admin-login-screen" id="admin-login-screen">
+    <form class="admin-login-card" id="admin-login-form">
+      <div class="admin-login-brand">CINE<span>MAX</span></div>
+      <h1>Đăng nhập quản trị</h1>
+      <p>Đăng nhập để thêm, sửa và xóa phim trực tuyến.</p>
+      <label for="admin-username">Tên đăng nhập</label>
+      <input id="admin-username" name="username" autocomplete="username" required>
+      <label for="admin-password">Mật khẩu</label>
+      <input id="admin-password" name="password" type="password" autocomplete="current-password" required>
+      <button type="submit" class="btn-save">Đăng nhập</button>
+      <div class="admin-login-error" id="admin-login-error" role="alert"></div>
+    </form>
+  </div>
+
+  <div class="admin-page" id="admin-page" hidden>
     <div class="admin-header">
       <h1>Thêm / Chỉnh Sửa Phim và Series</h1>
-      <a href="https://cinemaxmx.com" target="_blank" rel="noopener noreferrer">🏠 Xem Website</a>
+      <div class="admin-header-actions">
+        <a href="https://cinemaxmx.com" target="_blank" rel="noopener noreferrer">🏠 Xem Website</a>
+        <button type="button" class="btn-logout" id="admin-logout">Đăng xuất</button>
+      </div>
     </div>
 
     <!-- Alert success -->
     <div class="admin-success" id="admin-alert">
-      Thực hiện thành công! Đừng quên xuất file khi hoàn tất.
+      Thực hiện thành công! Dữ liệu đã được cập nhật trực tuyến.
     </div>
 
     <div class="admin-layout">
@@ -128,16 +145,16 @@
           </div>
         </form>
 
-        <div class="admin-export-row">
-          <button type="button" class="btn-export" onclick="exportMoviesJS()">💾 Lưu và Xuất file movies.js</button>
-        </div>
       </div>
 
       <!-- List Card -->
       <div class="admin-list-card">
         <div class="admin-list-header">
           <h2>Danh Sách Phim Hiện Có</h2>
-          <span class="admin-count" id="admin-movie-count">0</span>
+          <div class="admin-header-actions">
+            <button type="button" class="btn-save" id="admin-import-legacy" hidden>Nhập dữ liệu phim cũ</button>
+            <span class="admin-count" id="admin-movie-count">0</span>
+          </div>
         </div>
 
         <div class="admin-list-controls">

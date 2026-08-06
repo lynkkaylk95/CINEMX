@@ -2142,3 +2142,12 @@ body.has-webview-fullscreen {
     min-height: 232px;
   }
 }
+/* Online admin authentication */
+.admin-login-screen{position:fixed;inset:0;z-index:9999;display:grid;place-items:center;padding:20px;background:radial-gradient(circle at top,#251014 0,#0b0b0d 55%)}
+.admin-login-screen[hidden],.admin-page[hidden]{display:none!important}
+.admin-login-card{width:min(100%,400px);display:flex;flex-direction:column;gap:10px;padding:34px;border:1px solid rgba(255,255,255,.1);border-radius:18px;background:#151518;box-shadow:0 24px 80px rgba(0,0,0,.55)}
+.admin-login-brand{font-size:26px;font-weight:900;letter-spacing:-1px;color:#fff}.admin-login-brand span{color:#e50914}
+.admin-login-card h1{margin:8px 0 0;font-size:24px}.admin-login-card p{margin:0 0 12px;color:#aaa;line-height:1.5}.admin-login-card label{margin-top:5px;font-size:13px;font-weight:700;color:#ddd}
+.admin-login-card input{width:100%;box-sizing:border-box;padding:12px 14px;border:1px solid #3a3a40;border-radius:8px;background:#222226;color:#fff;font:inherit}
+.admin-login-card button{margin-top:10px;min-height:44px}.admin-login-error{min-height:20px;color:#ff7878;font-size:13px;text-align:center}
+.admin-header-actions{display:flex;align-items:center;gap:10px}.btn-logout{padding:9px 13px;border:1px solid #555;border-radius:7px;background:#242428;color:#fff;cursor:pointer}

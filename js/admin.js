@@ -3,7 +3,6 @@
    Logic for admin.html (Offline Admin Panel)
 ============================================================ */
 
-const MOVIES_STORAGE_KEY = 'cinemax_movies';
 const ADMIN_VIEWS_API = 'https://cinemaxmx.com/api/views';
 const GENRE_ALIASES = {
   'Học đường': 'Escolar',
@@ -26,7 +25,7 @@ const ADMIN_GENRE_LABELS = {
   'De época': 'Cổ trang',
   'Intrigas palaciegas': 'Cung đấu'
 };
-let currentMovies = loadSavedMovies().map(normalizeMovieGenres);
+let currentMovies = [];
 let activeEpisodeTags = [];
 let adminMovieViewCounts = {};
 let adminViewsLoaded = false;
@@ -36,7 +35,6 @@ function getMovieSortValue(movie) {
   if (!Number.isNaN(addedTime)) return addedTime;
   return Number(movie?.id || 0);
 }
-
 function getMovieAddedDate(movie) {
   // Legacy entries 1-37 were imported into the current catalog on 07/07/2026,
   // before individual addedAt timestamps were stored.
@@ -65,22 +63,40 @@ function sortMoviesNewestFirst(movies) {
   return [...movies].sort((a, b) => getMovieSortValue(b) - getMovieSortValue(a));
 }
 
-function loadSavedMovies() {
-  let list = [];
-  try {
-    const saved = localStorage.getItem(MOVIES_STORAGE_KEY);
-    const parsed = saved ? JSON.parse(saved) : null;
-    if (Array.isArray(parsed) && parsed.length > 0) list = parsed;
-  } catch (err) {
-    console.warn('Không đọc được danh sách phim đã lưu.', err);
+async function adminRequest(url, options = {}) {
+  const response = await fetch(url, {
+    credentials: 'same-origin',
+    ...options,
+    headers: { Accept: 'application/json', ...(options.body ? { 'Content-Type': 'application/json' } : {}), ...(options.headers || {}) }
+  });
+  const data = await response.json().catch(() => ({}));
+  if (response.status === 401) showLogin();
+  if (!response.ok) {
+    const error = new Error(data.error || `HTTP ${response.status}`);
+    error.code = data.error;
+    throw error;
   }
-  if (!list.length) list = typeof MOVIES !== 'undefined' ? [...MOVIES] : [];
-  return sortMoviesNewestFirst(list);
+  return data;
 }
 
-function persistMovies() {
-  currentMovies = sortMoviesNewestFirst(currentMovies);
-  localStorage.setItem(MOVIES_STORAGE_KEY, JSON.stringify(currentMovies));
+function showLogin(message = '') {
+  document.getElementById('admin-login-screen').hidden = false;
+  document.getElementById('admin-page').hidden = true;
+  document.getElementById('admin-login-error').textContent = message;
+}
+
+function showAdmin() {
+  document.getElementById('admin-login-screen').hidden = true;
+  document.getElementById('admin-page').hidden = false;
+}
+
+async function loadOnlineMovies() {
+  const data = await adminRequest('/api/admin/movies');
+  currentMovies = sortMoviesNewestFirst((data.movies || []).map(normalizeMovieGenres));
+  document.getElementById('admin-import-legacy').hidden = currentMovies.length > 0;
+  populateAdminGenreFilter();
+  renderAdminList();
+  await loadAdminMovieViews();
 }
 
 function extractYouTubeId(value) {
@@ -329,7 +345,7 @@ function setSelectedGenres(genres) {
   });
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   setSelectedGenres(['Acción']);
   const ytInput = document.getElementById('yt');
   if (ytInput) {
@@ -341,17 +357,62 @@ document.addEventListener('DOMContentLoaded', () => {
     thumbInput.addEventListener('input', updateThumbnailPreview);
     thumbInput.addEventListener('paste', () => setTimeout(updateThumbnailPreview, 0));
   }
-  populateAdminGenreFilter();
-  renderAdminList();
-  loadAdminMovieViews();
-});
+  const loginForm = document.getElementById('admin-login-form');
+  loginForm.addEventListener('submit', async event => {
+    event.preventDefault();
+    const error = document.getElementById('admin-login-error');
+    const button = loginForm.querySelector('button[type="submit"]');
+    error.textContent = '';
+    button.disabled = true;
+    try {
+      await adminRequest('/api/admin/login', {
+        method: 'POST',
+        body: JSON.stringify({
+          username: document.getElementById('admin-username').value,
+          password: document.getElementById('admin-password').value
+        })
+      });
+      document.getElementById('admin-password').value = '';
+      showAdmin();
+      await loadOnlineMovies();
+    } catch (loginError) {
+      const messages = {
+        invalid_credentials: 'Tên đăng nhập hoặc mật khẩu không đúng.',
+        too_many_attempts: 'Đăng nhập sai quá nhiều lần. Vui lòng thử lại sau 15 phút.',
+        admin_not_configured: 'Tài khoản quản trị chưa được cấu hình trên Cloudflare.'
+      };
+      error.textContent = messages[loginError.code] || 'Không thể đăng nhập. Vui lòng thử lại.';
+    } finally {
+      button.disabled = false;
+    }
+  });
+  document.getElementById('admin-logout').addEventListener('click', async () => {
+    try { await adminRequest('/api/admin/logout', { method: 'POST' }); } catch (_) {}
+    currentMovies = [];
+    showLogin('Đã đăng xuất.');
+  });
+  document.getElementById('admin-import-legacy').addEventListener('click', async event => {
+    if (!confirm('Nhập toàn bộ phim hiện có trong movies.js vào cơ sở dữ liệu online?')) return;
+    event.currentTarget.disabled = true;
+    try {
+      const data = await adminRequest('/api/admin/import-legacy', { method: 'POST' });
+      showToast(`Đã nhập ${data.imported} phim vào cơ sở dữ liệu.`);
+      await loadOnlineMovies();
+    } catch (_) {
+      showToast('Không thể nhập dữ liệu cũ. Cơ sở dữ liệu có thể đã chứa phim.');
+    } finally {
+      event.currentTarget.disabled = false;
+    }
+  });
 
-// Helper to find next unique ID
-function getNextId() {
-  if (currentMovies.length === 0) return 1;
-  const ids = currentMovies.map(m => Number(m.id)).filter(id => !isNaN(id));
-  return ids.length ? Math.max(...ids) + 1 : 1;
-}
+  try {
+    await adminRequest('/api/admin/session');
+    showAdmin();
+    await loadOnlineMovies();
+  } catch (_) {
+    showLogin();
+  }
+});
 
 // Populate the movie list in admin view
 function renderAdminList(searchQuery = '') {
@@ -506,7 +567,7 @@ function editMovie(id) {
 }
 
 // Save or Create movie
-function saveMovie() {
+async function saveMovie() {
   const idVal = document.getElementById('movie-id').value;
   const title = document.getElementById('title').value.trim();
   const genres = getSelectedGenres();
@@ -555,35 +616,48 @@ function saveMovie() {
     episodes: type === 'Serie' ? [...activeEpisodeTags] : []
   };
 
-  if (idVal) {
-    // Editing existing movie
-    const id = parseInt(idVal);
-    const idx = currentMovies.findIndex(m => Number(m.id) === id);
-    if (idx !== -1) {
-      currentMovies[idx] = { ...currentMovies[idx], ...movieData, id };
+  const button = document.getElementById('btn-submit');
+  button.disabled = true;
+  try {
+    const data = await adminRequest(idVal ? `/api/admin/movies/${Number(idVal)}` : '/api/admin/movies', {
+      method: idVal ? 'PUT' : 'POST',
+      body: JSON.stringify(movieData)
+    });
+    if (idVal) {
+      const index = currentMovies.findIndex(movie => Number(movie.id) === Number(idVal));
+      if (index !== -1) currentMovies[index] = normalizeMovieGenres(data.movie);
+      showToast("Cập nhật phim thành công.");
+    } else {
+      currentMovies.unshift(normalizeMovieGenres(data.movie));
+      showToast("Đã thêm phim mới thành công!");
     }
-    showToast("Cập nhật phim thành công.");
-  } else {
-    // Creating new movie
-    const newId = getNextId();
-    currentMovies.unshift({ ...movieData, id: newId, addedAt: new Date().toISOString() });
-    showToast("Đã thêm phim mới thành công!");
+    resetMovieForm();
+    currentMovies = sortMoviesNewestFirst(currentMovies);
+    populateAdminGenreFilter();
+    renderAdminList();
+    showAlert();
+  } catch (error) {
+    showToast(error.code === 'duplicate_slug_or_video'
+      ? 'Tên phim hoặc video đã tồn tại.'
+      : 'Không thể lưu phim. Vui lòng thử lại.');
+  } finally {
+    button.disabled = false;
   }
-
-  resetMovieForm();
-  persistMovies();
-  renderAdminList();
-  showAlert();
 }
 
 // Delete movie
-function deleteMovie(id) {
+async function deleteMovie(id) {
   if (confirm(`Bạn có chắc chắn muốn xóa phim có ID: ${id}?`)) {
-    currentMovies = currentMovies.filter(m => Number(m.id) !== Number(id));
-    persistMovies();
-    renderAdminList();
-    showToast("Đã xóa phim.");
-    showAlert();
+    try {
+      await adminRequest(`/api/admin/movies/${Number(id)}`, { method: 'DELETE' });
+      currentMovies = currentMovies.filter(m => Number(m.id) !== Number(id));
+      populateAdminGenreFilter();
+      renderAdminList();
+      showToast("Đã xóa phim.");
+      showAlert();
+    } catch (_) {
+      showToast('Không thể xóa phim. Vui lòng thử lại.');
+    }
   }
 }
 
@@ -617,25 +691,5 @@ function showAlert() {
       alertEl.classList.remove('show');
     }, 6000);
   }
-}
-
-// Export the updated MOVIES list as movies.js
-function exportMoviesJS() {
-  currentMovies = sortMoviesNewestFirst(currentMovies);
-  const jsContent = `// Base de datos de películas y series de CineMax MX
-const MOVIES = ${JSON.stringify(currentMovies, null, 2)};
-`;
-  const blob = new Blob([jsContent], { type: 'application/javascript;charset=utf-8' });
-  const url = URL.createObjectURL(blob);
-
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'movies.js';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-
-  showToast("Xuất file movies.js thành công!");
 }
 
