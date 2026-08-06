@@ -1329,7 +1329,7 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
 .video-fullscreen-close {
   position: absolute;
   z-index: 2147483647;
-  left: max(12px, env(safe-area-inset-left));
+  right: max(12px, env(safe-area-inset-right));
   bottom: max(12px, env(safe-area-inset-bottom));
   display: none;
   width: 44px;
@@ -1338,7 +1338,8 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
   border-radius: 50%;
   background: rgba(0,0,0,.72);
   color: #fff;
-  font-size: 26px;
+  font-size: 24px;
+  font-weight: 800;
   line-height: 1;
   pointer-events: auto;
   touch-action: manipulation;
