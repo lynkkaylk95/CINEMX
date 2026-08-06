@@ -1,5 +1,3 @@
-import { EmailMessage } from "cloudflare:email";
-
 function slugify(value) {
   return String(value || "")
     .normalize("NFD")
@@ -476,36 +474,39 @@ async function handleForgotPassword(request, env) {
   const genericResponse = jsonResponse({ ok: true });
   if (!timingSafeEqual(username.toLowerCase(), String(env.ADMIN_USERNAME || "").toLowerCase())) return genericResponse;
 
-  const activeReset = await env.DB.prepare(
-    "SELECT 1 AS active FROM admin_password_resets WHERE username = ? AND used_at IS NULL AND expires_at > datetime('now')"
-  ).bind(env.ADMIN_USERNAME).first();
-  if (activeReset) return genericResponse;
+  const resetIpHash = await sha256(`password-reset|${getClientIp(request)}|${env.SESSION_SECRET}`);
+  const recentRequests = await env.DB.prepare(
+    "SELECT COUNT(*) AS attempts FROM admin_login_attempts WHERE ip_hash = ? AND attempted_at > datetime('now', '-1 hour')"
+  ).bind(resetIpHash).first();
+  if (Number(recentRequests?.attempts || 0) >= 5) return genericResponse;
+  await env.DB.prepare("INSERT INTO admin_login_attempts (ip_hash) VALUES (?)").bind(resetIpHash).run();
 
   const tokenBytes = crypto.getRandomValues(new Uint8Array(32));
   const token = base64UrlEncode(tokenBytes);
   const tokenHash = await sha256(token);
-  await env.DB.prepare("DELETE FROM admin_password_resets WHERE expires_at <= datetime('now')").run();
+  await env.DB.prepare("DELETE FROM admin_password_resets WHERE expires_at <= datetime('now') OR username = ?")
+    .bind(env.ADMIN_USERNAME).run();
   await env.DB.prepare(
     "INSERT INTO admin_password_resets (token_hash, username, expires_at) VALUES (?, ?, datetime('now', '+30 minutes'))"
   ).bind(tokenHash, env.ADMIN_USERNAME).run();
 
   const resetUrl = `${new URL(request.url).origin}/admin?reset=${encodeURIComponent(token)}`;
   const from = env.ADMIN_EMAIL_FROM || "admin@cinemaxmx.com";
-  const raw = [
-    `From: CineMax MX <${from}>`,
-    `To: ${env.ADMIN_RECOVERY_EMAIL}`,
-    "Subject: Dat lai mat khau quan tri CineMax MX",
-    "Content-Type: text/plain; charset=UTF-8",
-    "",
+  const textBody = [
     "Ban da yeu cau dat lai mat khau quan tri CineMax MX.",
     `Mo lien ket sau trong vong 30 phut: ${resetUrl}`,
     "Neu ban khong yeu cau, hay bo qua email nay."
-  ].join("\r\n");
+  ].join("\n");
   try {
-    await env.SEND_EMAIL.send(new EmailMessage(from, env.ADMIN_RECOVERY_EMAIL, raw));
+    await env.SEND_EMAIL.send({
+      to: env.ADMIN_RECOVERY_EMAIL,
+      from: { email: from, name: "CineMax MX" },
+      subject: "Dat lai mat khau quan tri CineMax MX",
+      text: textBody
+    });
   } catch (error) {
-    console.error("Password recovery email failed", error);
-    return jsonResponse({ ok: false, error: "email_delivery_failed" }, { status: 502 });
+    console.error("Password recovery email failed", error?.code, error?.message || error);
+    return jsonResponse({ ok: false, error: "email_delivery_failed", reason: error?.code || "unknown" }, { status: 502 });
   }
   return genericResponse;
 }
