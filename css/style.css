@@ -1328,9 +1328,9 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
 }
 .video-fullscreen-close {
   position: absolute;
-  z-index: 5;
-  top: max(12px, env(safe-area-inset-top));
-  right: max(12px, env(safe-area-inset-right));
+  z-index: 2147483647;
+  left: max(12px, env(safe-area-inset-left));
+  bottom: max(12px, env(safe-area-inset-bottom));
   display: none;
   width: 44px;
   height: 44px;
@@ -1340,6 +1340,9 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
   color: #fff;
   font-size: 26px;
   line-height: 1;
+  pointer-events: auto;
+  touch-action: manipulation;
+  cursor: pointer;
 }
 .video-wrap.is-webview-fullscreen {
   position: fixed;
@@ -1352,7 +1355,10 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
   border-radius: 0;
   background: #000;
 }
-.video-wrap.is-webview-fullscreen .video-fullscreen-close {
+.video-wrap.is-webview-fullscreen .video-fullscreen-close,
+.video-wrap.is-native-fullscreen .video-fullscreen-close,
+.video-wrap:fullscreen .video-fullscreen-close,
+.video-wrap:-webkit-full-screen .video-fullscreen-close {
   display: grid;
   place-items: center;
 }

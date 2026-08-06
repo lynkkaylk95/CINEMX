@@ -45,7 +45,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=remove-mobile-top-20260728">
+  <link rel="stylesheet" href="css/style.css?v=fullscreen-exit-20260806">
 </head>
 <body>
 
@@ -670,21 +670,35 @@
       const fullscreenElement = document.fullscreenElement || document.webkitFullscreenElement;
       if (fullscreenElement) {
         playerNativeFullscreenSeen = true;
+        document.getElementById('video-wrap')?.classList.add('is-native-fullscreen');
+        document.body.classList.add('has-webview-fullscreen');
         return;
       }
       if (!playerNativeFullscreenSeen) return;
       playerNativeFullscreenSeen = false;
       const videoWrap = document.getElementById('video-wrap');
+      videoWrap?.classList.remove('is-native-fullscreen');
       videoWrap?.classList.remove('is-webview-fullscreen');
       document.body.classList.remove('has-webview-fullscreen');
     }
-    function leavePlayerFullscreen() {
+    function leavePlayerFullscreen(event) {
+      event?.preventDefault();
+      event?.stopPropagation();
       const videoWrap = document.getElementById('video-wrap');
+      videoWrap?.classList.remove('is-native-fullscreen');
       videoWrap?.classList.remove('is-webview-fullscreen');
       document.body.classList.remove('has-webview-fullscreen');
-      if (document.fullscreenElement && document.exitFullscreen) {
-        document.exitFullscreen().catch(() => {});
+      playerNativeFullscreenSeen = false;
+
+      const fullscreenElement = document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement;
+      const exitFullscreen = document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen;
+      if (fullscreenElement && exitFullscreen) {
+        try {
+          const result = exitFullscreen.call(document);
+          if (result && typeof result.catch === 'function') result.catch(() => {});
+        } catch (_) {}
       }
+      return false;
     }
 
     function enterPlayerFullscreen(videoWrap) {
@@ -763,7 +777,16 @@
       document.addEventListener('webkitfullscreenchange', handlePlayerFullscreenChange);
 
       const fullscreenClose = document.getElementById('video-fullscreen-close');
-      fullscreenClose?.addEventListener('click', leavePlayerFullscreen);
+      let fullscreenCloseHandledAt = 0;
+      const handleFullscreenClose = event => {
+        const now = Date.now();
+        if (now - fullscreenCloseHandledAt < 350) return;
+        fullscreenCloseHandledAt = now;
+        leavePlayerFullscreen(event);
+      };
+      fullscreenClose?.addEventListener('pointerup', handleFullscreenClose);
+      fullscreenClose?.addEventListener('touchend', handleFullscreenClose, { passive: false });
+      fullscreenClose?.addEventListener('click', handleFullscreenClose);
 
       const videoWrap = document.getElementById('video-wrap');
       if (videoWrap) {
