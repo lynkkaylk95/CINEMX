@@ -38,9 +38,4 @@
   const related = source.filter(item => item.id !== movie.id && genres(item).some(g => genres(movie).includes(g))).slice(0, 6);
   document.getElementById('related-grid').innerHTML = related.map(item => `<a href="/pelicula/${encodeURIComponent(movieSlug(item))}">
     <img src="${escape(image(item))}" alt="${escape(item.title)}" loading="lazy"><strong>${escape(item.title)}</strong><span>${escape(item.year)} · ★ ${escape(item.rating)}</span></a>`).join('');
-  const saveButton = document.getElementById('save-button');
-  const key = `cinemax_saved_${movieSlug(movie)}`;
-  const syncSaved = () => { const saved = localStorage.getItem(key) === '1'; saveButton.textContent = saved ? '✓ En mi lista' : '＋ Mi lista'; saveButton.classList.toggle('saved', saved); };
-  saveButton.addEventListener('click', () => { localStorage.setItem(key, localStorage.getItem(key) === '1' ? '0' : '1'); syncSaved(); });
-  syncSaved();
 })();

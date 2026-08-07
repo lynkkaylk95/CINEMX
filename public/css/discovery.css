@@ -8,6 +8,9 @@
 @media(max-width:640px){.catalog-view-count{left:6px;bottom:6px;padding:4px 6px;font-size:9px}.discovery-card:hover .catalog-view-count{opacity:1}}
 
 /* Mobile WebView containment (Facebook/Instagram in-app browsers). */
+.whatsapp-button{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:14px 22px;border-radius:9px;background:#25d366;color:#fff;font-size:14px;font-weight:800;box-shadow:0 10px 30px rgba(37,211,102,.2);white-space:nowrap}.whatsapp-button:hover{background:#20bd5a}.whatsapp-button svg{width:19px;height:19px;flex:0 0 auto}
+@media(max-width:640px){.whatsapp-button{min-width:0;padding-left:14px;padding-right:14px}}
+
 html,body{width:100%;max-width:100%;overflow-x:hidden}
 body>main,.catalog-hero,.catalog-content,.detail-hero,.detail-content,.detail-main{width:100%;max-width:100%;min-width:0}
 .site-header,.mobile-dock{width:100%;max-width:100%}
