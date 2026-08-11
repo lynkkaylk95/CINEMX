@@ -516,7 +516,6 @@ body.menu-open { overflow: hidden; }
 .ad-zone-home-top {
   margin: 20px 4vw 0;
 }
-.ad-zone-home-mid,
 .ad-zone-home-feed {
   min-height: 92px;
 }
@@ -542,10 +541,8 @@ body.menu-open { overflow: hidden; }
   height: var(--ad-h);
 }
 .ad-fixed-slot--728x90 { --ad-w: 728px; --ad-h: 90px; }
-.ad-fixed-slot--468x60 { --ad-w: 468px; --ad-h: 60px; }
 .ad-fixed-slot--320x50 { --ad-w: 320px; --ad-h: 50px; }
 .ad-fixed-slot--300x50 { --ad-w: 300px; --ad-h: 50px; }
-.ad-fixed-slot--300x250 { --ad-w: 300px; --ad-h: 250px; }
 .ad-fixed-slot--160x300 { --ad-w: 160px; --ad-h: 300px; }
 .ad-fixed-slot--160x600 { --ad-w: 160px; --ad-h: 600px; }
 .ad-slot-disabled { display: none !important; }
@@ -639,34 +636,21 @@ body.menu-open { overflow: hidden; }
 .cinemax-ad-banner--rail strong {
   white-space: normal;
 }
-.ad-fixed-slot--320x50 .cinemax-ad-banner,
-.ad-fixed-slot--468x60 .cinemax-ad-banner {
+.ad-fixed-slot--320x50 .cinemax-ad-banner {
   padding: 8px 12px;
   border-radius: 8px;
 }
 .ad-fixed-slot--320x50 .ad-kicker,
 .ad-fixed-slot--320x50 small,
-.ad-fixed-slot--468x60 small,
 .ad-fixed-slot--320x50 .cinemax-ad-banner::after {
   display: none;
 }
-.ad-fixed-slot--320x50 .cinemax-ad-banner strong,
-.ad-fixed-slot--468x60 .cinemax-ad-banner strong {
+.ad-fixed-slot--320x50 .cinemax-ad-banner strong {
   font-size: 13px;
 }
-.ad-fixed-slot--320x50 .ad-cta,
-.ad-fixed-slot--468x60 .ad-cta {
+.ad-fixed-slot--320x50 .ad-cta {
   padding: 7px 10px;
   font-size: 11px;
-}
-.ad-fixed-slot--300x250 .cinemax-ad-banner {
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  padding: 18px;
-}
-.ad-fixed-slot--300x250 .cinemax-ad-banner strong {
-  white-space: normal;
 }
 .ad-clickable {
   cursor: pointer;
@@ -910,8 +894,7 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
     min-height: 0;
     padding: 0;
   }
-  .ad-fixed-slot--728x90,
-  .ad-fixed-slot--468x60 {
+  .ad-fixed-slot--728x90 {
     --ad-w: 320px;
     --ad-h: 50px;
   }

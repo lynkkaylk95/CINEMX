@@ -164,7 +164,7 @@
     element.dataset.homeNativeMounted = 'true';
     element.dataset.nativeAd = 'true';
     element.dataset.nativePlacement = placement;
-    element.classList.remove('ad-clickable', 'ad-fixed-slot', 'ad-fixed-slot--300x250');
+    element.classList.remove('ad-clickable', 'ad-fixed-slot');
     element.removeAttribute('role');
     element.removeAttribute('tabindex');
     element.removeAttribute('aria-label');
@@ -285,13 +285,7 @@
     if (movieTarget) {
       movieTarget.dataset.adPlacement = 'movieBelowPlayerNative';
       mountAdsterraNative(movieTarget, 'movieBelowPlayerNative', CINEMAX_PLACEMENTS.movieBelowPlayerNative);
-      return;
     }
-
-    const target = document.querySelector('.ad-zone-home-mid');
-    if (!target) return;
-    target.dataset.adPlacement = 'homeBeforeEstrenos';
-    mountAdsterraNative(target, 'homeBeforeEstrenos', CINEMAX_PLACEMENTS.homeMidNative);
   }
 
   function loadSocialBar() {
