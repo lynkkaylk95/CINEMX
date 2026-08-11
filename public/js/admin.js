@@ -3,7 +3,6 @@
    Logic for admin.html (Offline Admin Panel)
 ============================================================ */
 
-const MOVIES_STORAGE_KEY = 'cinemax_movies';
 const ADMIN_VIEWS_API = 'https://cinemaxmx.com/api/views';
 const GENRE_ALIASES = {
   'Học đường': 'Escolar',
@@ -26,17 +25,18 @@ const ADMIN_GENRE_LABELS = {
   'De época': 'Cổ trang',
   'Intrigas palaciegas': 'Cung đấu'
 };
-let currentMovies = loadSavedMovies().map(normalizeMovieGenres);
+let currentMovies = [];
 let activeEpisodeTags = [];
 let adminMovieViewCounts = {};
 let adminViewsLoaded = false;
+let currentAdminSession = null;
+let adminUsers = [];
 
 function getMovieSortValue(movie) {
   const addedTime = Date.parse(movie?.addedAt || movie?.createdAt || '');
   if (!Number.isNaN(addedTime)) return addedTime;
   return Number(movie?.id || 0);
 }
-
 function getMovieAddedDate(movie) {
   // Legacy entries 1-37 were imported into the current catalog on 07/07/2026,
   // before individual addedAt timestamps were stored.
@@ -65,22 +65,118 @@ function sortMoviesNewestFirst(movies) {
   return [...movies].sort((a, b) => getMovieSortValue(b) - getMovieSortValue(a));
 }
 
-function loadSavedMovies() {
-  let list = [];
-  try {
-    const saved = localStorage.getItem(MOVIES_STORAGE_KEY);
-    const parsed = saved ? JSON.parse(saved) : null;
-    if (Array.isArray(parsed) && parsed.length > 0) list = parsed;
-  } catch (err) {
-    console.warn('Không đọc được danh sách phim đã lưu.', err);
+async function adminRequest(url, options = {}) {
+  const response = await fetch(url, {
+    credentials: 'same-origin',
+    ...options,
+    headers: { Accept: 'application/json', ...(options.body ? { 'Content-Type': 'application/json' } : {}), ...(options.headers || {}) }
+  });
+  const data = await response.json().catch(() => ({}));
+  if (response.status === 401) showLogin();
+  if (!response.ok) {
+    const error = new Error(data.error || `HTTP ${response.status}`);
+    error.code = data.error;
+    throw error;
   }
-  if (!list.length) list = typeof MOVIES !== 'undefined' ? [...MOVIES] : [];
-  return sortMoviesNewestFirst(list);
+  return data;
 }
 
-function persistMovies() {
-  currentMovies = sortMoviesNewestFirst(currentMovies);
-  localStorage.setItem(MOVIES_STORAGE_KEY, JSON.stringify(currentMovies));
+function showLogin(message = '') {
+  document.getElementById('admin-login-screen').hidden = false;
+  document.getElementById('admin-reset-screen').hidden = true;
+  document.getElementById('admin-page').hidden = true;
+  document.getElementById('admin-login-error').textContent = message;
+}
+
+function showAdmin(session = currentAdminSession) {
+  currentAdminSession = session || currentAdminSession;
+  document.getElementById('admin-login-screen').hidden = true;
+  document.getElementById('admin-page').hidden = false;
+  const usersNav = document.getElementById('admin-users-nav');
+  if (usersNav) usersNav.hidden = !currentAdminSession?.isRoot;
+  if (!currentAdminSession?.isRoot) switchAdminView('movies');
+}
+
+function switchAdminView(view) {
+  if (view === 'users' && !currentAdminSession?.isRoot) return;
+  const isUsers = view === 'users';
+  document.getElementById('admin-movies-view').hidden = isUsers;
+  document.getElementById('admin-users-view').hidden = !isUsers;
+  document.getElementById('admin-page-title').textContent = isUsers ? 'Quản lý tài khoản' : 'Thêm / Chỉnh Sửa Phim và Series';
+  document.querySelectorAll('.admin-nav-btn').forEach(button => button.classList.toggle('is-active', button.dataset.adminView === view));
+  if (isUsers) loadAdminUsers();
+}
+
+function resetAdminUserForm() {
+  document.getElementById('admin-user-form').reset();
+  document.getElementById('admin-user-id').value = '';
+  document.getElementById('admin-user-form-title').textContent = 'Thêm người quản lý';
+  document.getElementById('admin-user-submit').textContent = 'Thêm người quản lý';
+  document.getElementById('admin-user-password').required = true;
+  document.getElementById('admin-user-password-required').hidden = false;
+  document.getElementById('admin-user-cancel').hidden = true;
+  document.getElementById('admin-user-error').textContent = '';
+}
+
+function renderAdminUsers() {
+  const list = document.getElementById('admin-user-list');
+  document.getElementById('admin-user-count').textContent = adminUsers.length;
+  if (!adminUsers.length) {
+    list.innerHTML = '<div class="admin-users-empty">Chưa có người quản lý phụ.</div>';
+    return;
+  }
+  list.innerHTML = adminUsers.map(user => `
+    <article class="admin-user-row">
+      <div class="admin-user-avatar">${escapeHTML((user.name || user.email).slice(0, 1).toUpperCase())}</div>
+      <div class="admin-user-info"><strong>${escapeHTML(user.name)}</strong><span>${escapeHTML(user.email)}</span><small>Thêm ngày ${escapeHTML(new Intl.DateTimeFormat('vi-VN').format(new Date(user.createdAt)))}</small></div>
+      <div class="admin-user-actions"><button type="button" class="admin-user-edit" data-user-id="${user.id}">Sửa</button><button type="button" class="admin-user-delete" data-user-id="${user.id}">Xóa</button></div>
+    </article>`).join('');
+}
+
+async function loadAdminUsers() {
+  try {
+    const data = await adminRequest('/api/admin/users');
+    adminUsers = data.users || [];
+    renderAdminUsers();
+  } catch (error) {
+    showToast(error.code === 'root_admin_required' ? 'Chỉ admin gốc được quản lý tài khoản.' : 'Không thể tải danh sách người quản lý.');
+  }
+}
+
+function editAdminUser(id) {
+  const user = adminUsers.find(item => Number(item.id) === Number(id));
+  if (!user) return;
+  document.getElementById('admin-user-id').value = user.id;
+  document.getElementById('admin-user-name').value = user.name;
+  document.getElementById('admin-user-email').value = user.email;
+  document.getElementById('admin-user-password').value = '';
+  document.getElementById('admin-user-password').required = false;
+  document.getElementById('admin-user-password-required').hidden = true;
+  document.getElementById('admin-user-form-title').textContent = 'Chỉnh sửa người quản lý';
+  document.getElementById('admin-user-submit').textContent = 'Lưu thay đổi';
+  document.getElementById('admin-user-cancel').hidden = false;
+  document.getElementById('admin-user-name').focus();
+}
+
+async function deleteAdminUser(id) {
+  const user = adminUsers.find(item => Number(item.id) === Number(id));
+  if (!user || !confirm(`Xóa tài khoản ${user.name} (${user.email})? Tài khoản này sẽ không thể đăng nhập nữa.`)) return;
+  try {
+    await adminRequest(`/api/admin/users/${Number(id)}`, { method: 'DELETE' });
+    adminUsers = adminUsers.filter(item => Number(item.id) !== Number(id));
+    if (Number(document.getElementById('admin-user-id').value) === Number(id)) resetAdminUserForm();
+    renderAdminUsers();
+    showToast('Đã xóa người quản lý.');
+  } catch (_) { showToast('Không thể xóa người quản lý.'); }
+}
+
+async function loadOnlineMovies() {
+  const data = await adminRequest('/api/admin/movies');
+  currentMovies = sortMoviesNewestFirst((data.movies || []).map(normalizeMovieGenres));
+  document.getElementById('admin-import-legacy').hidden = currentMovies.length > 0;
+  populateAdminGenreFilter();
+  renderAdminList();
+  await loadAdminMovieViews();
 }
 
 function extractYouTubeId(value) {
@@ -329,7 +425,7 @@ function setSelectedGenres(genres) {
   });
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   setSelectedGenres(['Acción']);
   const ytInput = document.getElementById('yt');
   if (ytInput) {
@@ -341,17 +437,147 @@ document.addEventListener('DOMContentLoaded', () => {
     thumbInput.addEventListener('input', updateThumbnailPreview);
     thumbInput.addEventListener('paste', () => setTimeout(updateThumbnailPreview, 0));
   }
-  populateAdminGenreFilter();
-  renderAdminList();
-  loadAdminMovieViews();
-});
+  const loginForm = document.getElementById('admin-login-form');
+  const resetToken = new URLSearchParams(location.search).get('reset');
+  if (resetToken) {
+    document.getElementById('admin-login-screen').hidden = true;
+    document.getElementById('admin-reset-screen').hidden = false;
+  }
+  loginForm.addEventListener('submit', async event => {
+    event.preventDefault();
+    const error = document.getElementById('admin-login-error');
+    const button = loginForm.querySelector('button[type="submit"]');
+    error.textContent = '';
+    button.disabled = true;
+    try {
+      const session = await adminRequest('/api/admin/login', {
+        method: 'POST',
+        body: JSON.stringify({
+          username: document.getElementById('admin-username').value,
+          password: document.getElementById('admin-password').value
+        })
+      });
+      document.getElementById('admin-password').value = '';
+      showAdmin(session);
+      await loadOnlineMovies();
+    } catch (loginError) {
+      const messages = {
+        invalid_credentials: 'Tên đăng nhập hoặc mật khẩu không đúng.',
+        too_many_attempts: 'Đăng nhập sai quá nhiều lần. Vui lòng thử lại sau 15 phút.',
+        admin_not_configured: 'Tài khoản quản trị chưa được cấu hình trên Cloudflare.'
+      };
+      error.textContent = messages[loginError.code] || 'Không thể đăng nhập. Vui lòng thử lại.';
+    } finally {
+      button.disabled = false;
+    }
+  });
+  document.getElementById('admin-forgot-password').addEventListener('click', async event => {
+    const username = document.getElementById('admin-username').value.trim() || 'Admin';
+    const error = document.getElementById('admin-login-error');
+    event.currentTarget.disabled = true;
+    try {
+      await adminRequest('/api/admin/forgot-password', {
+        method: 'POST', body: JSON.stringify({ username })
+      });
+      error.style.color = '#8edb9b';
+      error.textContent = 'Nếu tài khoản hợp lệ, liên kết đặt lại đã được gửi tới email khôi phục.';
+    } catch (forgotError) {
+      error.style.color = '';
+      error.textContent = forgotError.code === 'password_recovery_not_configured'
+        ? 'Email khôi phục chưa được cấu hình trên Cloudflare.'
+        : 'Chưa thể gửi email. Vui lòng thử lại sau.';
+    } finally {
+      event.currentTarget.disabled = false;
+    }
+  });
+  document.getElementById('admin-reset-form').addEventListener('submit', async event => {
+    event.preventDefault();
+    const password = document.getElementById('admin-new-password').value;
+    const confirmation = document.getElementById('admin-confirm-password').value;
+    const error = document.getElementById('admin-reset-error');
+    if (password !== confirmation) {
+      error.textContent = 'Hai mật khẩu không giống nhau.';
+      return;
+    }
+    try {
+      await adminRequest('/api/admin/reset-password', {
+        method: 'POST', body: JSON.stringify({ token: resetToken, password })
+      });
+      history.replaceState({}, '', '/admin');
+      showLogin('Đã đổi mật khẩu. Bạn có thể đăng nhập ngay.');
+      document.getElementById('admin-username').value = 'Admin';
+    } catch (resetError) {
+      error.textContent = resetError.code === 'invalid_or_expired_token'
+        ? 'Liên kết đã hết hạn hoặc đã được sử dụng.'
+        : 'Không thể đổi mật khẩu. Vui lòng thử lại.';
+    }
+  });
+  document.getElementById('admin-logout').addEventListener('click', async () => {
+    try { await adminRequest('/api/admin/logout', { method: 'POST' }); } catch (_) {}
+    currentMovies = [];
+    switchAdminView('movies');
+    currentAdminSession = null;
+    adminUsers = [];
+    showLogin('Đã đăng xuất.');
+  });
+  document.querySelectorAll('.admin-nav-btn').forEach(button => button.addEventListener('click', () => switchAdminView(button.dataset.adminView)));
+  document.getElementById('admin-user-cancel').addEventListener('click', resetAdminUserForm);
+  document.getElementById('admin-user-list').addEventListener('click', event => {
+    const button = event.target.closest('[data-user-id]');
+    if (!button) return;
+    if (button.classList.contains('admin-user-edit')) editAdminUser(button.dataset.userId);
+    if (button.classList.contains('admin-user-delete')) deleteAdminUser(button.dataset.userId);
+  });
+  document.getElementById('admin-user-form').addEventListener('submit', async event => {
+    event.preventDefault();
+    const id = document.getElementById('admin-user-id').value;
+    const button = document.getElementById('admin-user-submit');
+    const error = document.getElementById('admin-user-error');
+    const payload = {
+      name: document.getElementById('admin-user-name').value.trim(),
+      email: document.getElementById('admin-user-email').value.trim(),
+      password: document.getElementById('admin-user-password').value
+    };
+    error.textContent = '';
+    button.disabled = true;
+    try {
+      const data = await adminRequest(id ? `/api/admin/users/${Number(id)}` : '/api/admin/users', {
+        method: id ? 'PUT' : 'POST', body: JSON.stringify(payload)
+      });
+      if (id) adminUsers = adminUsers.map(user => Number(user.id) === Number(id) ? data.user : user);
+      else adminUsers.unshift(data.user);
+      renderAdminUsers();
+      resetAdminUserForm();
+      showToast(id ? 'Đã cập nhật người quản lý.' : 'Đã thêm người quản lý mới.');
+    } catch (saveError) {
+      const messages = { duplicate_email: 'Email này đã được sử dụng.', root_account_reserved: 'Không thể sử dụng tài khoản của admin gốc.', invalid_user: 'Vui lòng nhập đúng email và mật khẩu ít nhất 10 ký tự.' };
+      error.textContent = messages[saveError.code] || 'Không thể lưu người quản lý. Vui lòng thử lại.';
+    } finally { button.disabled = false; }
+  });
+  document.getElementById('admin-import-legacy').addEventListener('click', async event => {
+    if (!confirm('Nhập toàn bộ phim hiện có trong movies.js vào cơ sở dữ liệu online?')) return;
+    event.currentTarget.disabled = true;
+    try {
+      const data = await adminRequest('/api/admin/import-legacy', { method: 'POST' });
+      showToast(`Đã nhập ${data.imported} phim vào cơ sở dữ liệu.`);
+      await loadOnlineMovies();
+    } catch (_) {
+      showToast('Không thể nhập dữ liệu cũ. Cơ sở dữ liệu có thể đã chứa phim.');
+    } finally {
+      event.currentTarget.disabled = false;
+    }
+  });
 
-// Helper to find next unique ID
-function getNextId() {
-  if (currentMovies.length === 0) return 1;
-  const ids = currentMovies.map(m => Number(m.id)).filter(id => !isNaN(id));
-  return ids.length ? Math.max(...ids) + 1 : 1;
-}
+  if (resetToken) return;
+
+  try {
+    const session = await adminRequest('/api/admin/session');
+    showAdmin(session);
+    await loadOnlineMovies();
+  } catch (_) {
+    showLogin();
+  }
+});
 
 // Populate the movie list in admin view
 function renderAdminList(searchQuery = '') {
@@ -506,7 +732,7 @@ function editMovie(id) {
 }
 
 // Save or Create movie
-function saveMovie() {
+async function saveMovie() {
   const idVal = document.getElementById('movie-id').value;
   const title = document.getElementById('title').value.trim();
   const genres = getSelectedGenres();
@@ -555,35 +781,48 @@ function saveMovie() {
     episodes: type === 'Serie' ? [...activeEpisodeTags] : []
   };
 
-  if (idVal) {
-    // Editing existing movie
-    const id = parseInt(idVal);
-    const idx = currentMovies.findIndex(m => Number(m.id) === id);
-    if (idx !== -1) {
-      currentMovies[idx] = { ...currentMovies[idx], ...movieData, id };
+  const button = document.getElementById('btn-submit');
+  button.disabled = true;
+  try {
+    const data = await adminRequest(idVal ? `/api/admin/movies/${Number(idVal)}` : '/api/admin/movies', {
+      method: idVal ? 'PUT' : 'POST',
+      body: JSON.stringify(movieData)
+    });
+    if (idVal) {
+      const index = currentMovies.findIndex(movie => Number(movie.id) === Number(idVal));
+      if (index !== -1) currentMovies[index] = normalizeMovieGenres(data.movie);
+      showToast("Cập nhật phim thành công.");
+    } else {
+      currentMovies.unshift(normalizeMovieGenres(data.movie));
+      showToast("Đã thêm phim mới thành công!");
     }
-    showToast("Cập nhật phim thành công.");
-  } else {
-    // Creating new movie
-    const newId = getNextId();
-    currentMovies.unshift({ ...movieData, id: newId, addedAt: new Date().toISOString() });
-    showToast("Đã thêm phim mới thành công!");
+    resetMovieForm();
+    currentMovies = sortMoviesNewestFirst(currentMovies);
+    populateAdminGenreFilter();
+    renderAdminList();
+    showAlert();
+  } catch (error) {
+    showToast(error.code === 'duplicate_slug_or_video'
+      ? 'Tên phim hoặc video đã tồn tại.'
+      : 'Không thể lưu phim. Vui lòng thử lại.');
+  } finally {
+    button.disabled = false;
   }
-
-  resetMovieForm();
-  persistMovies();
-  renderAdminList();
-  showAlert();
 }
 
 // Delete movie
-function deleteMovie(id) {
+async function deleteMovie(id) {
   if (confirm(`Bạn có chắc chắn muốn xóa phim có ID: ${id}?`)) {
-    currentMovies = currentMovies.filter(m => Number(m.id) !== Number(id));
-    persistMovies();
-    renderAdminList();
-    showToast("Đã xóa phim.");
-    showAlert();
+    try {
+      await adminRequest(`/api/admin/movies/${Number(id)}`, { method: 'DELETE' });
+      currentMovies = currentMovies.filter(m => Number(m.id) !== Number(id));
+      populateAdminGenreFilter();
+      renderAdminList();
+      showToast("Đã xóa phim.");
+      showAlert();
+    } catch (_) {
+      showToast('Không thể xóa phim. Vui lòng thử lại.');
+    }
   }
 }
 
@@ -617,25 +856,5 @@ function showAlert() {
       alertEl.classList.remove('show');
     }, 6000);
   }
-}
-
-// Export the updated MOVIES list as movies.js
-function exportMoviesJS() {
-  currentMovies = sortMoviesNewestFirst(currentMovies);
-  const jsContent = `// Base de datos de películas y series de CineMax MX
-const MOVIES = ${JSON.stringify(currentMovies, null, 2)};
-`;
-  const blob = new Blob([jsContent], { type: 'application/javascript;charset=utf-8' });
-  const url = URL.createObjectURL(blob);
-
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'movies.js';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-
-  showToast("Xuất file movies.js thành công!");
 }
 

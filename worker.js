@@ -99,8 +99,8 @@ function timingSafeEqual(left, right) {
   return difference === 0;
 }
 
-async function createAdminSession(username, secret) {
-  const payload = base64UrlEncode(JSON.stringify({ username, exp: Date.now() + 12 * 60 * 60 * 1000 }));
+async function createAdminSession(username, secret, isRoot = false) {
+  const payload = base64UrlEncode(JSON.stringify({ username, isRoot, exp: Date.now() + 12 * 60 * 60 * 1000 }));
   return `${payload}.${await hmac(payload, secret)}`;
 }
 
@@ -445,11 +445,17 @@ async function handleAdminLogin(request, env) {
   const body = await readJson(request);
   const username = String(body?.username || "").trim();
   const passwordHash = await sha256(String(body?.password || ""));
-  const storedCredential = env.DB
-    ? await env.DB.prepare("SELECT password_hash FROM admin_credentials WHERE username = ?").bind(username).first()
+  const isRoot = timingSafeEqual(username.toLowerCase(), String(env.ADMIN_USERNAME).toLowerCase());
+  const storedCredential = isRoot && env.DB
+    ? await env.DB.prepare("SELECT password_hash FROM admin_credentials WHERE username = ?").bind(env.ADMIN_USERNAME).first()
     : null;
-  const expectedPasswordHash = storedCredential?.password_hash || env.ADMIN_PASSWORD_HASH;
-  const valid = timingSafeEqual(username, env.ADMIN_USERNAME)
+  const managedUser = !isRoot && env.DB
+    ? await env.DB.prepare("SELECT email, password_hash FROM admin_users WHERE email = ? COLLATE NOCASE").bind(username).first()
+    : null;
+  const expectedPasswordHash = isRoot
+    ? (storedCredential?.password_hash || env.ADMIN_PASSWORD_HASH)
+    : managedUser?.password_hash;
+  const valid = Boolean(expectedPasswordHash)
     && timingSafeEqual(passwordHash.toLowerCase(), String(expectedPasswordHash).toLowerCase());
 
   if (!valid) {
@@ -460,8 +466,9 @@ async function handleAdminLogin(request, env) {
   }
 
   if (env.DB) await env.DB.prepare("DELETE FROM admin_login_attempts WHERE ip_hash = ?").bind(ipHash).run();
-  const token = await createAdminSession(username, env.SESSION_SECRET);
-  return jsonResponse({ ok: true, username }, { headers: { "Set-Cookie": adminCookie(token) } });
+  const sessionUsername = isRoot ? env.ADMIN_USERNAME : managedUser.email;
+  const token = await createAdminSession(sessionUsername, env.SESSION_SECRET, isRoot);
+  return jsonResponse({ ok: true, username: sessionUsername, isRoot }, { headers: { "Set-Cookie": adminCookie(token) } });
 }
 
 async function handleForgotPassword(request, env) {
@@ -538,7 +545,82 @@ async function handleResetPassword(request, env) {
 
 async function requireAdmin(request, env) {
   const session = await getAdminSession(request, env);
-  return session || null;
+  if (!session) return null;
+  if (timingSafeEqual(String(session.username).toLowerCase(), String(env.ADMIN_USERNAME || "").toLowerCase())) return session;
+  if (!env.DB) return null;
+  const user = await env.DB.prepare("SELECT id FROM admin_users WHERE email = ? COLLATE NOCASE").bind(session.username).first();
+  return user ? session : null;
+}
+
+function isRootAdmin(session, env) {
+  return Boolean(session) && (session.isRoot === true
+    || timingSafeEqual(String(session.username).toLowerCase(), String(env.ADMIN_USERNAME || "").toLowerCase()));
+}
+
+function adminUserFromRow(row) {
+  return { id: Number(row.id), name: row.name, email: row.email, createdAt: row.created_at, updatedAt: row.updated_at };
+}
+
+async function handleAdminUsers(request, env, id = null) {
+  if (!env.DB) return jsonResponse({ ok: false, error: "database_not_configured" }, { status: 503 });
+  const session = await requireAdmin(request, env);
+  if (!session) return jsonResponse({ ok: false, error: "unauthorized" }, { status: 401 });
+  if (!isRootAdmin(session, env)) return jsonResponse({ ok: false, error: "root_admin_required" }, { status: 403 });
+  if (request.method !== "GET" && !isSameOrigin(request)) {
+    return jsonResponse({ ok: false, error: "invalid_origin" }, { status: 403 });
+  }
+  const validRoute = (!id && (request.method === "GET" || request.method === "POST"))
+    || (Boolean(id) && (request.method === "PUT" || request.method === "DELETE"));
+  if (!validRoute) return jsonResponse({ ok: false, error: "method_not_allowed" }, { status: 405 });
+
+  if (request.method === "GET") {
+    const result = await env.DB.prepare("SELECT id, name, email, created_at, updated_at FROM admin_users ORDER BY datetime(created_at) DESC, id DESC").all();
+    return jsonResponse({ ok: true, users: result.results.map(adminUserFromRow) });
+  }
+  if (request.method === "DELETE" && id) {
+    const result = await env.DB.prepare("DELETE FROM admin_users WHERE id = ?").bind(Number(id)).run();
+    if (!Number(result.meta?.changes || 0)) return jsonResponse({ ok: false, error: "not_found" }, { status: 404 });
+    return jsonResponse({ ok: true });
+  }
+
+  const body = await readJson(request);
+  const name = String(body?.name || "").trim();
+  const email = String(body?.email || "").trim().toLowerCase();
+  const password = String(body?.password || "");
+  if (!name || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || (request.method === "POST" && password.length < 10) || (password && password.length < 10)) {
+    return jsonResponse({ ok: false, error: "invalid_user" }, { status: 400 });
+  }
+  if (timingSafeEqual(email, String(env.ADMIN_USERNAME || "").toLowerCase())) {
+    return jsonResponse({ ok: false, error: "root_account_reserved" }, { status: 409 });
+  }
+
+  try {
+    if (request.method === "POST") {
+      const result = await env.DB.prepare("INSERT INTO admin_users (name, email, password_hash) VALUES (?, ?, ?)")
+        .bind(name, email, await sha256(password)).run();
+      const created = await env.DB.prepare("SELECT id, name, email, created_at, updated_at FROM admin_users WHERE id = ?")
+        .bind(result.meta.last_row_id).first();
+      return jsonResponse({ ok: true, user: adminUserFromRow(created) }, { status: 201 });
+    }
+    if (request.method === "PUT" && id) {
+      const existing = await env.DB.prepare("SELECT id FROM admin_users WHERE id = ?").bind(Number(id)).first();
+      if (!existing) return jsonResponse({ ok: false, error: "not_found" }, { status: 404 });
+      if (password) {
+        await env.DB.prepare("UPDATE admin_users SET name = ?, email = ?, password_hash = ?, updated_at = datetime('now') WHERE id = ?")
+          .bind(name, email, await sha256(password), Number(id)).run();
+      } else {
+        await env.DB.prepare("UPDATE admin_users SET name = ?, email = ?, updated_at = datetime('now') WHERE id = ?")
+          .bind(name, email, Number(id)).run();
+      }
+      const updated = await env.DB.prepare("SELECT id, name, email, created_at, updated_at FROM admin_users WHERE id = ?").bind(Number(id)).first();
+      return jsonResponse({ ok: true, user: adminUserFromRow(updated) });
+    }
+  } catch (error) {
+    if (String(error?.message || error).includes("UNIQUE")) return jsonResponse({ ok: false, error: "duplicate_email" }, { status: 409 });
+    console.error("Admin user mutation failed", error);
+    return jsonResponse({ ok: false, error: "database_error" }, { status: 500 });
+  }
+  return jsonResponse({ ok: false, error: "method_not_allowed" }, { status: 405 });
 }
 
 async function handleAdminMovies(request, env, id = null) {
@@ -776,9 +858,13 @@ export default {
     if (url.pathname === "/api/admin/session" && request.method === "GET") {
       const session = await requireAdmin(request, env);
       return session
-        ? jsonResponse({ ok: true, username: session.username })
+        ? jsonResponse({ ok: true, username: session.username, isRoot: isRootAdmin(session, env) })
         : jsonResponse({ ok: false, error: "unauthorized" }, { status: 401 });
     }
+
+    if (url.pathname === "/api/admin/users") return handleAdminUsers(request, env);
+    const adminUserMatch = url.pathname.match(/^\/api\/admin\/users\/(\d+)$/);
+    if (adminUserMatch) return handleAdminUsers(request, env, Number(adminUserMatch[1]));
 
     if (url.pathname === "/api/admin/movies") {
       return handleAdminMovies(request, env);

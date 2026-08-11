@@ -29,6 +29,8 @@ let currentMovies = [];
 let activeEpisodeTags = [];
 let adminMovieViewCounts = {};
 let adminViewsLoaded = false;
+let currentAdminSession = null;
+let adminUsers = [];
 
 function getMovieSortValue(movie) {
   const addedTime = Date.parse(movie?.addedAt || movie?.createdAt || '');
@@ -86,9 +88,86 @@ function showLogin(message = '') {
   document.getElementById('admin-login-error').textContent = message;
 }
 
-function showAdmin() {
+function showAdmin(session = currentAdminSession) {
+  currentAdminSession = session || currentAdminSession;
   document.getElementById('admin-login-screen').hidden = true;
   document.getElementById('admin-page').hidden = false;
+  const usersNav = document.getElementById('admin-users-nav');
+  if (usersNav) usersNav.hidden = !currentAdminSession?.isRoot;
+  if (!currentAdminSession?.isRoot) switchAdminView('movies');
+}
+
+function switchAdminView(view) {
+  if (view === 'users' && !currentAdminSession?.isRoot) return;
+  const isUsers = view === 'users';
+  document.getElementById('admin-movies-view').hidden = isUsers;
+  document.getElementById('admin-users-view').hidden = !isUsers;
+  document.getElementById('admin-page-title').textContent = isUsers ? 'Quản lý tài khoản' : 'Thêm / Chỉnh Sửa Phim và Series';
+  document.querySelectorAll('.admin-nav-btn').forEach(button => button.classList.toggle('is-active', button.dataset.adminView === view));
+  if (isUsers) loadAdminUsers();
+}
+
+function resetAdminUserForm() {
+  document.getElementById('admin-user-form').reset();
+  document.getElementById('admin-user-id').value = '';
+  document.getElementById('admin-user-form-title').textContent = 'Thêm người quản lý';
+  document.getElementById('admin-user-submit').textContent = 'Thêm người quản lý';
+  document.getElementById('admin-user-password').required = true;
+  document.getElementById('admin-user-password-required').hidden = false;
+  document.getElementById('admin-user-cancel').hidden = true;
+  document.getElementById('admin-user-error').textContent = '';
+}
+
+function renderAdminUsers() {
+  const list = document.getElementById('admin-user-list');
+  document.getElementById('admin-user-count').textContent = adminUsers.length;
+  if (!adminUsers.length) {
+    list.innerHTML = '<div class="admin-users-empty">Chưa có người quản lý phụ.</div>';
+    return;
+  }
+  list.innerHTML = adminUsers.map(user => `
+    <article class="admin-user-row">
+      <div class="admin-user-avatar">${escapeHTML((user.name || user.email).slice(0, 1).toUpperCase())}</div>
+      <div class="admin-user-info"><strong>${escapeHTML(user.name)}</strong><span>${escapeHTML(user.email)}</span><small>Thêm ngày ${escapeHTML(new Intl.DateTimeFormat('vi-VN').format(new Date(user.createdAt)))}</small></div>
+      <div class="admin-user-actions"><button type="button" class="admin-user-edit" data-user-id="${user.id}">Sửa</button><button type="button" class="admin-user-delete" data-user-id="${user.id}">Xóa</button></div>
+    </article>`).join('');
+}
+
+async function loadAdminUsers() {
+  try {
+    const data = await adminRequest('/api/admin/users');
+    adminUsers = data.users || [];
+    renderAdminUsers();
+  } catch (error) {
+    showToast(error.code === 'root_admin_required' ? 'Chỉ admin gốc được quản lý tài khoản.' : 'Không thể tải danh sách người quản lý.');
+  }
+}
+
+function editAdminUser(id) {
+  const user = adminUsers.find(item => Number(item.id) === Number(id));
+  if (!user) return;
+  document.getElementById('admin-user-id').value = user.id;
+  document.getElementById('admin-user-name').value = user.name;
+  document.getElementById('admin-user-email').value = user.email;
+  document.getElementById('admin-user-password').value = '';
+  document.getElementById('admin-user-password').required = false;
+  document.getElementById('admin-user-password-required').hidden = true;
+  document.getElementById('admin-user-form-title').textContent = 'Chỉnh sửa người quản lý';
+  document.getElementById('admin-user-submit').textContent = 'Lưu thay đổi';
+  document.getElementById('admin-user-cancel').hidden = false;
+  document.getElementById('admin-user-name').focus();
+}
+
+async function deleteAdminUser(id) {
+  const user = adminUsers.find(item => Number(item.id) === Number(id));
+  if (!user || !confirm(`Xóa tài khoản ${user.name} (${user.email})? Tài khoản này sẽ không thể đăng nhập nữa.`)) return;
+  try {
+    await adminRequest(`/api/admin/users/${Number(id)}`, { method: 'DELETE' });
+    adminUsers = adminUsers.filter(item => Number(item.id) !== Number(id));
+    if (Number(document.getElementById('admin-user-id').value) === Number(id)) resetAdminUserForm();
+    renderAdminUsers();
+    showToast('Đã xóa người quản lý.');
+  } catch (_) { showToast('Không thể xóa người quản lý.'); }
 }
 
 async function loadOnlineMovies() {
@@ -371,7 +450,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     error.textContent = '';
     button.disabled = true;
     try {
-      await adminRequest('/api/admin/login', {
+      const session = await adminRequest('/api/admin/login', {
         method: 'POST',
         body: JSON.stringify({
           username: document.getElementById('admin-username').value,
@@ -379,7 +458,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         })
       });
       document.getElementById('admin-password').value = '';
-      showAdmin();
+      showAdmin(session);
       await loadOnlineMovies();
     } catch (loginError) {
       const messages = {
@@ -436,7 +515,44 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.getElementById('admin-logout').addEventListener('click', async () => {
     try { await adminRequest('/api/admin/logout', { method: 'POST' }); } catch (_) {}
     currentMovies = [];
+    switchAdminView('movies');
+    currentAdminSession = null;
+    adminUsers = [];
     showLogin('Đã đăng xuất.');
+  });
+  document.querySelectorAll('.admin-nav-btn').forEach(button => button.addEventListener('click', () => switchAdminView(button.dataset.adminView)));
+  document.getElementById('admin-user-cancel').addEventListener('click', resetAdminUserForm);
+  document.getElementById('admin-user-list').addEventListener('click', event => {
+    const button = event.target.closest('[data-user-id]');
+    if (!button) return;
+    if (button.classList.contains('admin-user-edit')) editAdminUser(button.dataset.userId);
+    if (button.classList.contains('admin-user-delete')) deleteAdminUser(button.dataset.userId);
+  });
+  document.getElementById('admin-user-form').addEventListener('submit', async event => {
+    event.preventDefault();
+    const id = document.getElementById('admin-user-id').value;
+    const button = document.getElementById('admin-user-submit');
+    const error = document.getElementById('admin-user-error');
+    const payload = {
+      name: document.getElementById('admin-user-name').value.trim(),
+      email: document.getElementById('admin-user-email').value.trim(),
+      password: document.getElementById('admin-user-password').value
+    };
+    error.textContent = '';
+    button.disabled = true;
+    try {
+      const data = await adminRequest(id ? `/api/admin/users/${Number(id)}` : '/api/admin/users', {
+        method: id ? 'PUT' : 'POST', body: JSON.stringify(payload)
+      });
+      if (id) adminUsers = adminUsers.map(user => Number(user.id) === Number(id) ? data.user : user);
+      else adminUsers.unshift(data.user);
+      renderAdminUsers();
+      resetAdminUserForm();
+      showToast(id ? 'Đã cập nhật người quản lý.' : 'Đã thêm người quản lý mới.');
+    } catch (saveError) {
+      const messages = { duplicate_email: 'Email này đã được sử dụng.', root_account_reserved: 'Không thể sử dụng tài khoản của admin gốc.', invalid_user: 'Vui lòng nhập đúng email và mật khẩu ít nhất 10 ký tự.' };
+      error.textContent = messages[saveError.code] || 'Không thể lưu người quản lý. Vui lòng thử lại.';
+    } finally { button.disabled = false; }
   });
   document.getElementById('admin-import-legacy').addEventListener('click', async event => {
     if (!confirm('Nhập toàn bộ phim hiện có trong movies.js vào cơ sở dữ liệu online?')) return;
@@ -455,8 +571,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (resetToken) return;
 
   try {
-    await adminRequest('/api/admin/session');
-    showAdmin();
+    const session = await adminRequest('/api/admin/session');
+    showAdmin(session);
     await loadOnlineMovies();
   } catch (_) {
     showLogin();

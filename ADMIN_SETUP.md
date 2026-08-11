@@ -63,8 +63,11 @@ Khi bấm **Quên mật khẩu?**, hệ thống gửi liên kết dùng một l�
 ## 4. Triển khai
 
 ```powershell
+npx wrangler d1 migrations apply cinemax-movies --remote
 npx wrangler deploy
 ```
+
+Lệnh migration cần chạy trước khi deploy để tạo bảng tài khoản người quản lý. Admin gốc sau đó có thể mở mục **Người quản lý** để thêm, sửa hoặc xóa các tài khoản phụ.
 
 Sau đó mở `https://cinemaxmx.com/admin`, đăng nhập và bấm **Nhập dữ liệu phim cũ**. Nút này chỉ xuất hiện khi D1 chưa có phim và chỉ nhập được một lần.
 
