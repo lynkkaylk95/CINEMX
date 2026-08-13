@@ -1313,7 +1313,7 @@ footer { background: var(--bg2); border-top: 1px solid var(--border); padding: 3
   position: absolute;
   z-index: 2147483647;
   right: max(12px, env(safe-area-inset-right));
-  bottom: max(12px, env(safe-area-inset-bottom));
+  top: max(12px, env(safe-area-inset-top));
   display: none;
   width: 44px;
   height: 44px;
