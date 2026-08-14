@@ -45,7 +45,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=fullscreen-controls-20260813">
+  <link rel="stylesheet" href="css/style.css?v=fullscreen-controls-20260814">
 </head>
 <body>
 
@@ -665,18 +665,45 @@
     }
 
     let playerNativeFullscreenSeen = false;
+    let playerFullscreenElement = null;
 
     function handlePlayerFullscreenChange() {
-      const fullscreenElement = document.fullscreenElement || document.webkitFullscreenElement;
+      const fullscreenElement = document.fullscreenElement
+        || document.webkitFullscreenElement
+        || document.msFullscreenElement;
+      const videoWrap = document.getElementById('video-wrap');
+      const iframe = document.getElementById('yt-player');
+
+      // The first click on YouTube's fullscreen control replaces our fullscreen
+      // wrapper with the iframe instead of exiting. Treat that transition as the
+      // user's request to minimise the player, so one click is enough.
+      if (fullscreenElement === iframe && playerFullscreenElement === videoWrap) {
+        const exitFullscreen = document.exitFullscreen
+          || document.webkitExitFullscreen
+          || document.msExitFullscreen;
+        playerFullscreenElement = null;
+        playerNativeFullscreenSeen = false;
+        videoWrap?.classList.remove('is-native-fullscreen');
+        document.body.classList.remove('has-webview-fullscreen');
+        if (exitFullscreen) {
+          try {
+            const result = exitFullscreen.call(document);
+            if (result && typeof result.catch === 'function') result.catch(() => {});
+          } catch (_) {}
+        }
+        return;
+      }
+
       if (fullscreenElement) {
         playerNativeFullscreenSeen = true;
-        document.getElementById('video-wrap')?.classList.add('is-native-fullscreen');
+        playerFullscreenElement = fullscreenElement;
+        videoWrap?.classList.add('is-native-fullscreen');
         document.body.classList.add('has-webview-fullscreen');
         return;
       }
       if (!playerNativeFullscreenSeen) return;
       playerNativeFullscreenSeen = false;
-      const videoWrap = document.getElementById('video-wrap');
+      playerFullscreenElement = null;
       videoWrap?.classList.remove('is-native-fullscreen');
       videoWrap?.classList.remove('is-webview-fullscreen');
       document.body.classList.remove('has-webview-fullscreen');
@@ -689,6 +716,7 @@
       videoWrap?.classList.remove('is-webview-fullscreen');
       document.body.classList.remove('has-webview-fullscreen');
       playerNativeFullscreenSeen = false;
+      playerFullscreenElement = null;
 
       const fullscreenElement = document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement;
       const exitFullscreen = document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen;
