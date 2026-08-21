@@ -12,6 +12,8 @@
   const CINEMAX_SMARTLINK_URL = config.smartlink.url;
   const CINEMAX_SOCIAL_BAR_SRC = config.providers.socialBar;
   const CINEMAX_SOCIAL_BAR_ID = 'cinemax-social-bar';
+  const CINEMAX_HILLTOPADS_POPUNDER_ID = 'cinemax-hilltopads-popunder';
+  const CINEMAX_VIDEO_SLIDER_ID = 'cinemax-video-slider';
   const CINEMAX_MONETAG_PUSH_ID = 'cinemax-monetag-push';
   const CINEMAX_MONETAG_VIGNETTE_ID = 'cinemax-monetag-vignette';
   const CINEMAX_MONETAG_IN_PAGE_PUSH_ID = 'cinemax-monetag-in-page-push';
@@ -307,6 +309,43 @@
     report('socialBar', 'armed', { provider: 'effectivecpmnetwork' });
   }
 
+  function loadHilltopadsPopunder() {
+    const placement = CINEMAX_PLACEMENTS.hilltopadsPopunder;
+    const providerSrc = config.providers.hilltopadsPopunder;
+    if (!placement?.enabled || !providerSrc) return;
+    if (document.getElementById(CINEMAX_HILLTOPADS_POPUNDER_ID)) return;
+
+    // HilltopAds' popunder tag expects its settings before the provider script loads.
+    const script = document.createElement('script');
+    script.id = CINEMAX_HILLTOPADS_POPUNDER_ID;
+    script.settings = {};
+    script.src = providerSrc;
+    script.async = true;
+    script.referrerPolicy = 'no-referrer-when-downgrade';
+    script.onload = () => report('hilltopadsPopunder', 'script-loaded', { provider: 'hilltopads' });
+    script.onerror = () => report('hilltopadsPopunder', 'script-error', { provider: 'hilltopads' });
+    document.head.appendChild(script);
+    report('hilltopadsPopunder', 'armed', { provider: 'hilltopads' });
+  }
+
+  function loadVideoSlider() {
+    const placement = CINEMAX_PLACEMENTS.videoSlider;
+    const providerSrc = config.providers.videoSlider;
+    if (!placement?.enabled || !providerSrc) return;
+    if (document.getElementById(CINEMAX_VIDEO_SLIDER_ID)) return;
+
+    const script = document.createElement('script');
+    script.id = CINEMAX_VIDEO_SLIDER_ID;
+    script.settings = {};
+    script.src = providerSrc;
+    script.async = true;
+    script.referrerPolicy = 'no-referrer-when-downgrade';
+    script.onload = () => report('videoSlider', 'script-loaded', { provider: 'hilltopads' });
+    script.onerror = () => report('videoSlider', 'script-error', { provider: 'hilltopads' });
+    document.head.appendChild(script);
+    report('videoSlider', 'armed', { provider: 'hilltopads' });
+  }
+
   function loadMonetagPush() {
     const placement = CINEMAX_PLACEMENTS.monetagPush;
     if (!placement?.enabled || !isEnabledOnCurrentPage(placement)) return;
@@ -365,6 +404,8 @@
 
   onDomReady(() => safely('smartlink wiring', wireSmartlinks));
   onDomReady(() => safely('social bar', loadSocialBar));
+  onDomReady(() => safely('HilltopAds popunder', loadHilltopadsPopunder));
+  onDomReady(() => safely('video slider', loadVideoSlider));
   onDomReady(() => safely('Monetag push notifications', loadMonetagPush));
   onDomReady(() => safely('Monetag vignette banner', loadMonetagVignette));
   onDomReady(() => safely('Monetag in-page push', loadMonetagInPagePush));
